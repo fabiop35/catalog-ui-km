@@ -1,0 +1,41 @@
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
+  padding: 1rem;
+}
+
+.product-card {
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+  }
+
+  img {
+    height: 200px;
+    object-fit: cover;
+  }
+
+  .price {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+    .sell {
+      font-weight: 600;
+      color: #0d47a1;   // Indigo 900
+    }
+    .buy {
+      font-size: 0.9em;
+      color: #757575;   // Gray 700
+      text-decoration: line-through;
+    }
+  }
+}
+
+@media (max-width: 600px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,59 +1,85 @@
-# CatalogUiKm
+#GUI for Unicenta POS
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 20.1.1.
+$ npm i -g @angular/cli
+$ ng new catalog-ui-km --routing=true --style=scss --standalone
+$ cd catalog-ui
+$ ng serve -o
+$ ng add @angular/material
 
-## Development server
+#Generate shared folder & interfaces
+$ ng g interface shared/models/product --type=model --standalone
+$ ng g interface shared/models/category --type=model --standalone
+$ ng g interface shared/models/tax-category --type=model --standalone
+$ ng g interface shared/models/tax --type=model --standalone
 
-To start a local development server, run:
+#HTTP service
+$ ng g s shared/services/catalog --standalone
 
-```bash
-ng serve
-```
+#Generate pages / components - Product list + create
+$ ng g component pages/product-list --standalone --skip-tests
+$ ng g component pages/product-form --standalone --skip-tests
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+#Supporting components (optional)
+$ ng g component pages/category-list --standalone --skip-tests
+$ ng g component pages/tax-category-list --standalone --skip-tests
+$ ng g component pages/tax-list --standalone --skip-tests
 
-## Code scaffolding
+# Run the client
+$ ng serve
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+#product-detail.component.ts
+$ ng g component pages/product-detail --standalone --skip-tests
 
-```bash
-ng generate component component-name
-```
+#Quick test
+$ curl http://localhost:8080/api/v1/products/f1e2d3c4-b5a6-7890-1234-567890abcdef
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+# Angular component (stand-alone) 
+ng g component pages/product-detail --standalone --skip-tests
 
-```bash
-ng generate --help
-```
+#Install Angular Material
+$ ng add @angular/material
 
-## Building
+#Product Panel Component
+$ ng g component shared/components/product-panel --standalone --skip-tests
 
-To build the project run:
+#Category / Tax-Category / Tax Panels. Each panel is a stand-alone component with identical structure
+$ ng g component shared/components/category-panel --standalone --skip-tests
+$ ng g component shared/components/tax-category-panel --standalone --skip-tests
+$ ng g component shared/components/tax-panel --standalone --skip-tests
 
-```bash
-ng build
-```
+#Product-Grid component
+$ ng g component shared/components/product-grid --standalone --skip-tests
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
 
-## Running unit tests
 
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
 
-```bash
-ng test
-```
 
-## Running end-to-end tests
 
-For end-to-end (e2e) testing, run:
 
-```bash
-ng e2e
-```
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
 
-## Additional Resources
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

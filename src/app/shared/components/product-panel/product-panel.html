@@ -1,0 +1,42 @@
+<app-product-grid [products]="products"></app-product-grid>
+
+<!--<mat-card class="panel">
+  <mat-card-header class="panel-header">
+    <mat-card-title>Products</mat-card-title>
+    <div>
+      <button mat-icon-button (click)="load()" matTooltip="Refresh">
+        <mat-icon>refresh</mat-icon>
+      </button>
+      <button mat-raised-button color="primary" (click)="create()">Create Dummy</button>
+    </div>
+  </mat-card-header>
+
+  <mat-card-content class="panel-body">
+    
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Product ID</mat-label>
+      <input matInput [(ngModel)]="idInput" placeholder="uuid">
+      <button matSuffix mat-icon-button (click)="getSingle()">
+        <mat-icon>search</mat-icon>
+      </button>
+    </mat-form-field>
+
+    
+    <mat-card *ngIf="singleProduct" class="detail-card">
+      <mat-card-title>{{ singleProduct.name }}</mat-card-title>
+      <mat-card-content>
+        <p>Ref: {{ singleProduct.reference }}</p>
+        <p>Price: {{ singleProduct.priceSell | currency }}</p>
+        <p>Category: {{ singleProduct.categoryName }}</p>
+      </mat-card-content>
+    </mat-card>
+
+    
+    <mat-nav-list *ngIf="products.length">
+      <a mat-list-item *ngFor="let p of products">
+        <span matListItemTitle>{{ p.name }}</span>
+        <span matListItemLine>{{ p.priceSell | currency }} – {{ p.categoryName }}</span>
+      </a>
+    </mat-nav-list>
+  </mat-card-content>
+</mat-card> -->

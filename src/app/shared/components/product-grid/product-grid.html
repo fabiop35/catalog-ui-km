@@ -1,0 +1,31 @@
+<div class="grid">
+  <mat-card class="product-card" *ngFor="let p of products; trackBy: trackById" [routerLink]="['/products', p.id]">
+    <!--<img mat-card-image
+         [src]="p.imageUrl || 'https://via.placeholder.com/300x200?text=' + p.name"
+         [alt]="p.name"
+         loading="lazy"
+    > -->
+
+    <mat-card-header>
+      <mat-card-title>{{ p.name }}</mat-card-title>
+      <mat-card-subtitle>{{ p.reference }}</mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+      <mat-chip-set>
+        <mat-chip color="primary">{{ p.categoryName }}</mat-chip>
+      </mat-chip-set>
+
+      <div class="price">
+        <span class="sell">{{ p.priceSell | currency }}</span>
+        <span class="buy">{{ p.priceBuy | currency }}</span>
+      </div>
+    </mat-card-content>
+
+    <mat-card-actions align="end">
+      <button mat-icon-button matTooltip="Details">
+        <mat-icon>open_in_new</mat-icon>
+      </button>
+    </mat-card-actions>
+  </mat-card>
+</div>
