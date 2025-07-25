@@ -1,0 +1,7 @@
+<mat-toolbar color="primary">
+  <span>Product List</span>
+  <span class="spacer"></span>
+  <button mat-button [routerLink]="['/products/new']">Create Product</button>
+</mat-toolbar>
+
+<app-product-grid [products]="products"></app-product-grid>

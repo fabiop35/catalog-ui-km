@@ -26,7 +26,7 @@ export class ProductGrid {
   singleProduct: any;
 
   trackById(index: number, item: ProductWithCategoryDto): string {
-    return item.id;
+    return item.id || '';
   }
 
 }

@@ -14,12 +14,18 @@ import { ProductPanel } from './shared/components/product-panel/product-panel';
 import { CategoryPanel } from './shared/components/category-panel/category-panel';
 import { TaxCategoryPanel } from './shared/components/tax-category-panel/tax-category-panel';
 import { TaxPanel } from './shared/components/tax-panel/tax-panel';
+import { Toolbar } from './shared/components/toolbar/toolbar';
+import { ProductForm } from './shared/components/product-form/product-form';
+
 import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { RouterOutlet } from '@angular/router';
 
 @Component({
   selector: 'app-root',
   standalone: true,
   imports: [
+    RouterOutlet,
     CommonModule,
     RouterLink,
     MatCardModule,
@@ -31,7 +37,10 @@ import { MatToolbarModule } from '@angular/material/toolbar';
     CategoryPanel,
     TaxCategoryPanel,
     TaxPanel,
-    MatToolbarModule
+    MatToolbarModule,
+    Toolbar,
+    MatSnackBarModule,
+    ProductForm
   ],
   templateUrl: './app.html'
 })
@@ -51,14 +60,16 @@ export class AppComponent {
   }
   createDummyProduct() {
     this.svc.createProduct({
+      id: "",
       reference: 'APP-TEST',
       code: '1234567890128',
+      codetype: 'EAN-13',
       name: 'App-Test Product',
-      priceSell: 4.99,
-      priceBuy: 3.50,
+      pricesell: 4.99,
+      pricebuy: 3.50,
       currency: 'USD',
       categoryId: 'c4d5e6f7-a8b9-c0d1-e2f3-a4b5c6d7e8f9',
-      taxCategoryId: '04928060-63b7-4a0d-9b0d-b8d2d2c3e1e2'
+      taxcatId: '04928060-63b7-4a0d-9b0d-b8d2d2c3e1e2'
     }).subscribe(() => this.loadProducts());
   }
 

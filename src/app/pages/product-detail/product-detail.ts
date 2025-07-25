@@ -12,7 +12,7 @@ import { ProductWithCategoryDto } from '../../shared/models/product-with-categor
     <div *ngIf="product; else loading">
       <h2>{{ product.name }}</h2>
       <p>Ref: {{ product.reference }}</p>
-      <p>Price: {{ product.priceSell | currency }}</p>
+      <p>Price: {{ product.pricesell | currency }}</p>
       <p>Category: {{ product.categoryName }}</p>
     </div>
     <ng-template #loading>Loading…</ng-template>

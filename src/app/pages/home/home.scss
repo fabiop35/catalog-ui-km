@@ -1,0 +1,54 @@
+.hero-toolbar {
+    font-weight: 500;
+    letter-spacing: 0.5px;
+}
+
+.hero {
+    text-align: center;
+    padding: 2rem 1rem;
+    background: linear-gradient(135deg, #3f51b5, #5c6bc0);
+    color: white;
+
+    .hero-title {
+        font-size: clamp(1.8rem, 4vw, 2.5rem);
+        margin-bottom: 0.5rem;
+    }
+
+    .hero-subtitle {
+        font-size: clamp(1rem, 2.5vw, 1.25rem);
+        max-width: 600px;
+        margin: 0 auto;
+    }
+}
+
+.grid {
+    display: grid;
+    gap: 1.5rem;
+    padding: 1.5rem;
+
+    /* mobile-first 1 column → desktop 4 columns */
+    grid-template-columns: 1fr;
+
+    @media (min-width: 600px) {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    @media (min-width: 1024px) {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+.feature-card {
+    border-top: 4px solid;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+    &:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+    }
+
+    mat-card-actions {
+        margin-top: 0.5rem;
+    }
+}

@@ -1,0 +1,17 @@
+<mat-toolbar color="primary">
+    <span>Tax Categories</span>
+    <span class="spacer"></span>
+    <button mat-button [routerLink]="['/tax-categories/new']" color="accent">
+        <mat-icon>add</mat-icon> New Tax Category
+    </button>
+</mat-toolbar>
+
+<div class="container">
+    <div class="grid">
+        <mat-card class="card" *ngFor="let tc of taxCategories">
+            <mat-card-content>
+                <span class="name">{{ tc.name }}</span>
+            </mat-card-content>
+        </mat-card>
+    </div>
+</div>

@@ -14,8 +14,9 @@ export class CatalogService {
   constructor(private http: HttpClient) { }
 
   /* Products */
-  listProducts() {
-    return this.http.get<Product[]>(`${this.base}/products`);
+  listProducts(): Observable<ProductWithCategoryDto[]> {
+    //return this.http.get<Product[]>(`${this.base}/products`);
+    return this.http.get<ProductWithCategoryDto[]>(`${this.base}/products`);
   }
 
   getProduct(id: string) {
@@ -23,8 +24,9 @@ export class CatalogService {
     return this.http.get<ProductWithCategoryDto>(`${this.base}/products/${id}`);
   }
 
-  createProduct(p: Product) {
-    return this.http.post<Product>(`${this.base}/products`, p);
+  createProduct(product: ProductWithCategoryDto): Observable<ProductWithCategoryDto> {
+    //return this.http.post<Product>(`${this.base}/products`, p);
+    return this.http.post<ProductWithCategoryDto>(`${this.base}/products`, product);
   }
 
   /* Categories */
@@ -42,6 +44,7 @@ export class CatalogService {
   }
 
   createTaxCategory(tc: TaxCategory) {
+    return this.http.post<TaxCategory>(`${this.base}/tax-categories`, tc);
     return this.http.post<TaxCategory>(`${this.base}/tax-categories`, tc);
   }
 

@@ -1,0 +1,24 @@
+<div class="form-container">
+    <form [formGroup]="form" (ngSubmit)="onSubmit()">
+        <mat-toolbar color="primary"><span>Create Tax</span></mat-toolbar>
+
+        <mat-form-field appearance="fill">
+            <mat-label>Name</mat-label>
+            <input matInput formControlName="name" required />
+        </mat-form-field>
+
+        <mat-form-field appearance="fill">
+            <mat-label>Category ID</mat-label>
+            <input matInput formControlName="categoryId" required />
+        </mat-form-field>
+
+        <mat-form-field appearance="fill">
+            <mat-label>Rate (decimal, e.g. 0.05)</mat-label>
+            <input matInput formControlName="rate" type="number" step="0.01" required />
+        </mat-form-field>
+
+        <button mat-raised-button color="primary" type="submit" [disabled]="form.invalid">
+            Save
+        </button>
+    </form>
+</div>

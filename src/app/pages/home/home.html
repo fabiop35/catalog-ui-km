@@ -1,0 +1,30 @@
+<mat-toolbar color="primary" class="hero-toolbar">
+    <span>Catalog UI 2.0</span>
+</mat-toolbar>
+
+<section class="hero">
+    <h1 class="hero-title">Welcome to the Catalog Manager</h1>
+    <p class="hero-subtitle">
+        Create, browse, and manage products, categories, and taxes in one place.
+    </p>
+</section>
+
+<section class="grid">
+    <mat-card *ngFor="let card of cards" [style.borderTopColor]="card.color" class="feature-card"
+        [routerLink]="card.link">
+        <mat-card-header>
+            <mat-icon mat-card-avatar [style.color]="card.color">{{ card.icon }}</mat-icon>
+            <mat-card-title>{{ card.title }}</mat-card-title>
+        </mat-card-header>
+
+        <mat-card-content>
+            {{ card.desc }}
+        </mat-card-content>
+
+        <mat-card-actions align="end">
+            <button mat-flat-button [style.backgroundColor]="card.color">
+                Go to {{ card.title }}
+            </button>
+        </mat-card-actions>
+    </mat-card>
+</section>

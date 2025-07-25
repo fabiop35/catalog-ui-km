@@ -1,0 +1,38 @@
+.container {
+    padding: 1.5rem;
+    background: #f5f7fa;
+}
+
+.toolbar {
+    margin-bottom: 1.5rem;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
+
+    @media (max-width: 600px) {
+        grid-template-columns: 1fr;
+    }
+}
+
+.category-card {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    padding: 1.5rem;
+    text-align: center;
+
+    &:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+    }
+
+    .name {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: #263238;
+    }
+}

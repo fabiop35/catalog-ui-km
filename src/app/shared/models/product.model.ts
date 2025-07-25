@@ -1,12 +1,13 @@
 export interface Product {
-  id?: string;
+  id: string;
   reference: string;
   code: string;
+  codetype: string;
   name: string;
-  priceSell: number;
-  priceBuy: number;
+  pricesell: number;
+  pricebuy: number;
   currency: string;
   categoryId: string;
-  taxCategoryId: string;
+  taxcatId: string;
   categoryName?: string;
 }

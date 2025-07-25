@@ -1,0 +1,17 @@
+<mat-toolbar color="primary" class="toolbar">
+    <span>Categories</span>
+    <span class="spacer"></span>
+    <button mat-button [routerLink]="['/categories/new']" color="accent">
+        <mat-icon>add</mat-icon> New Category
+    </button>
+</mat-toolbar>
+
+<div class="container">
+    <div class="grid">
+        <mat-card class="category-card" *ngFor="let c of categories">
+            <mat-card-content>
+                <span class="name">{{ c.name }}</span>
+            </mat-card-content>
+        </mat-card>
+    </div>
+</div>

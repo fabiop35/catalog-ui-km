@@ -1,6 +1,32 @@
-<app-product-grid [products]="products"></app-product-grid>
+<!-- Search -->
+<<mat-form-field appearance="fill" class="search-field">
+  <mat-label>Search product by name</mat-label>
+  <input matInput [formControl]="searchCtrl" [matAutocomplete]="auto" placeholder="Type to filter…">
+  <mat-icon matSuffix>search</mat-icon>
+  <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onSelect($event)" [displayWith]="displayFn">
+    <mat-option *ngFor="let p of filteredProducts$ | async" [value]="p">
+      {{ p.name }} – ({{ p.pricesell | currency }})
+    </mat-option>
+  </mat-autocomplete>
+  </mat-form-field>
 
-<!--<mat-card class="panel">
+  <!-- Single product detail (optional) -->
+  <mat-card *ngIf="singleProduct" class="detail-card">
+    <mat-card-title>{{ singleProduct.name }}</mat-card-title>
+    <mat-card-content>
+      <p>Ref: {{ singleProduct.reference }}</p>
+      <p>Price: {{ singleProduct.pricesell | currency }}</p>
+      <p>Category: {{ singleProduct.categoryName }}</p>
+    </mat-card-content>
+    <mat-card-actions align="end">
+      <button mat-flat-button color="primary" (click)="clearSelection()">Close</button>
+    </mat-card-actions>
+  </mat-card>
+
+  <!-- Grid remains unchanged -->
+  <app-product-grid [products]="products"></app-product-grid>
+
+  <!--<mat-card class="panel">
   <mat-card-header class="panel-header">
     <mat-card-title>Products</mat-card-title>
     <div>
