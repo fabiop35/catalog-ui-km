@@ -1,0 +1,58 @@
+<div class="form-container">
+    <form [formGroup]="form" (ngSubmit)="onSubmit()">
+        <mat-toolbar color="primary">
+            {{ product ? 'Edit Product' : 'Create Product' }}
+        </mat-toolbar>
+
+        <mat-form-field appearance="fill">
+            <mat-label>Reference</mat-label>
+            <input matInput formControlName="reference" readonly>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill">
+            <mat-label>Code</mat-label>
+            <input matInput formControlName="code" readonly>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill">
+            <mat-label>Code Type</mat-label>
+            <mat-select formControlName="codetype">
+                <mat-option value="EAN-13">EAN-13</mat-option>
+            </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill">
+            <mat-label>Name</mat-label>
+            <input matInput formControlName="name" required>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill">
+            <mat-label>Display</mat-label>
+            <input matInput formControlName="display">
+        </mat-form-field>
+
+        <mat-form-field appearance="fill">
+            <mat-label>Sell Price (cents)</mat-label>
+            <input matInput formControlName="pricesell" type="number" required>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill">
+            <mat-label>Buy Price (cents)</mat-label>
+            <input matInput formControlName="pricebuy" type="number" required>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill">
+            <mat-label>Category ID</mat-label>
+            <input matInput formControlName="categoryId" required>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill">
+            <mat-label>Tax Category ID</mat-label>
+            <input matInput formControlName="taxcatId" required>
+        </mat-form-field>
+
+        <button mat-raised-button color="primary" type="submit" [disabled]="form.invalid">
+            {{ product ? 'Update' : 'Create' }}
+        </button>
+    </form>
+</div>

@@ -73,9 +73,14 @@ ng g component shared/components/tax-category-form --standalone --skip-tests
 ng g component shared/components/tax-list --standalone --skip-tests
 ng g component shared/components/tax-form --standalone --skip-tests
 
+#Modify product
+$ ng g component shared/components/product-form-edit --standalone --skip-tests
 
+#edit product
+ng g component shared/components/inline-product-edit --standalone --skip-tests
 
-
+#scroll, pagination
+$ npm install @angular/cdk
 
 
 

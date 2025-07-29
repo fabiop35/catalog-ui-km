@@ -1,0 +1,15 @@
+.edit-card {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    margin: 1rem 0;
+
+    mat-form-field {
+        width: 100%;
+        margin-bottom: 0.5rem;
+    }
+
+    mat-card-actions {
+        padding: 0 1rem 1rem;
+    }
+}

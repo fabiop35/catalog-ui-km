@@ -56,4 +56,9 @@ export class CatalogService {
   createTax(t: Tax) {
     return this.http.post<Tax>(`${this.base}/taxes`, t);
   }
+
+  updateProduct(id: string, product: ProductWithCategoryDto): Observable<ProductWithCategoryDto> {
+    console.log(">>>updateProduct.")
+    return this.http.put<ProductWithCategoryDto>(`${this.base}/products/${id}`, product);
+  }
 }

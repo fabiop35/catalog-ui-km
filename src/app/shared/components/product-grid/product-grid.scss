@@ -8,6 +8,7 @@
 .product-card {
   cursor: pointer;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
+
   &:hover {
     transform: translateY(-4px);
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
@@ -22,13 +23,15 @@
     display: flex;
     gap: 0.5rem;
     margin-top: 0.5rem;
+
     .sell {
       font-weight: 600;
-      color: #0d47a1;   // Indigo 900
+      color: #0d47a1; // Indigo 900
     }
+
     .buy {
       font-size: 0.9em;
-      color: #757575;   // Gray 700
+      color: #757575; // Gray 700
       text-decoration: line-through;
     }
   }
@@ -37,5 +40,20 @@
 @media (max-width: 600px) {
   .grid {
     grid-template-columns: 1fr;
+  }
+}
+
+.updated {
+  border: 2px solid #4caf50;
+  animation: pulse 3s forwards;
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 rgba(76, 175, 80, 0.8);
+  }
+
+  100% {
+    box-shadow: 0 0 0 rgba(76, 175, 80, 0);
   }
 }

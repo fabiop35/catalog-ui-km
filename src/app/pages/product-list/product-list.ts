@@ -5,11 +5,13 @@ import { MatButtonModule } from '@angular/material/button';
 import { Router } from '@angular/router';
 import { RouterLink } from '@angular/router';
 import { CatalogService } from '../../shared/services/catalog';
+import { MatCard, MatCardModule } from "@angular/material/card";
+import { MatIconModule } from "@angular/material/icon";
 
 @Component({
   selector: 'app-product-list',
   standalone: true,
-  imports: [CommonModule, MatTableModule, MatButtonModule, RouterLink  ],
+  imports: [CommonModule, MatTableModule, MatButtonModule, RouterLink, MatCard, MatCardModule, MatIconModule],
   templateUrl: './product-list.html'
 })
 export class ProductList implements OnInit {

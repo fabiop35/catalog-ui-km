@@ -1,4 +1,4 @@
-<button mat-raised-button color="primary" (click)="add()">Add Product</button>
+<button mat-raised-button color="primary" (click)="add()">Add Product**</button>
 
 <table mat-table [dataSource]="products">
   <ng-container matColumnDef="name">
@@ -26,3 +26,15 @@
   <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
   <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
 </table>
+
+<mat-card class="card" *ngFor="let p of products">
+  <mat-card-content>
+    <span class="name">{{ p.name }}</span>
+    <span class="price">{{ p.priceSell | currency }}</span>
+  </mat-card-content>
+  <mat-card-actions align="end">
+    <button mat-icon-button [routerLink]="['/products', p.id, 'edit']" matTooltip="Edit">
+      <mat-icon>edit</mat-icon>
+    </button>
+  </mat-card-actions>
+</mat-card>

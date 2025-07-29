@@ -1,31 +1,40 @@
 <div class="grid">
-  <mat-card class="product-card" *ngFor="let p of products; trackBy: trackById" [routerLink]="['/products', p.id]">
-    <!--<img mat-card-image
-         [src]="p.imageUrl || 'https://via.placeholder.com/300x200?text=' + p.name"
-         [alt]="p.name"
-         loading="lazy"
-    > -->
+  <ng-container *ngFor="let p of products; trackBy: trackById">
+    <!-- normal card -->
+    <mat-card class="product-card" [class.updated]="updatedId === p.id"
+      *ngIf="!editing[p.id!]"
+      class="product-card">
+      <mat-card-header>
+        <mat-card-title>{{ p.name }}</mat-card-title>
+        <mat-card-subtitle>{{ p.reference }}</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <mat-chip-set>
+          <mat-chip color="primary">{{ p.categoryName }}</mat-chip>
+        </mat-chip-set>
+        <div class="price">
+          <span class="sell">{{ p.pricesell | currency }}</span>
+          <span class="buy">{{ p.pricebuy | currency }}</span>
+        </div>
+      </mat-card-content>
+      <mat-card-actions align="end">
+        <button mat-icon-button (click)="openEdit(p)" matTooltip="Edit">
+          <mat-icon>edit</mat-icon>
+        </button>
+      </mat-card-actions>
+    </mat-card>
 
-    <mat-card-header>
-      <mat-card-title>{{ p.name }}</mat-card-title>
-      <mat-card-subtitle>{{ p.reference }}</mat-card-subtitle>
-    </mat-card-header>
+    <!-- inline edit -->
+    <!--<app-inline-product-edit 
+       *ngIf="editing[p.id!]" 
+       [product]="p" (saved)="closeEdit(p.id!)">
+    </app-inline-product-edit> -->
+    <!-- inline edit -->
+    <app-inline-product-edit
+      *ngIf="editing[p.id!]"
+      [product]="p"
+      (saved)="onProductUpdated(p.id!)"
+    ></app-inline-product-edit>
 
-    <mat-card-content>
-      <mat-chip-set>
-        <mat-chip color="primary">{{ p.categoryName }}</mat-chip>
-      </mat-chip-set>
-
-      <div class="price">
-        <span class="sell">{{ p.pricesell | currency }}</span>
-        <span class="buy">{{ p.pricebuy | currency }}</span>
-      </div>
-    </mat-card-content>
-
-    <mat-card-actions align="end">
-      <button mat-icon-button matTooltip="Details">
-        <mat-icon>open_in_new</mat-icon>
-      </button>
-    </mat-card-actions>
-  </mat-card>
+  </ng-container>
 </div>

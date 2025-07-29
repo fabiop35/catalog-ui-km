@@ -6,6 +6,7 @@ export const routes: Routes = [
   { path: 'products', loadComponent: () => import('./shared/components/product-panel/product-panel').then(m => m.ProductPanel) },
   { path: 'products/new', loadComponent: () => import('./shared/components/product-form/product-form').then(m => m.ProductForm) },
   { path: 'products/:id', loadComponent: () => import('./pages/product-detail/product-detail').then(c => c.ProductDetailComponent) },
+  { path: 'products/:id/edit', loadComponent: () => import('./shared/components/product-form-edit/product-form-edit').then(c => c.ProductFormEdit) },
   { path: 'categories', loadComponent: () => import('./shared/components/category-list/category-list').then(c => c.CategoryList) },
   { path: 'categories/new', loadComponent: () => import('./shared/components/category-form/category-form').then(c => c.CategoryForm) },
   { path: 'tax-categories', loadComponent: () => import('./shared/components/tax-category-list/tax-category-list').then(m => m.TaxCategoryList) },

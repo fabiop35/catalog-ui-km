@@ -1,6 +1,6 @@
 <!-- Search -->
 <<mat-form-field appearance="fill" class="search-field">
-  <mat-label>Search product by name</mat-label>
+  <mat-label>Buscar producto</mat-label>
   <input matInput [formControl]="searchCtrl" [matAutocomplete]="auto" placeholder="Type to filter…">
   <mat-icon matSuffix>search</mat-icon>
   <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onSelect($event)" [displayWith]="displayFn">
