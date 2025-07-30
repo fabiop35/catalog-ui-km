@@ -1,0 +1,64 @@
+<mat-form-field appearance="fill" class="search-field">
+  <mat-label>Buscar producto</mat-label>
+  <input matInput [formControl]="searchCtrl" [matAutocomplete]="auto" placeholder="Type to filter…">
+  <mat-icon matSuffix>search</mat-icon>
+  <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onSelect($event)" [displayWith]="displayFn">
+    <mat-option *ngFor="let p of filteredProducts$ | async" [value]="p">
+      {{ p.name }} – ({{ p.pricesell | currency }})
+    </mat-option>
+  </mat-autocomplete>
+  </mat-form-field>
+
+  <!-- Single product detail (optional) -->
+  <mat-card *ngIf="singleProduct" class="detail-card">
+    <mat-card-title>{{ singleProduct.name }}</mat-card-title>
+    <mat-card-content>
+      <p>Ref: {{ singleProduct.reference }}</p>
+      <p>Price: {{ singleProduct.pricesell | currency }}</p>
+      <p>Category: {{ singleProduct.categoryName }}</p>
+    </mat-card-content>
+    <mat-card-actions align="end">
+      <button mat-flat-button color="primary" (click)="clearSelection()">Close</button>
+    </mat-card-actions>
+  </mat-card>
+
+<mat-paginator 
+    [pageIndex]="pageIndex" 
+    [pageSize]="pageSize" 
+    [pageSizeOptions]="[5, 10, 20]" 
+    [length]="totalElements"
+    (page)="onPageChange($event)"></mat-paginator>
+
+<div class="grid">
+    <ng-container *ngFor="let product of products; trackBy: trackById">
+        <!-- normal card -->
+        <mat-card [class.updated]="updatedId === product.id" *ngIf="!editing[product.id!]" class="product-card">
+
+            <mat-card-header>
+
+                <mat-card-title>{{ product.name }}</mat-card-title>
+                <mat-card-subtitle>{{ product.reference }}</mat-card-subtitle>
+            </mat-card-header>
+
+            <mat-card-content>
+                <mat-chip-set>
+                    <mat-chip color="primary">{{ product.categoryName }}</mat-chip>
+                </mat-chip-set>
+                <div class="price">
+                    <span class="sell">{{ product.pricesell | currency }}</span>
+                    <span class="buy">{{ product.pricebuy | currency }}</span>
+                </div>
+            </mat-card-content>
+
+            <mat-card-actions align="end">
+                <button mat-icon-button (click)="openEdit(product)" matTooltip="Edit">
+                    <mat-icon>edit</mat-icon>
+                </button>
+            </mat-card-actions>
+        </mat-card>
+
+        <!-- inline edit -->
+        <app-inline-product-edit *ngIf="editing[product.id!]" [product]="product"
+            (saved)="onProductUpdated()"></app-inline-product-edit>
+    </ng-container>
+</div>

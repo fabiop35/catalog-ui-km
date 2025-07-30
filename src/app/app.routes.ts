@@ -1,9 +1,11 @@
 import { Routes } from '@angular/router';
+import { ProductListPaginated } from './shared/components/product-list-paginated/product-list-paginated';
 
 export const routes: Routes = [
   { path: '', loadComponent: () => import('./pages/home/home').then(c => c.HomeComponent) },
   //{ path: 'products', loadComponent: () => import('./pages/product-list/product-list').then(m => m.ProductList) },
-  { path: 'products', loadComponent: () => import('./shared/components/product-panel/product-panel').then(m => m.ProductPanel) },
+  //{ path: 'products', loadComponent: () => import('./shared/components/product-panel/product-panel').then(m => m.ProductPanel) },
+  { path: 'products', component: ProductListPaginated },
   { path: 'products/new', loadComponent: () => import('./shared/components/product-form/product-form').then(m => m.ProductForm) },
   { path: 'products/:id', loadComponent: () => import('./pages/product-detail/product-detail').then(c => c.ProductDetailComponent) },
   { path: 'products/:id/edit', loadComponent: () => import('./shared/components/product-form-edit/product-form-edit').then(c => c.ProductFormEdit) },

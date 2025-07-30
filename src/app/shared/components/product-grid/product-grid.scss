@@ -6,6 +6,7 @@
 }
 
 .product-card {
+  in-height: 140px;
   cursor: pointer;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 
@@ -56,4 +57,12 @@
   100% {
     box-shadow: 0 0 0 rgba(76, 175, 80, 0);
   }
+
+
+}
+
+.viewport {
+  height: 400px;
+  /* or fill container */
+  border: 1px solid #e0e0e0;
 }

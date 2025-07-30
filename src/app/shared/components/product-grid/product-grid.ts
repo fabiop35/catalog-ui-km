@@ -73,13 +73,13 @@ export class ProductGrid {
     setTimeout(() => (this.updatedId = undefined), 3000);
   }*/
 
-  onProductUpdated(id: string) {
-    this.service.listProducts().subscribe(list => {
-      this.products = list;
-      this.editing = {};                      // close inline
-      this.updatedId = id;                    // mark card
-      setTimeout(() => (this.updatedId = undefined), 3000);
-    });
-  }
+    onProductUpdated(id: string) {
+  this.service.listProducts().subscribe(list => {
+    this.products = list;
+    this.editing = {};                      // close inline
+    this.updatedId = id;                    // mark card
+    setTimeout(() => (this.updatedId = undefined), 3000);
+  });
+}
 
 }

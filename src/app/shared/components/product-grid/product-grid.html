@@ -1,5 +1,6 @@
 <div class="grid">
   <ng-container *ngFor="let p of products; trackBy: trackById">
+    
     <!-- normal card -->
     <mat-card class="product-card" [class.updated]="updatedId === p.id"
       *ngIf="!editing[p.id!]"
@@ -18,10 +19,10 @@
         </div>
       </mat-card-content>
       <mat-card-actions align="end">
-        <button mat-icon-button (click)="openEdit(p)" matTooltip="Edit">
-          <mat-icon>edit</mat-icon>
-        </button>
-      </mat-card-actions>
+      <button mat-icon-button [routerLink]="['/products', p.id, 'edit']" matTooltip="Edit">
+        <mat-icon>edit</mat-icon>
+      </button>
+    </mat-card-actions>
     </mat-card>
 
     <!-- inline edit -->

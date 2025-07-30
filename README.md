@@ -82,6 +82,10 @@ ng g component shared/components/inline-product-edit --standalone --skip-tests
 #scroll, pagination
 $ npm install @angular/cdk
 
+#Pagination
+$ ng g component shared/components/product-list-paginated --standalone --skip-tests
+$ ng g interface shared/models/page --type=model
+
 
 
 

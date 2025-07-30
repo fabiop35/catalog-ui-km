@@ -6,6 +6,7 @@ import { Category } from '../models/category.model';
 import { TaxCategory } from '../models/tax-category.model';
 import { Tax } from '../models/tax.model';
 import { ProductWithCategoryDto } from '../models/product-with-category.model';
+import { Page } from '../models/page.model';
 
 @Injectable({ providedIn: 'root' })
 export class CatalogService {
@@ -15,6 +16,7 @@ export class CatalogService {
 
   /* Products */
   listProducts(): Observable<ProductWithCategoryDto[]> {
+    console.log(">>> CatalogService.listProducts() <<< ")
     //return this.http.get<Product[]>(`${this.base}/products`);
     return this.http.get<ProductWithCategoryDto[]>(`${this.base}/products`);
   }
@@ -45,7 +47,6 @@ export class CatalogService {
 
   createTaxCategory(tc: TaxCategory) {
     return this.http.post<TaxCategory>(`${this.base}/tax-categories`, tc);
-    return this.http.post<TaxCategory>(`${this.base}/tax-categories`, tc);
   }
 
   /* Taxes */
@@ -58,7 +59,12 @@ export class CatalogService {
   }
 
   updateProduct(id: string, product: ProductWithCategoryDto): Observable<ProductWithCategoryDto> {
-    console.log(">>>updateProduct.")
     return this.http.put<ProductWithCategoryDto>(`${this.base}/products/${id}`, product);
+  }
+
+  listProductsPaged(page = 0, size = 5): Observable<Page<ProductWithCategoryDto>> {
+    return this.http.get<Page<ProductWithCategoryDto>>(`${this.base}/products`, {
+      params: { page, size }
+    });
   }
 }
