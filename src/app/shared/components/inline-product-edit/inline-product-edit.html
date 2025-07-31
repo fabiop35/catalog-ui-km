@@ -40,15 +40,21 @@
                     <input matInput formControlName="pricebuy" type="number" required>
                 </mat-form-field>
 
-                <mat-form-field appearance="fill">
-                    <mat-label>Category ID</mat-label>
-                    <input matInput formControlName="categoryId" required>
+                <!-- dropdowns for IDs -->
+                <mat-form-field appearance="fill" class="full-width">
+                    <mat-label>Category</mat-label>
+                    <mat-select formControlName="categoryId" required>
+                        <mat-option *ngFor="let c of categories" [value]="c.id">{{ c.name }}</mat-option>
+                    </mat-select>
                 </mat-form-field>
 
-                <mat-form-field appearance="fill">
-                    <mat-label>Tax Category ID</mat-label>
-                    <input matInput formControlName="taxcatId" required>
+                <mat-form-field appearance="fill" class="full-width">
+                    <mat-label>Tax Category</mat-label>
+                    <mat-select formControlName="taxcatId" required>
+                        <mat-option *ngFor="let tc of taxCategories" [value]="tc.id">{{ tc.name }}</mat-option>
+                    </mat-select>
                 </mat-form-field>
+
             </mat-card-content>
 
             <mat-card-actions align="end">

@@ -86,7 +86,8 @@ $ npm install @angular/cdk
 $ ng g component shared/components/product-list-paginated --standalone --skip-tests
 $ ng g interface shared/models/page --type=model
 
-
+#server bound to all interfaces
+$ ng serve --host 0.0.0.0 --port 4200
 
 
 

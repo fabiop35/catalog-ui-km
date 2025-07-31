@@ -13,7 +13,14 @@ import { ProductWithCategoryDto } from '../../models/product-with-category.model
 @Component({
   selector: 'app-product-form-edit',
   standalone: true,
-  imports: [ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatSelectModule, MatButtonModule, MatToolbar],
+  imports: [
+    ReactiveFormsModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSelectModule,
+    MatButtonModule,
+    MatToolbar
+  ],
   templateUrl: './product-form-edit.html',
   styleUrls: ['./product-form-edit.scss']
 })

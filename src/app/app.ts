@@ -9,6 +9,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatListModule } from '@angular/material/list';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatIconModule } from '@angular/material/icon';
+import { MatDialogModule } from '@angular/material/dialog';
 
 import { ProductPanel } from './shared/components/product-panel/product-panel';
 import { CategoryPanel } from './shared/components/category-panel/category-panel';
@@ -40,7 +41,8 @@ import { RouterOutlet } from '@angular/router';
     MatToolbarModule,
     Toolbar,
     MatSnackBarModule,
-    ProductForm
+    ProductForm,
+    MatDialogModule
   ],
   templateUrl: './app.html'
 })
