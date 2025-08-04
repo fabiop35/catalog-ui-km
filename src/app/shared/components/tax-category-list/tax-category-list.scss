@@ -28,3 +28,19 @@
         color: #263238;
     }
 }
+
+.edit-card {
+    background: #e4e6f2;
+    box-shadow: 0 4px 12px rgba(123, 116, 35, 0.15);
+    padding: 1rem;
+}
+
+.row {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.half {
+    width: 50%;
+}

@@ -29,7 +29,37 @@
     }
 
     .rate {
-        font-size: 0.9rem;
-        color: #757575;
+        font-weight: 600;
+            color: #0d47a1;
     }
+    .price {
+        display: flex;
+        gap: 0.5rem;
+        margin-top: 0.5rem;
+
+        .sell {
+            font-weight: 600;
+            color: #0d47a1; // Indigo 900
+        }
+
+        .buy {
+            font-size: 0.9em;
+            color: #757575; // Gray 700
+            text-decoration: line-through;
+        }
+    }
+}
+
+.edit-card {
+  padding: 1rem;
+}
+
+.row {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.half {
+  width: 50%;
 }

@@ -98,7 +98,7 @@ export class AppComponent {
   createDummyTax() {
     this.svc.createTax({
       name: 'Demo VAT 7%',
-      categoryId: '04928060-63b7-4a0d-9b0d-b8d2d2c3e1e2',
+      taxcatId: '04928060-63b7-4a0d-9b0d-b8d2d2c3e1e2',
       rate: 0.07
     }).subscribe(() => this.loadTaxes());
   }

@@ -1,6 +1,6 @@
 export interface Tax {
   id?: string;
   name: string;
-  categoryId: string;
+  taxcatId: string;
   rate: number;
 }

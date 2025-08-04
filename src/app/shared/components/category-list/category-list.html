@@ -1,17 +1,55 @@
 <mat-toolbar color="primary" class="toolbar">
     <span>Categories</span>
     <span class="spacer"></span>
-    <button mat-button [routerLink]="['/categories/new']" color="accent">
-        <mat-icon>add</mat-icon> New Category
+    <button mat-button (click)="openCreate()" color="accent">
+        <mat-icon>add</mat-icon> Nueva Categoría
     </button>
 </mat-toolbar>
 
-<div class="container">
-    <div class="grid">
-        <mat-card class="category-card" *ngFor="let c of categories">
+<!-- inline create -->
+ 
+<mat-card *ngIf="creating" class="edit-card">
+    <form [formGroup]="form" (ngSubmit)="saveCreate()">
+        <div class="row">
+        <mat-form-field appearance="fill" class="full-width">
+            <mat-label>Nombre</mat-label>
+            <input matInput formControlName="name" required>
+        </mat-form-field>
+        </div>
+        <mat-card-actions align="start">
+            <button mat-button (click)="cancel()">Cancelar</button>
+            <button mat-raised-button color="primary" type="submit">Guardar</button>
+        </mat-card-actions>
+    </form>
+</mat-card>
+
+<!-- list + inline edit -->
+<div class="grid">
+    <ng-container *ngFor="let c of categories; trackBy: trackById">
+        <!-- normal card -->
+        <mat-card *ngIf="!editing[c.id!]" class="category-card">
             <mat-card-content>
                 <span class="name">{{ c.name }}</span>
             </mat-card-content>
+            <mat-card-actions align="end">
+                <button mat-icon-button (click)="openEdit(c)" matTooltip="Edit">
+                    <mat-icon>edit</mat-icon>
+                </button>
+            </mat-card-actions>
         </mat-card>
-    </div>
+
+        <!-- inline edit -->
+        <mat-card *ngIf="editing[c.id!]" class="edit-card">
+            <form [formGroup]="form" (ngSubmit)="saveEdit(c.id!)">
+                <mat-form-field appearance="fill" class="full-width">
+                    <mat-label>Nombre</mat-label>
+                    <input matInput formControlName="name" required>
+                </mat-form-field>
+                <mat-card-actions align="end">
+                    <button mat-button (click)="cancel()">Cancel</button>
+                    <button mat-raised-button color="primary" type="submit">Save</button>
+                </mat-card-actions>
+            </form>
+        </mat-card>
+    </ng-container>
 </div>

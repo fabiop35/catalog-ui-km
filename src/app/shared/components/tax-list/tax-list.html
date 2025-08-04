@@ -1,18 +1,90 @@
-<mat-toolbar color="primary">
-    <span>Taxes</span>
-    <span class="spacer"></span>
-    <button mat-button [routerLink]="['/taxes/new']" color="accent">
-        <mat-icon>add</mat-icon> New Tax
-    </button>
+<mat-toolbar color="primary" class="toolbar">
+  <span>Impuestos</span>
+  <span class="spacer"></span>
+  <button mat-button (click)="openCreate()" color="accent">
+    <mat-icon>add</mat-icon> Crear Impuesto
+  </button>
 </mat-toolbar>
 
-<div class="container">
-    <div class="grid">
-        <mat-card class="card" *ngFor="let t of taxes">
-            <mat-card-content>
-                <span class="name">{{ t.name }}</span>
-                <span class="rate">Rate: {{ t.rate * 100 }} %</span>
-            </mat-card-content>
-        </mat-card>
+<!-- inline create -->
+<mat-card *ngIf="creating" class="edit-card">
+  <form [formGroup]="form" (ngSubmit)="saveCreate()">
+    <div class="row">
+    <mat-form-field appearance="fill" class="half">
+      <mat-label>Nombre</mat-label>
+      <input matInput formControlName="name" required>
+    </mat-form-field>
     </div>
+<div class="row">
+    <mat-form-field appearance="fill" class="half">
+      <mat-label>Tasa (decimal)</mat-label>
+      <input matInput formControlName="rate" type="number" required>
+    </mat-form-field>
+</div>
+
+ <div class="row">
+    <mat-form-field appearance="fill" class="half">
+      <mat-label>Categoria del impuesto</mat-label>
+      <mat-select formControlName="taxcatId" required>
+        <mat-option *ngFor="let c of taxCategories" [value]="c.id">{{ c.name }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+    </div>
+
+    <mat-card-actions align="start">
+      <button mat-button (click)="cancel()">Cancelar</button>
+      <button mat-raised-button color="primary" type="submit">Guardar</button>
+    </mat-card-actions>
+  </form>
+</mat-card>
+
+<!-- list + inline edit -->
+<div class="container">
+  <div class="grid">
+    <ng-container *ngFor="let tax of taxes; trackBy: trackById">
+      <!-- normal card -->
+      <mat-card *ngIf="!forms[tax.id!]" class="card" [class.updated]="updatedId === tax.id">
+        <mat-card-content>
+          <span class="name">{{ tax.name }}</span>
+          <mat-chip-set>
+          <mat-chip color="primary">Tasa: {{ tax.rate * 100 }} %</mat-chip>
+        </mat-chip-set>
+
+          
+        </mat-card-content>
+        <mat-card-actions align="end">
+          <button mat-icon-button (click)="openEdit(tax)" matTooltip="Edit">
+            <mat-icon>edit</mat-icon>
+          </button>
+        </mat-card-actions>
+      </mat-card>
+
+      <!-- inline edit -->
+      <mat-card *ngIf="forms[tax.id!]" class="edit-card">
+        <form [formGroup]="forms[tax.id!]" (ngSubmit)="saveEdit(tax.id!)">
+          <mat-form-field appearance="fill" class="full-width">
+            <mat-label>Nombre</mat-label>
+            <input matInput formControlName="name" required>
+          </mat-form-field>
+
+          <mat-form-field appearance="fill" class="full-width">
+            <mat-label>Tasa (decimal)</mat-label>
+            <input matInput formControlName="rate" type="number" required>
+          </mat-form-field>
+
+          <mat-form-field appearance="fill" class="full-width">
+            <mat-label>Tipo de Impuesto</mat-label>
+            <mat-select formControlName="taxcatId" required>
+              <mat-option *ngFor="let c of taxCategories" [value]="c.id">{{ c.name }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-card-actions align="end">
+            <button mat-button (click)="cancel()">Cancelar</button>
+            <button mat-raised-button color="primary" type="submit">Guardar</button>
+          </mat-card-actions>
+        </form>
+      </mat-card>
+    </ng-container>
+  </div>
 </div>

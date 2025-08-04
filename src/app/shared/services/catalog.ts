@@ -11,7 +11,7 @@ import { TaxCategory } from '../models/tax-category.model';
 
 @Injectable({ providedIn: 'root' })
 export class CatalogService {
-  
+
   private readonly base = 'http://192.168.10.3:8081/api/v1';
 
   constructor(private http: HttpClient) { }
@@ -41,13 +41,26 @@ export class CatalogService {
     return this.http.post<Category>(`${this.base}/categories`, c);
   }
 
-  /* Tax-Categories */
+  /* update category**/
+  updateCategory(id: string, category: Category): Observable<Category> {
+    return this.http.put<Category>(`${this.base}/categories/${id}`, category);
+  }
+
+  /* Tax-Categories 
   listTaxCategories() {
     return this.http.get<TaxCategory[]>(`${this.base}/tax-categories`);
-  }
+  }*/
+
+  listTaxCategories(): Observable<TaxCategory[]> {
+  return this.http.get<TaxCategory[]>(`${this.base}/tax-categories`);
+}
 
   createTaxCategory(tc: TaxCategory) {
     return this.http.post<TaxCategory>(`${this.base}/tax-categories`, tc);
+  }
+
+  updateTaxCategory(id: string, taxCategory: TaxCategory): Observable<Category> {
+    return this.http.put<Category>(`${this.base}/tax-categories/${id}`, taxCategory);
   }
 
   /* Taxes */
@@ -57,6 +70,10 @@ export class CatalogService {
 
   createTax(t: Tax) {
     return this.http.post<Tax>(`${this.base}/taxes`, t);
+  }
+
+  updateTax(id: string, tax: Tax): Observable<Tax> {
+    return this.http.put<Tax>(`${this.base}/taxes/${id}`, tax);
   }
 
   updateProduct(id: string, product: ProductWithCategoryDto): Observable<ProductWithCategoryDto> {
@@ -74,4 +91,7 @@ export class CatalogService {
       params: { name }
     });
   }
+
+
+
 }

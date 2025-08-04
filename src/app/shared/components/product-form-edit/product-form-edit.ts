@@ -59,7 +59,7 @@ export class ProductFormEdit {
 
   onSubmit() {
     if (!this.form.valid) return;
-    const payload = { ...this.form.getRawValue(), currency: 'USD' } as ProductWithCategoryDto;
+    const payload = { ...this.form.getRawValue(), currency: 'COP' } as ProductWithCategoryDto;
 
     const id = this.product ? this.product.id : undefined;
     const obs = id
