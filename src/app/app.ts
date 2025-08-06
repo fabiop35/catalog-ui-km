@@ -17,10 +17,13 @@ import { TaxCategoryPanel } from './shared/components/tax-category-panel/tax-cat
 import { TaxPanel } from './shared/components/tax-panel/tax-panel';
 import { Toolbar } from './shared/components/toolbar/toolbar';
 import { ProductForm } from './shared/components/product-form/product-form';
+import { SupplierManager } from './shared/components/supplier-manager/supplier-manager/supplier-manager';
 
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { RouterOutlet } from '@angular/router';
+
+//type ActiveTab = 'suppliers' | 'products' | 'categories' | 'taxes';
 
 @Component({
   selector: 'app-root',
@@ -42,7 +45,8 @@ import { RouterOutlet } from '@angular/router';
     Toolbar,
     MatSnackBarModule,
     ProductForm,
-    MatDialogModule
+    MatDialogModule,
+    SupplierManager
   ],
   templateUrl: './app.html'
 })

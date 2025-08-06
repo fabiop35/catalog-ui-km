@@ -89,9 +89,12 @@ $ ng g interface shared/models/page --type=model
 #server bound to all interfaces
 $ ng serve --host 0.0.0.0 --port 4200
 
-
-
-
+#suppliers
+$ ng g interface shared/models/supplier --type=model 
+$ ng g component shared/components/supplier-manager/supplier-manager --standalone --skip-tests
+$ ng g component shared/components/supplier-manager/supplier-dialog --standalone --skip-tests
+$ npm install @angular/material-moment-adapter moment --save
+$ ng add @angular/animations
 
 
 

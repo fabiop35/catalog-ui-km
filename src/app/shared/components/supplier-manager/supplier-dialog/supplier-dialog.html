@@ -1,0 +1,65 @@
+<h1 mat-dialog-title class="text-2xl font-bold mb-4">{{ isEditMode ? 'Modificar Proveedor' : 'Crear Proveedor' }}</h1>
+<div mat-dialog-content>
+    <form [formGroup]="form" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <mat-form-field appearance="outline" class="col-span-1">
+            <mat-label>Alias</mat-label>
+            <input matInput formControlName="searchkey" required>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="col-span-1">
+            <mat-label>Nombre del Proveedor</mat-label>
+            <input matInput formControlName="name" required>
+        </mat-form-field>
+
+         <mat-form-field appearance="outline" class="col-span-1">
+            <mat-label>NIT</mat-label>
+            <input matInput formControlName="taxid">
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="col-span-2">
+            <mat-label>Email</mat-label>
+            <input matInput formControlName="email" type="email">
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="col-span-1">
+            <mat-label>Deuda Máxima</mat-label>
+            <input matInput formControlName="maxdebt" type="number" required>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="col-span-1">
+            <mat-label>Teléfono</mat-label>
+            <input matInput formControlName="phone">
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="col-span-2">
+            <mat-label>Dirección</mat-label>
+            <input matInput formControlName="address">
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="col-span-1">
+            <mat-label>Ciudad</mat-label>
+            <mat-select formControlName="city">
+                <mat-option value="Bogota">Bogotá</mat-option>
+
+            </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="col-span-1">
+            <mat-label>País</mat-label>
+            <mat-select formControlName="country">
+                <mat-option value="Colombia">Colombia</mat-option>
+
+            </mat-select>
+        </mat-form-field>
+
+        <div class="col-span-2 mt-2">
+            <mat-checkbox formControlName="visible">Visible</mat-checkbox>
+        </div>
+    </form>
+</div>
+<div mat-dialog-actions align="end" class="mt-6">
+    <button mat-stroked-button (click)="onCancel()">Cancelar</button>
+    <button mat-flat-button color="primary" (click)="onSave()" [disabled]="!form.valid">
+        {{ isEditMode ? 'Actualizar' : 'Crear' }}
+    </button>
+</div>

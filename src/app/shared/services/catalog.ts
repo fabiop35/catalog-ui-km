@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { Observable, of } from 'rxjs';
 
 import { Category } from '../models/category.model';
 import { Page } from '../models/page.model';
@@ -8,6 +8,7 @@ import { Product } from '../models/product.model';
 import { ProductWithCategoryDto } from '../models/product-with-category.model';
 import { Tax } from '../models/tax.model';
 import { TaxCategory } from '../models/tax-category.model';
+import { Supplier } from '../models/supplier.model';
 
 @Injectable({ providedIn: 'root' })
 export class CatalogService {
@@ -52,8 +53,8 @@ export class CatalogService {
   }*/
 
   listTaxCategories(): Observable<TaxCategory[]> {
-  return this.http.get<TaxCategory[]>(`${this.base}/tax-categories`);
-}
+    return this.http.get<TaxCategory[]>(`${this.base}/tax-categories`);
+  }
 
   createTaxCategory(tc: TaxCategory) {
     return this.http.post<TaxCategory>(`${this.base}/tax-categories`, tc);
@@ -92,6 +93,38 @@ export class CatalogService {
     });
   }
 
+  /* Suppliers */
+  getSuppliers(page: number, size: number, order: string): Observable<Page<Supplier>> {
+    const params = new HttpParams()
+      .set('page', page.toString())
+      .set('size', size.toString())
+      ;
+    return this.http.get<Page<Supplier>>(`${this.base}/suppliers`, { params });
+  }
 
+  getSupplierById(id: string): Observable<Supplier> {
+    return this.http.get<Supplier>(`${this.base}/suppliers/${id}`);
+  }
+
+  createSupplier(supplier: Omit<Supplier, 'id'>): Observable<Supplier> {
+    return this.http.post<Supplier>(`${this.base}/suppliers`, supplier);
+  }
+
+  updateSupplier(id: string, supplier: Omit<Supplier, 'id'>): Observable<Supplier> {
+    return this.http.put<Supplier>(`${this.base}/suppliers/${id}`, supplier);
+  }
+
+  deleteSupplier(id: string): Observable<void> {
+    return this.http.delete<void>(`${this.base}/suppliers/${id}`);
+  }
+
+  //Method to search for suppliers by searchkey.
+  searchSuppliers(term: string): Observable<Supplier[]> {
+    if (!term || !term.trim()) { //Handle null/undefined term
+      return of([]); // Return an empty observable if term is empty
+    }
+    const params = new HttpParams().set('term', term);
+    return this.http.get<Supplier[]>(`${this.base}/suppliers/search`, { params });
+  }
 
 }

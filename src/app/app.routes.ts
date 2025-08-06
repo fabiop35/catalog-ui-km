@@ -15,5 +15,6 @@ export const routes: Routes = [
   { path: 'tax-categories/new', loadComponent: () => import('./shared/components/tax-category-form/tax-category-form').then(c => c.TaxCategoryForm) },
   { path: 'taxes', loadComponent: () => import('./shared/components/tax-list/tax-list').then(c => c.TaxList) },
   { path: 'taxes/new', loadComponent: () => import('./shared/components/tax-form/tax-form').then(c => c.TaxForm) },
+  { path: 'suppliers', loadComponent: () => import('./shared/components/supplier-manager/supplier-manager/supplier-manager').then(c => c.SupplierManager) },
   { path: '**', redirectTo: '' }   // optional catch-all
 ];
