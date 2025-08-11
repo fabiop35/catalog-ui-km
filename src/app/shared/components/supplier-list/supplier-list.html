@@ -1,0 +1,315 @@
+<mat-toolbar color="primary" class="toolbar">
+    <span>Proveedores</span>
+    <span class="spacer"></span>
+    <button mat-button (click)="openCreate()" color="accent">
+        <mat-icon>add</mat-icon> Nuevo Proveedor
+    </button>
+</mat-toolbar>
+
+<!-- AUTOCOMPLETE BAR -->
+<mat-form-field appearance="fill" class="search-field">
+    <mat-label>Buscar proveedor</mat-label>
+    <input matInput [formControl]="searchCtrl" [matAutocomplete]="auto" placeholder="Escriba para filtrar…">
+
+    <!-- clear icon inside the field -->
+    <button mat-icon-button matSuffix *ngIf="searchCtrl.value" (click)="clearSelection()" matTooltip="Limpiar">
+        <mat-icon>close</mat-icon>
+    </button>
+
+    <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onSelect($event.option.value)"
+        [displayWith]="displayFn">
+
+        <!-- results -->
+        <mat-option *ngFor="let s of searchResults$ | async" [value]="s">
+            {{ s.searchkey }} – {{ s.name }}
+        </mat-option>
+        <!-- empty state -->
+        <mat-option *ngIf="(searchResults$ | async)?.length === 0 && searchCtrl.value" disabled>
+            No se encontraron proveedores
+        </mat-option>
+    </mat-autocomplete>
+</mat-form-field>
+<!-- show the selected supplier -->
+<mat-card *ngIf="selectedSupplier" class="detail-card">
+    <mat-card-header>
+        <mat-card-title>{{ selectedSupplier.name }}</mat-card-title>
+        <button mat-icon-button (click)="clearSelection()" matTooltip="Cerrar">
+            <mat-icon>close</mat-icon>
+        </button>
+    </mat-card-header>
+    <mat-card-content>
+        <mat-chip-set>
+            <mat-chip color="primary">{{ selectedSupplier.searchkey }}</mat-chip>
+        </mat-chip-set><br>
+        <ng-container *ngIf="selectedSupplier.taxid">
+            <span><strong>NIT:</strong> {{ selectedSupplier.taxid }}</span><br>
+        </ng-container>
+        <ng-container *ngIf="selectedSupplier.firstname">
+            <span><strong>Contacto: </strong>{{ selectedSupplier.firstname }} {{ selectedSupplier.lastname }}</span><br>
+        </ng-container>
+        <ng-container *ngIf="selectedSupplier.phone">
+            <span><strong>Teléfono: </strong>{{ selectedSupplier.phone }}</span><br>
+        </ng-container>
+        <ng-container *ngIf="selectedSupplier.email">
+            <span><strong>email: </strong>{{ selectedSupplier.email }}</span><br>
+        </ng-container>
+        <ng-container *ngIf="selectedSupplier.address">
+            <span><strong>Dirección: </strong>{{ selectedSupplier.address }}</span><br>
+        </ng-container>
+        <ng-container *ngIf="selectedSupplier.curdebt">
+            <span><strong>Deuda Actual: </strong>{{ selectedSupplier.curdebt }}</span><br>
+        </ng-container>
+        <ng-container *ngIf="selectedSupplier.maxdebt">
+            <span><strong>Deuda Máxima: </strong>{{ selectedSupplier.maxdebt }}</span><br>
+        </ng-container>
+        <span *ngIf="selectedSupplier.notes">Notas: {{ selectedSupplier.notes }} </span><br>
+    </mat-card-content>
+
+
+    <!-- EDIT MODE -->
+    <form *ngIf="isEditing" [formGroup]="detailForm" (ngSubmit)="saveDetail()">
+        <!-- same fields as the inline edit card -->
+        <mat-form-field appearance="fill" class="full-width">
+            <mat-label>Alias</mat-label>
+            <input matInput formControlName="searchkey" required>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill" class="full-width">
+            <mat-label>Nombre del Proveedor</mat-label>
+            <input matInput formControlName="name" required>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill" class="full-width">
+            <mat-label>NIT</mat-label>
+            <input matInput formControlName="taxid">
+        </mat-form-field>
+
+        <mat-form-field appearance="fill" class="full-width">
+            <mat-label>Email</mat-label>
+            <input matInput formControlName="email" type="email">
+        </mat-form-field>
+
+        <mat-form-field appearance="fill" class="full-width">
+            <mat-label>Deuda Máxima</mat-label>
+            <input matInput formControlName="maxdebt" type="number" required>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill" class="full-width">
+            <mat-label>Teléfono</mat-label>
+            <input matInput formControlName="phone">
+        </mat-form-field>
+
+        <mat-form-field appearance="fill" class="full-width">
+            <mat-label>Dirección</mat-label>
+            <input matInput formControlName="address">
+        </mat-form-field>
+        <!-- … add any other supplier fields you want … -->
+        <mat-card-actions align="end">
+            <button mat-button type="button" (click)="cancelEdit()">Cancelar</button>
+            <button mat-raised-button color="primary" type="submit">Guardar</button>
+        </mat-card-actions>
+    </form>
+    <!-- BUTTONS when read-only -->
+    <mat-card-actions *ngIf="!isEditing" align="start">
+        <button mat-raised-button color="primary" (click)="startEdit()">Editar</button>
+        <button mat-button (click)="clearSelection()">Cerrar</button>
+    </mat-card-actions>
+</mat-card>
+
+<!-- inline create -->
+<mat-card *ngIf="creating" class="edit-card">
+    <h2 mat-dialog-title style="color:rgba(0, 0, 255, 0.636)" class="dialog-title">
+        Crear Proveedor
+    </h2>
+    <form [formGroup]="form" (ngSubmit)="saveCreate()">
+        <mat-form-field appearance="fill" class="full-width">
+            <mat-label>Alias</mat-label>
+            <input matInput formControlName="searchkey" required>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill" class="full-width">
+            <mat-label>Nombre del Proveedor / Razón Social</mat-label>
+            <input matInput formControlName="name" required>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill" class="full-width">
+            <mat-label>NIT</mat-label>
+            <input matInput formControlName="taxid">
+        </mat-form-field>
+        <mat-form-field appearance="fill" class="full-width">
+            <mat-label>Nombre Contacto</mat-label>
+            <input matInput formControlName="firstname">
+        </mat-form-field>
+
+        <mat-form-field appearance="fill" class="full-width">
+            <mat-label>Apellido Contacto</mat-label>
+            <input matInput formControlName="lastname">
+        </mat-form-field>
+        <mat-form-field appearance="fill" class="full-width">
+            <mat-label>Email</mat-label>
+            <input matInput formControlName="email" type="email">
+        </mat-form-field>
+        <mat-form-field appearance="fill" class="full-width">
+            <mat-label>Teléfono</mat-label>
+            <input matInput formControlName="phone">
+        </mat-form-field>
+        <mat-form-field appearance="fill" class="full-width">
+            <mat-label>Dirección</mat-label>
+            <input matInput formControlName="address">
+        </mat-form-field>
+        <mat-form-field appearance="fill" class="full-width">
+            <mat-label>Ciudad</mat-label>
+            <mat-select formControlName="city">
+                <mat-option value="Bogota">Bogotá</mat-option>
+            </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="fill" class="full-width">
+            <mat-label>País</mat-label>
+            <mat-select formControlName="country">
+                <mat-option value="Colombia" selected>Colombia</mat-option>
+            </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="fill" class="full-width">
+            <mat-label>Deuda Máxima</mat-label>
+            <input matInput formControlName="maxdebt" type="number" required>
+        </mat-form-field>
+        <mat-form-field appearance="fill" class="full-width">
+            <mat-label>Notas</mat-label>
+            <textarea matInput formControlName="notes" rows="2"></textarea>
+        </mat-form-field>
+        <div class="full-width">
+            <mat-checkbox formControlName="visible">Visible</mat-checkbox>
+        </div>
+
+        <mat-card-actions align="end">
+            <button mat-button (click)="cancel()">Cancelar</button>
+            <button mat-raised-button color="primary" type="submit">Guardar</button>
+        </mat-card-actions>
+    </form>
+</mat-card>
+
+<!-- list + inline edit -->
+<div class="grid">
+    <ng-container *ngFor="let s of suppliers; trackBy: trackById">
+        <!-- normal card -->
+        <mat-card *ngIf="!editing[s.id!]" class="supplier-card">
+            <mat-card-content>
+                <span class="name">{{ s.name }}</span>
+                <div class="meta">
+                    <mat-chip-set>
+                        <mat-chip color="primary">{{ s.searchkey }}</mat-chip>
+                    </mat-chip-set><br>
+                    <ng-container *ngIf="s.taxid">
+                        <span><strong>NIT: </strong>{{ s.taxid }}</span><br>
+                    </ng-container>
+                    <ng-container *ngIf="s.firstname">
+                        <span><strong>Contacto: </strong>{{ s.firstname }} {{ s.lastname }}</span><br>
+                    </ng-container>
+                    <ng-container *ngIf="s.phone">
+                        <span><strong>Teléfono: </strong>{{ s.phone }}</span><br>
+                    </ng-container>
+                    <ng-container *ngIf="s.email">
+                        <span><strong>email: </strong>{{ s.email }}</span><br>
+                    </ng-container>
+                    <ng-container *ngIf="s.address">
+                        <span><strong>Dirección: </strong>{{ s.address }}</span><br>
+                    </ng-container>
+                    <ng-container *ngIf="s.city">
+                        <span>{{ s.city }} - {{ s.country }}</span><br>
+                    </ng-container>
+                    <ng-container *ngIf="s.curdebt">
+                        <span><strong>Deuda Actual: </strong>{{ s.curdebt }}</span><br>
+                    </ng-container>
+
+                    <ng-container *ngIf="s.maxdebt">
+                        <span><strong>Deuda Máxima: </strong>{{ s.maxdebt }}</span><br>
+                    </ng-container>
+                    <span *ngIf="s.notes"><strong>Notas: </strong>{{ s.notes }} </span><br>
+                </div>
+            </mat-card-content>
+            <mat-card-actions align="end">
+                <button mat-icon-button (click)="openEdit(s)" matTooltip="Edit">
+                    <mat-icon>edit</mat-icon>
+                </button>
+                <button mat-icon-button color="warn" (click)="deleteSupplier(s.id!)" matTooltip="Delete">
+                    <mat-icon>delete</mat-icon>
+                </button>
+            </mat-card-actions>
+        </mat-card>
+
+        <!-- inline edit -->
+        <mat-card *ngIf="editing[s.id!]" class="edit-card">
+            <!-- inline create OR inline edit -->
+            <h2 mat-dialog-title style="color:rgba(0, 0, 255, 0.636)" class="dialog-title">
+                Modificar Proveedor
+            </h2>
+            <form [formGroup]="form" (ngSubmit)="isCreate ? saveCreate() : saveEdit(editId)">
+                <!-- Mandatory -->
+                <mat-form-field appearance="fill" class="full-width">
+                    <mat-label>Alias</mat-label>
+                    <input matInput formControlName="searchkey" required>
+                </mat-form-field>
+
+                <mat-form-field appearance="fill" class="full-width">
+                    <mat-label>Nombre del Proveedor</mat-label>
+                    <input matInput formControlName="name" required>
+                </mat-form-field>
+
+
+                <!-- Optional / nullable -->
+                <mat-form-field appearance="fill" class="full-width">
+                    <mat-label>NIT</mat-label>
+                    <input matInput formControlName="taxid">
+                </mat-form-field>
+                <mat-form-field appearance="fill" class="full-width">
+                    <mat-label>Nombre Contacto</mat-label>
+                    <input matInput formControlName="firstname">
+                </mat-form-field>
+
+                <mat-form-field appearance="fill" class="full-width">
+                    <mat-label>Apellido Contacto</mat-label>
+                    <input matInput formControlName="lastname">
+                </mat-form-field>
+
+                <mat-form-field appearance="fill" class="full-width">
+                    <mat-label>Email</mat-label>
+                    <input matInput formControlName="email" type="email">
+                </mat-form-field>
+
+                <mat-form-field appearance="fill" class="full-width">
+                    <mat-label>Teléfono</mat-label>
+                    <input matInput formControlName="phone">
+                </mat-form-field>
+
+                <mat-form-field appearance="fill" class="full-width">
+                    <mat-label>Dirección</mat-label>
+                    <input matInput formControlName="address">
+                </mat-form-field>
+                <mat-form-field appearance="fill" class="full-width">
+                    <mat-label>Ciudad</mat-label>
+                    <input matInput formControlName="city">
+                </mat-form-field>
+                <mat-form-field appearance="fill" class="full-width">
+                    <mat-label>País</mat-label>
+                    <input matInput formControlName="country">
+                </mat-form-field>
+                <mat-form-field appearance="fill" class="full-width">
+                    <mat-label>Deuda Máxima</mat-label>
+                    <input matInput formControlName="maxdebt" type="number" required>
+                </mat-form-field>
+                <mat-form-field appearance="fill" class="full-width">
+                    <mat-label>Notas</mat-label>
+                    <textarea matInput formControlName="notes" rows="2"></textarea>
+                </mat-form-field>
+                <mat-checkbox formControlName="visible">Visible</mat-checkbox>
+
+                <mat-card-actions align="end">
+                    <button mat-button (click)="cancel()">Cancelar</button>
+                    <button mat-raised-button color="primary" type="submit">
+                        {{ isCreate ? 'Guardar' : 'Actualizar' }}
+                    </button>
+                </mat-card-actions>
+            </form>
+        </mat-card>
+    </ng-container>
+</div>

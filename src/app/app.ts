@@ -11,13 +11,9 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDialogModule } from '@angular/material/dialog';
 
-import { ProductPanel } from './shared/components/product-panel/product-panel';
-import { CategoryPanel } from './shared/components/category-panel/category-panel';
 import { TaxCategoryPanel } from './shared/components/tax-category-panel/tax-category-panel';
-import { TaxPanel } from './shared/components/tax-panel/tax-panel';
 import { Toolbar } from './shared/components/toolbar/toolbar';
 import { ProductForm } from './shared/components/product-form/product-form';
-import { SupplierManager } from './shared/components/supplier-manager/supplier-manager/supplier-manager';
 
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
@@ -37,16 +33,12 @@ import { RouterOutlet } from '@angular/router';
     MatListModule,
     MatChipsModule,
     MatIconModule,
-    ProductPanel,
-    CategoryPanel,
     TaxCategoryPanel,
-    TaxPanel,
     MatToolbarModule,
     Toolbar,
     MatSnackBarModule,
     ProductForm,
-    MatDialogModule,
-    SupplierManager
+    MatDialogModule
   ],
   templateUrl: './app.html'
 })

@@ -95,9 +95,9 @@ $ ng g component shared/components/supplier-manager/supplier-manager --standalon
 $ ng g component shared/components/supplier-manager/supplier-dialog --standalone --skip-tests
 $ npm install @angular/material-moment-adapter moment --save
 $ ng add @angular/animations
-
-
-
+#Improve look & fell
+$ ng g component shared/components/supplier-manager/confirmation-dialog --standalone --skip-tests
+$ ng g component shared/components/supplier-list --standalone --skip-tests
 
 
 
