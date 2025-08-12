@@ -99,6 +99,8 @@ $ ng add @angular/animations
 $ ng g component shared/components/supplier-manager/confirmation-dialog --standalone --skip-tests
 $ ng g component shared/components/supplier-list --standalone --skip-tests
 
+#add the detail in single modal view mode
+$ ng g c shared/components/supplier-list/supplier-detail-dialog --standalone --skip-tests --style=scss
+$ ng g interface shared/models/stockdiary --type=model
 
-
-
+ 

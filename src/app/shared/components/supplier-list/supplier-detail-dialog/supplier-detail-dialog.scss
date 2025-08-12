@@ -1,0 +1,95 @@
+/* 1️⃣  dialog shell */
+.mat-mdc-dialog-surface {
+  border-radius: 24px;
+  overflow: hidden;
+  background: linear-gradient(145deg, #ffffff 0%, #f3f4f6 100%);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.08),
+    0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+/* 2️⃣  header */
+.dialog-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: #fff;
+  padding: 2rem 2.25rem;
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+/* 3️⃣  content */
+.dialog-content {
+  padding: 2.25rem;
+  background: #ffffff;
+  display: grid;
+  gap: 0.75rem;
+  font-family: 'Roboto', sans-serif;
+
+  .field {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    border-radius: 12px;
+    background: #f8fafc;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.04);
+    transition: all 0.2s ease;
+
+    &:hover {
+      background: #eef2ff;
+      transform: translateY(-1px);
+    }
+
+    .label {
+      min-width: 120px;
+      font-weight: 600;
+      color: #4f46e5;
+    }
+
+    .value {
+      flex: 1;
+      color: #1e293b;
+      font-size: 0.95rem;
+    }
+  }
+}
+
+/* 4️⃣  actions */
+.dialog-actions {
+  padding: 1.5rem 2.25rem;
+  background: #f8fafc;
+  border-top: 1px solid #e5e7eb;
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+
+  button {
+    border-radius: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+}
+
+.tab-pane {
+  padding: 1rem 0;
+}
+
+.trans-table {
+  width: 100%;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #ffffff;
+  box-shadow: 0 2px 8px rgba(0,0,0,.08);
+
+  th {
+    background: #e0e7ff;
+    color: #4f46e5;
+    font-weight: 600;
+  }
+
+  td {
+    color: #374151;
+  }
+}

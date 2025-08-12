@@ -9,6 +9,7 @@ import { ProductWithCategoryDto } from '../models/product-with-category.model';
 import { Tax } from '../models/tax.model';
 import { TaxCategory } from '../models/tax-category.model';
 import { Supplier } from '../models/supplier.model';
+import { StockDiary } from '../models/stockdiary.model';
 
 @Injectable({ providedIn: 'root' })
 export class CatalogService {
@@ -126,5 +127,9 @@ export class CatalogService {
     const params = new HttpParams().set('term', term);
     return this.http.get<Supplier[]>(`${this.base}/suppliers/search`, { params });
   }
+
+  getStockDiary(supplierId: string) {
+  return this.http.get<StockDiary[]>(`${this.base}/suppliers/${supplierId}/stockdiary`);
+}
 
 }

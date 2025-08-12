@@ -13,6 +13,9 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatInputModule } from '@angular/material/input';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { SupplierDetailDialog } from './supplier-detail-dialog/supplier-detail-dialog';
+
 import { HttpClient } from '@angular/common/http';
 
 import { Supplier } from '../../models/supplier.model';
@@ -94,7 +97,8 @@ export class SupplierList implements OnInit {
 
   constructor(
     private svc: CatalogService,
-    private snack: MatSnackBar
+    private snack: MatSnackBar,
+    private dialog: MatDialog
   ) { }
 
   ngOnInit() {
@@ -218,6 +222,26 @@ export class SupplierList implements OnInit {
       country: new FormControl(s.country),
       visible: new FormControl(s.visible)
     });
+  }
+
+  singleSupplier?: Supplier;   // replaces selectedSupplier when in “detail” mode
+  isSingleView = false;        // true when user is viewing one supplier only
+
+  /**
+   * Shows a single supplier in the same detail-card used for search/edit
+   */
+  viewSingle(supplier: Supplier) {
+    this.dialog.open(SupplierDetailDialog, {
+      width: 'clamp(300px, 90vw, 600px)',
+      data: { supplier: supplier }
+    }).afterClosed().subscribe(result => {
+      if (result === 'edited') this.load();   // refresh list if edited
+    });
+  }
+
+  clearSingleView() {
+    this.singleSupplier = undefined;
+    this.isSingleView = false;
   }
 
 

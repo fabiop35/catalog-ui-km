@@ -1,0 +1,77 @@
+<h2 mat-dialog-title class="dialog-header">{{ data.supplier.name }}</h2>
+
+<mat-dialog-content class="dialog-content">
+    <!-- Tabs -->
+    <mat-tab-group animationDuration="0ms">
+        <!-- 1️⃣ General -->
+        <mat-tab label="General">
+            <div class="tab-pane">
+                <mat-chip-set><mat-chip color="primary">{{ data.supplier.searchkey }}</mat-chip></mat-chip-set><br>
+                <div class="field" *ngIf="data.supplier.taxid"><span class="label"><strong>NIT: </strong></span><span
+                        class="value">{{ data.supplier.taxid }}</span></div>
+
+                <div class="field" *ngIf="data.supplier.firstname"><span class="label"><strong>Contacto:
+                        </strong></span><span class="value">{{ data.supplier.firstname }} {{ data.supplier.lastname
+                        }}</span></div>
+                <div class="field" *ngIf="data.supplier.phone"><span class="label"><strong>Teléfono:
+                        </strong></span><span class="value">{{ data.supplier.phone }}</span></div>
+                <div class="field" *ngIf="data.supplier.email"><span class="label"><strong>Email: </strong></span><span
+                        class="value">{{ data.supplier.email }}</span></div>
+                <div class="field" *ngIf="data.supplier.address"><span class="label"><strong>Dirección:
+                        </strong></span><span class="value">{{ data.supplier.address }}, {{ data.supplier.city }} - {{
+                        data.supplier.country }}</span></div>
+                <div class="field" *ngIf="data.supplier.maxdebt != null"><span class="label">Deuda
+                        Máxima</span><span class="value">{{ data.supplier.maxdebt }}</span></div>
+                <div class="field" *ngIf="data.supplier.notes"><span class="label">Notas</span><span class="value">{{
+                        data.supplier.notes }}</span></div>
+
+            </div>
+        </mat-tab>
+
+        <!-- 2️⃣ Transactions -->
+        <mat-tab label="Transactions">
+            <div class="tab-pane">
+                <div *ngIf="loading" style="text-align:center;padding:1rem;">
+                    <mat-spinner diameter="40"></mat-spinner>
+                </div>
+                <ng-container *ngIf="!loading">
+                    <mat-table *ngIf="stockDiary.length; else noRecords" [dataSource]="stockDiary" class="trans-table">
+                        <ng-container matColumnDef="date">
+                            <mat-header-cell *matHeaderCellDef>Fecha</mat-header-cell>
+                            <mat-cell *matCellDef="let t">{{ t.datenew | date:'short' }}</mat-cell>
+                        </ng-container>
+                        <ng-container matColumnDef="product">
+                            <mat-header-cell *matHeaderCellDef>Producto</mat-header-cell>
+                            <mat-cell *matCellDef="let t">{{ t.productName }}</mat-cell>
+                        </ng-container>
+                        <ng-container matColumnDef="units">
+                            <mat-header-cell *matHeaderCellDef>Cantidad</mat-header-cell>
+                            <mat-cell *matCellDef="let t">{{ t.units }}</mat-cell>
+                        </ng-container>
+                        <ng-container matColumnDef="price">
+                            <mat-header-cell *matHeaderCellDef>Precio</mat-header-cell>
+                            <mat-cell *matCellDef="let t">{{ t.price | currency }}</mat-cell>
+                        </ng-container>
+                        <ng-container matColumnDef="reason">
+                            <mat-header-cell *matHeaderCellDef>Motivo</mat-header-cell>
+                            <mat-cell *matCellDef="let t">{{ t.reason === 1 ? 'Entrada' : 'Salida' }}</mat-cell>
+                        </ng-container>
+
+                        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+                        <mat-row *matRowDef="let row; columns: displayedColumns"></mat-row>
+                    </mat-table>
+                    <ng-template #noRecords>
+                        <div style="padding: 1.5rem; text-align: center; color: #6b7280; font-size: 1rem;">
+                            <mat-icon style="font-size: 2.5rem; opacity: .5;">inbox</mat-icon>
+                            <p>No hay movimientos registrados</p>
+                        </div>
+                    </ng-template>
+                </ng-container>
+            </div>
+        </mat-tab>
+    </mat-tab-group>
+</mat-dialog-content>
+
+<mat-dialog-actions class="dialog-actions">
+    <button mat-raised-button color="primary" mat-dialog-close>Cerrar</button>
+</mat-dialog-actions>
