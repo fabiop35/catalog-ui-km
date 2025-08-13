@@ -11,6 +11,8 @@ import { MatInputModule } from '@angular/material/input';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
+import { MatDialog } from '@angular/material/dialog';
 import { MatAutocompleteModule, MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 
 import { Observable, of, map, startWith, debounceTime, distinctUntilChanged, switchMap } from 'rxjs';
@@ -19,10 +21,9 @@ import { CatalogService } from '../../services/catalog';
 import { InlineProductEdit } from '../inline-product-edit/inline-product-edit';
 import { ProductWithCategoryDto } from '../../models/product-with-category.model';
 import { ProductForm } from '../product-form/product-form';
-import { MatDialog } from '@angular/material/dialog';
 import { Category } from '../../models/category.model';
 import { TaxCategory } from '../../models/tax-category.model';
-import { MatSelectModule } from '@angular/material/select';
+import { BarcodeScanner } from "../barcode-scanner/barcode-scanner";
 
 @Component({
   selector: 'app-product-list-paginated',
@@ -41,8 +42,9 @@ import { MatSelectModule } from '@angular/material/select';
     ReactiveFormsModule,
     MatToolbarModule,
     MatButtonModule,
-    MatSelectModule
-  ],
+    MatSelectModule,
+    BarcodeScanner
+],
   templateUrl: './product-list-paginated.html',
   styleUrls: ['./product-list-paginated.scss']
 })

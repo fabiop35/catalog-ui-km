@@ -1,0 +1,111 @@
+.scanner-container {
+    max-width: 500px;
+    margin: 0 auto;
+    position: relative;
+    font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+.video-feed {
+    width: 100%;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.scan-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+}
+
+.scan-frame {
+    position: absolute;
+    top: 30%;
+    left: 10%;
+    width: 80%;
+    height: 30%;
+    border: 2px solid #00c853;
+}
+
+.corner {
+    position: absolute;
+    width: 24px;
+    height: 24px;
+    border: 2px solid #00c853;
+}
+
+.top-left {
+    top: -2px;
+    left: -2px;
+    border-right: none;
+    border-bottom: none;
+}
+
+.top-right {
+    top: -2px;
+    right: -2px;
+    border-left: none;
+    border-bottom: none;
+}
+
+.bottom-left {
+    bottom: -2px;
+    left: -2px;
+    border-right: none;
+    border-top: none;
+}
+
+.bottom-right {
+    bottom: -2px;
+    right: -2px;
+    border-left: none;
+    border-top: none;
+}
+
+.scan-instructions {
+    position: absolute;
+    bottom: 15%;
+    width: 100%;
+    text-align: center;
+    color: white;
+    text-shadow: 0 0 4px rgba(0, 0, 0, 0.7);
+    font-weight: 500;
+}
+
+.result-container {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.barcode-input {
+    padding: 14px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 16px;
+    background-color: #f8f9fa;
+}
+
+.scan-button {
+    padding: 14px;
+    background: #1a73e8;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.scan-button.active {
+    background: #d32f2f;
+}
+
+.scan-button:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+}

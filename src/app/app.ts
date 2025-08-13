@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+
 import { CatalogService } from './shared/services/catalog';
 import { ProductWithCategoryDto } from './shared/models/product-with-category.model';
 
@@ -38,7 +40,8 @@ import { RouterOutlet } from '@angular/router';
     Toolbar,
     MatSnackBarModule,
     ProductForm,
-    MatDialogModule
+    MatDialogModule,
+    FormsModule
   ],
   templateUrl: './app.html'
 })

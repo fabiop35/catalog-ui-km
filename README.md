@@ -103,4 +103,11 @@ $ ng g component shared/components/supplier-list --standalone --skip-tests
 $ ng g c shared/components/supplier-list/supplier-detail-dialog --standalone --skip-tests --style=scss
 $ ng g interface shared/models/stockdiary --type=model
 
- 
+#scan barcodes and populate a field
+$ npm install @zxing/browser @zxing/library
+$ ng g c shared/components/barcode-scanner --standalone --skip-tests --style=scss
+$ openssl req -x509 -newkey rsa:2048 -keyout localhost-key.pem -out localhost.pem -days 365 -nodes
+$ ng serve --ssl true --ssl-cert "./localhost.pem" --ssl-key "./localhost-key.pem" --host 0.0.0.0 --port 4200
+
+#Test if camera works: https://webrtc.github.io/samples/src/content/devices/input-output/
+

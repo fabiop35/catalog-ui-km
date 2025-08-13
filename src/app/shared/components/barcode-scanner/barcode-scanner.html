@@ -1,0 +1,24 @@
+<div class="scanner-container">
+    <!-- Camera View -->
+    <video #videoElement [hidden]="!isScanning" autoplay playsinline class="video-feed"></video>
+
+    <!-- Overlay Guides -->
+    <div class="scan-overlay" *ngIf="isScanning">
+        <div class="scan-frame">
+            <div class="corner top-left"></div>
+            <div class="corner top-right"></div>
+            <div class="corner bottom-left"></div>
+            <div class="corner bottom-right"></div>
+        </div>
+        <p class="scan-instructions">Alinea el código de barras dentro del cuadro</p>
+    </div>
+
+    <!-- Result Field -->
+    <div class="result-container">
+        <input type="text" [(ngModel)]="scannedCode" placeholder="El código aparecerá acá" class="barcode-input"
+            readonly>
+        <button (click)="toggleScanner()" [class.active]="isScanning" class="scan-button">
+            {{ isScanning ? '❚❚ Detener Escaneo' : '◧ Iniciar Ecaneo' }}
+        </button>
+    </div>
+</div>

@@ -2,6 +2,7 @@
 @use '@angular/material' as mat;
 
 @include mat.core();
+@import 'full-screen-dialog';
 
 // ---------- CORPORATE M2 THEME ----------
 $primary: mat.m2-define-palette(mat.$m2-indigo-palette, 900);
@@ -35,4 +36,49 @@ body {
   font-size: 1.5rem;
   font-weight: 500;
   margin: 1rem 0 .5rem;
+}
+
+// FULL-SCREEN DIALOG FIX FOR MOBILE
+.full-screen-dialog {
+  .mat-dialog-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    max-height: 100vh;
+    margin: 0;
+    padding: 0;
+    border-radius: 0;
+
+    // Handle iPhone notches
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+  }
+}
+
+/* CRITICAL MOBILE KEYBOARD FIXES */
+html,
+body {
+  height: 100%;
+  overflow: hidden;
+  /* Prevent body scroll */
+}
+
+body {
+  /* iOS specific fix */
+  -webkit-user-select: none;
+  user-select: none;
+
+  /* Android specific fix */
+  touch-action: manipulation;
+  overscroll-behavior: contain;
+}
+
+/* Prevent zoom on input focus (mobile) */
+input,
+select,
+textarea {
+  font-size: 16px !important;
+  -webkit-text-size-adjust: 100%;
 }

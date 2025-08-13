@@ -1,69 +1,85 @@
-<div class="form-container">
+<div class="mobile-form-container">
     <form [formGroup]="form" (ngSubmit)="onSubmit()">
-        <mat-toolbar color="primary">
-            <span>Create Product</span>
-        </mat-toolbar>
+        <!-- Mobile Header with Back Button -->
+        <div class="mobile-header">
+            <button mat-icon-button (click)="onCancel()" class="back-button">
+                <mat-icon>arrow_back</mat-icon>
+            </button>
+            <h2>{{ product ? 'Editar Producto' : 'Nuevo Producto' }}</h2>
+        </div>
 
-        <mat-form-field appearance="fill">
-            <mat-label>Reference</mat-label>
-            <input matInput formControlName="reference" required>
-        </mat-form-field>
+        <!-- Scrollable Content Area (KEY CHANGE) -->
+        <div class="form-content" #formContent>
+            <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Referencia</mat-label>
+                <input matInput formControlName="reference" required>
+            </mat-form-field>
 
-        <mat-form-field appearance="fill">
-            <mat-label>Code</mat-label>
-            <input matInput formControlName="code" required>
-        </mat-form-field>
+            <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Código</mat-label>
+                <input matInput formControlName="code" required>
+                <button matSuffix mat-icon-button type="button" (click)="openBarcodeScanner()" aria-label="Scan barcode"
+                    class="scan-button">
+                    <mat-icon>qr_code_scanner</mat-icon>
+                </button>
+            </mat-form-field>
 
-        <mat-form-field appearance="fill">
-            <mat-label>Code Type</mat-label>
-            <mat-select formControlName="codetype" required>
-                <mat-option value="EAN-13">EAN-13</mat-option>
-            </mat-select>
-        </mat-form-field>
+            <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Tipo de Código</mat-label>
+                <mat-select formControlName="codetype" required>
+                    <mat-option value="EAN-13">EAN-13</mat-option>
+                </mat-select>
+            </mat-form-field>
 
-        <mat-form-field appearance="fill">
-            <mat-label>Name</mat-label>
-            <input matInput formControlName="name" required>
-        </mat-form-field>
+            <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Nombre</mat-label>
+                <input matInput formControlName="name" required>
+            </mat-form-field>
 
-        <mat-form-field appearance="fill">
-            <mat-label>Display</mat-label>
-            <input matInput formControlName="display">
-        </mat-form-field>
+            <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Display</mat-label>
+                <input matInput formControlName="display">
+            </mat-form-field>
 
-        <mat-form-field appearance="fill">
-            <mat-label>Sell Price</mat-label>
-            <input matInput formControlName="pricesell" type="number" required>
-        </mat-form-field>
+            <div class="price-grid">
+                <mat-form-field appearance="outline">
+                    <mat-label>Precio de venta</mat-label>
+                    <input matInput formControlName="pricesell" type="number" required>
+                </mat-form-field>
 
-        <mat-form-field appearance="fill">
-            <mat-label>Buy Price</mat-label>
-            <input matInput formControlName="pricebuy" type="number" required>
-        </mat-form-field>
+                <mat-form-field appearance="outline">
+                    <mat-label>Precio de Compra</mat-label>
+                    <input matInput formControlName="pricebuy" type="number" required>
+                </mat-form-field>
+            </div>
 
-        <mat-form-field appearance="fill">
-            <mat-label>Category</mat-label>
-            <mat-select formControlName="categoryId" required>
-                <mat-option *ngFor="let c of categories" [value]="c.id">
-                    {{ c.name }}
-                </mat-option>
-            </mat-select>
-        </mat-form-field>
+            <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Categoría</mat-label>
+                <mat-select formControlName="categoryId" required>
+                    <mat-option *ngFor="let c of categories" [value]="c.id">
+                        {{ c.name }}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
 
-        <mat-form-field appearance="fill">
-            <mat-label>Tax Category</mat-label>
-            <mat-select formControlName="taxcatId" required>
-                <mat-option *ngFor="let tc of taxCategories" [value]="tc.id">
-                    {{ tc.name }}
-                </mat-option>
-            </mat-select>
-        </mat-form-field>
-        <div class="form-actions">
-            <button mat-button type="button" (click)="onCancel()">Cancel</button>
-            <button mat-raised-button color="primary" type="submit" [disabled]="form.invalid">
-                {{ product ? 'Update' : 'Create' }}
+            <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Tipo del Impuesto</mat-label>
+                <mat-select formControlName="taxcatId" required>
+                    <mat-option *ngFor="let tc of taxCategories" [value]="tc.id">
+                        {{ tc.name }}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+        </div>
+
+        <!-- Sticky Action Bar (Now properly positioned) -->
+        <div class="action-bar">
+            <button mat-stroked-button class="cancel-btn" (click)="onCancel()">
+                Cancelar
+            </button>
+            <button mat-flat-button color="primary" type="submit" [disabled]="form.invalid" class="submit-btn">
+                {{ product ? 'Actualizar' : 'Crear' }}
             </button>
         </div>
-        
     </form>
 </div>

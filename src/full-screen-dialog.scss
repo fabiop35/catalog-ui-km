@@ -1,0 +1,12 @@
+// full-screen-dialog.scss
+.full-screen-dialog {
+  .mat-dialog-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    max-height: 100vh !important;
+    margin: 0;
+    padding: 0;
+    border-radius: 0 !important;
+  }
+}

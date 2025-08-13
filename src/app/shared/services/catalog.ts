@@ -14,7 +14,8 @@ import { StockDiary } from '../models/stockdiary.model';
 @Injectable({ providedIn: 'root' })
 export class CatalogService {
 
-  private readonly base = 'http://192.168.10.3:8081/api/v1';
+  //private readonly base = 'http://192.168.10.3:8081/api/v1';
+  private readonly base = 'https://192.168.10.3:8443/api/v1';
 
   constructor(private http: HttpClient) { }
 
@@ -129,7 +130,7 @@ export class CatalogService {
   }
 
   getStockDiary(supplierId: string) {
-  return this.http.get<StockDiary[]>(`${this.base}/suppliers/${supplierId}/stockdiary`);
-}
+    return this.http.get<StockDiary[]>(`${this.base}/suppliers/${supplierId}/stockdiary`);
+  }
 
 }

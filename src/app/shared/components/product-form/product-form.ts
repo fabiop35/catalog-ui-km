@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Inject, Input, OnInit, Output } from '@angular/core';
+import { AfterViewInit, ViewChild, ElementRef, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -8,13 +9,15 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { ReactiveFormsModule, FormGroup, FormControl } from '@angular/forms';
-
+import { MatIconModule } from "@angular/material/icon";
 
 import { CatalogService } from '../../services/catalog';
 import { ProductWithCategoryDto } from '../../models/product-with-category.model';
 import { Dialog } from '../dialog/dialog';
 import { Category } from '../../models/category.model';
 import { TaxCategory } from '../../models/tax-category.model';
+import { BarcodeScanner } from '../barcode-scanner/barcode-scanner';
+
 
 @Component({
   selector: 'app-product-form',
@@ -26,17 +29,25 @@ import { TaxCategory } from '../../models/tax-category.model';
     MatInputModule,
     MatSelectModule,
     ReactiveFormsModule,
-    MatToolbarModule
+    MatToolbarModule,
+    BarcodeScanner,
+    MatIconModule
   ],
   templateUrl: './product-form.html',
   styleUrls: ['./product-form.scss']
 })
-export class ProductForm implements OnInit {
+export class ProductForm implements OnInit, AfterViewInit, OnDestroy {
 
   categories: Category[] = [];
   taxCategories: TaxCategory[] = [];
   @Input() product?: ProductWithCategoryDto;
   @Output() saved = new EventEmitter<ProductWithCategoryDto>();
+
+  @ViewChild('formContent') formContent!: ElementRef;
+  private keyboardObserver: any;
+  private isKeyboardVisible = false;
+  private lastScrollPosition = 0;
+  private fieldOffset = 0;
 
   /* ---------- FORM ---------- */
   form = new FormGroup({
@@ -53,24 +64,23 @@ export class ProductForm implements OnInit {
 
   constructor(
     private svc: CatalogService,
-    private snack: MatSnackBar, 
+    private snack: MatSnackBar,
     private dialog: MatDialog,
     private dialogRef?: MatDialogRef<ProductForm>,
     @Inject(MAT_DIALOG_DATA) public data?: ProductWithCategoryDto
-   
   ) { }
 
   ngOnInit() {
     this.svc.listCategories().subscribe(list => {
-    this.categories = list;
-    // pre-select first category
-    if (!this.product) this.form.patchValue({ categoryId: list[0]?.id });
-  });
+      this.categories = list;
+      // pre-select first category
+      if (!this.product) this.form.patchValue({ categoryId: list[0]?.id });
+    });
 
-  this.svc.listTaxCategories().subscribe(list => {
-    this.taxCategories = list;
-    if (!this.product) this.form.patchValue({ taxcatId: list[0]?.id });
-  });
+    this.svc.listTaxCategories().subscribe(list => {
+      this.taxCategories = list;
+      if (!this.product) this.form.patchValue({ taxcatId: list[0]?.id });
+    });
 
   }
 
@@ -78,18 +88,18 @@ export class ProductForm implements OnInit {
     if (!this.form.valid) return;
 
     const payload: ProductWithCategoryDto = {
-    //id: this.product?.id ?? crypto.randomUUID(), // new UUID for POST
-    reference: this.form.value.reference!,
-    code: this.form.value.code!,
-    codetype: this.form.value.codetype!,
-    name: this.form.value.name!,
-    pricesell: this.form.value.pricesell!,
-    pricebuy: this.form.value.pricebuy!,
-    currency: 'USD',
-    categoryId: this.form.value.categoryId!,
-    taxcatId: this.form.value.taxcatId!,
-    display: this.form.value.display || ''
-  };
+      //id: this.product?.id ?? crypto.randomUUID(), // new UUID for POST
+      reference: this.form.value.reference!,
+      code: this.form.value.code!,
+      codetype: this.form.value.codetype!,
+      name: this.form.value.name!,
+      pricesell: this.form.value.pricesell!,
+      pricebuy: this.form.value.pricebuy!,
+      currency: 'USD',
+      categoryId: this.form.value.categoryId!,
+      taxcatId: this.form.value.taxcatId!,
+      display: this.form.value.display || ''
+    };
 
     const obs = this.product?.id
       ? this.svc.updateProduct(this.product.id, payload)
@@ -110,12 +120,126 @@ export class ProductForm implements OnInit {
         this.snack.open('Error saving', 'Close', { duration: 3000 })
     });
   }
- 
+
   onCancel() {
-     this.form.reset();
-     this.dialogRef?.close();                // if inside dialog
-     this.saved.emit();                      // or signal parent
+    this.form.reset();
+    this.dialogRef?.close();                // if inside dialog
+    this.saved.emit();                      // or signal parent
   }
 
+  openBarcodeScanner() {
+    const dialogRef = this.dialog.open(BarcodeScanner, {
+      width: '100vw',
+      height: '100vh',
+      maxWidth: '100vw',
+      maxHeight: '100vh',
+      panelClass: 'full-screen-dialog',
+      autoFocus: false
+    });
+
+    dialogRef.componentInstance.codeScanned.subscribe(code => {
+      this.form.get('code')?.setValue(code);
+      dialogRef.close();
+    });
+  }
+
+  ngAfterViewInit() {
+    this.setupKeyboardHandling();
+  }
+
+  ngOnDestroy() {
+    this.cleanupKeyboardHandling();
+  }
+
+  private setupKeyboardHandling() {
+    // 1. Modern approach using Visual Viewport API (Chrome/Edge)
+    if ('visualViewport' in window) {
+      const viewport = (window as any).visualViewport;
+
+      viewport.addEventListener('resize', () => {
+        this.adjustForKeyboard(viewport);
+      });
+
+      viewport.addEventListener('scroll', () => {
+        if (this.isKeyboardVisible) {
+          this.ensureFieldVisible();
+        }
+      });
+    }
+    // 2. Fallback for Safari/iOS
+    else {
+      this.keyboardObserver = {
+        connect: () => {
+          window.addEventListener('resize', this.handleWindowResize.bind(this));
+        },
+        disconnect: () => {
+          window.removeEventListener('resize', this.handleWindowResize.bind(this));
+        }
+      };
+      this.keyboardObserver.connect();
+    }
+  }
+
+  private cleanupKeyboardHandling() {
+    if (this.keyboardObserver?.disconnect) {
+      this.keyboardObserver.disconnect();
+    }
+  }
+
+  private handleWindowResize() {
+    // On iOS, keyboard resize events are unreliable
+    setTimeout(() => {
+      const viewportHeight = window.innerHeight;
+      const keyboardThreshold = 300; // Approx keyboard height
+
+      if (viewportHeight < window.screen.height * 0.7) {
+        this.isKeyboardVisible = true;
+        this.ensureFieldVisible();
+      } else {
+        this.isKeyboardVisible = false;
+      }
+    }, 100);
+  }
+
+  private adjustForKeyboard(viewport: any) {
+    const keyboardHeight = window.innerHeight - viewport.height;
+    this.isKeyboardVisible = keyboardHeight > 100; // Threshold for keyboard
+
+    if (this.isKeyboardVisible) {
+      // Save current scroll position
+      this.lastScrollPosition = this.formContent.nativeElement.scrollTop;
+
+      // Ensure focused field is visible
+      setTimeout(() => this.ensureFieldVisible(), 100);
+    }
+  }
+
+  private ensureFieldVisible() {
+    const activeElement = document.activeElement as HTMLElement;
+    if (!activeElement || !this.formContent) return;
+
+    const fieldRect = activeElement.getBoundingClientRect();
+    const containerRect = this.formContent.nativeElement.getBoundingClientRect();
+
+    // Calculate how much the field is hidden by keyboard
+    const hiddenBottom = fieldRect.bottom - containerRect.bottom + 20;
+
+    if (hiddenBottom > 0) {
+      // Scroll to make field visible above keyboard
+      this.formContent.nativeElement.scrollTop += hiddenBottom;
+      this.fieldOffset = hiddenBottom;
+    } else if (this.fieldOffset > 0) {
+      // Reset if we scrolled too far
+      this.formContent.nativeElement.scrollTop -= this.fieldOffset;
+      this.fieldOffset = 0;
+    }
+  }
 }
+
+
+
+
+
+
+
 
