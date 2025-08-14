@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -44,7 +44,7 @@ import { BarcodeScanner } from "../barcode-scanner/barcode-scanner";
     MatButtonModule,
     MatSelectModule,
     BarcodeScanner
-],
+  ],
   templateUrl: './product-list-paginated.html',
   styleUrls: ['./product-list-paginated.scss']
 })
@@ -63,7 +63,7 @@ export class ProductListPaginated implements OnInit {
   searchCtrl = new FormControl('');
   singleProduct?: ProductWithCategoryDto;
   filteredProducts$!: Observable<ProductWithCategoryDto[]>;
- detailForm!: FormGroup;
+  detailForm!: FormGroup;
 
   /* dropdowns */
   categories: Category[] = [];
@@ -72,7 +72,8 @@ export class ProductListPaginated implements OnInit {
   constructor(
     private svc: CatalogService,
     private snack: MatSnackBar,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private cdr: ChangeDetectorRef
   ) { }
 
   ngOnInit() {
@@ -132,7 +133,7 @@ export class ProductListPaginated implements OnInit {
       categoryId: new FormControl(product.categoryId, Validators.required),
       taxcatId: new FormControl(product.taxcatId, Validators.required)
     });
-     this.searchCtrl.setValue('');
+    this.searchCtrl.setValue('');
   }
 
   clearSelection() {
@@ -179,5 +180,73 @@ export class ProductListPaginated implements OnInit {
     });
   }
 
+  openBarcodeScanner() {
+    const dialogRef = this.dialog.open(BarcodeScanner, {
+      width: '100vw',
+      height: '100vh',
+      maxWidth: '100vw',
+      maxHeight: '100vh',
+      panelClass: 'full-screen-dialog',
+      autoFocus: false
+    });
+
+    dialogRef.componentInstance.codeScanned.subscribe(code => {
+      this.handleScannedCode(code);
+      dialogRef.close();
+    });
+  }
+
+  handleScannedCode(code: string) {
+    // 1. Clear previous search
+    this.singleProduct = undefined;
+    this.searchCtrl.setValue('');
+
+    // 2. Seach product by code
+    this.svc.searchProductsByCode(code).subscribe({
+      next: (products) => {
+        if (products && products.length > 0) {
+          // we found the product
+          const product = products[0];
+
+          // Load the necessary categories
+          this.svc.listCategories().subscribe(c => this.categories = c);
+          this.svc.listTaxCategories().subscribe(tc => this.taxCategories = tc);
+
+          // Show the product
+          this.singleProduct = product;
+          this.detailForm = new FormGroup({
+            name: new FormControl(product.name, Validators.required),
+            display: new FormControl(product.display),
+            pricesell: new FormControl(product.pricesell, Validators.required),
+            pricebuy: new FormControl(product.pricebuy, Validators.required),
+            categoryId: new FormControl(product.categoryId, Validators.required),
+            taxcatId: new FormControl(product.taxcatId, Validators.required)
+          });
+
+          // Feedback visual
+          this.snack.open(`✅ Encontrado: ${product.name}`, 'OK', {
+            duration: 2000,
+            panelClass: ['success-snackbar']
+          });
+        } else {
+          // Product not found
+          this.snack.open('❌ Código no encontrado', 'OK', {
+            duration: 3000,
+            panelClass: ['error-snackbar']
+          });
+        }
+
+        // Force detection of changes to update the UI
+        this.cdr.detectChanges();
+      },
+      error: (err: any) => {
+        console.error('Error buscando producto:', err);
+        this.snack.open('❌ Error al buscar producto', 'OK', {
+          duration: 3000,
+          panelClass: ['error-snackbar']
+        });
+      }
+    });
+  }
 
 }

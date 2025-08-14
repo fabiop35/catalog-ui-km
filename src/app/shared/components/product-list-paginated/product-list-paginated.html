@@ -10,12 +10,19 @@
   <mat-label>Buscar producto</mat-label>
   <input matInput [formControl]="searchCtrl" [matAutocomplete]="auto" placeholder="Type to filter…">
   <mat-icon matSuffix>search</mat-icon>
-  <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onSelect($event.option.value)" >
+  <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onSelect($event.option.value)">
     <mat-option *ngFor="let p of filteredProducts$ | async" [value]="p">
       {{ p.name }} – ({{ p.pricesell | currency }})
     </mat-option>
   </mat-autocomplete>
 </mat-form-field>
+
+<!-- Botón de escaneo de código de barras -->
+<button matSuffix mat-icon-button type="button" (click)="openBarcodeScanner()" aria-label="Scan barcode"
+  class="scan-button">
+  <mat-icon>qr_code_scanner</mat-icon>
+</button>
+
 
 <!-- Single product detail when searched -->
 <!-- detail / edit -->
@@ -99,6 +106,7 @@
 
     <!-- inline edit -->
     <app-inline-product-edit *ngIf="editing[product.id!]" [product]="product"
-      (saved)="onProductUpdated()"></app-inline-product-edit>
+      (saved)="onProductUpdated()">
+    </app-inline-product-edit>
   </ng-container>
 </div>

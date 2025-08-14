@@ -133,4 +133,10 @@ export class CatalogService {
     return this.http.get<StockDiary[]>(`${this.base}/suppliers/${supplierId}/stockdiary`);
   }
 
+  searchProductsByCode(code: string): Observable<ProductWithCategoryDto[]> {
+    return this.http.get<ProductWithCategoryDto[]>(`${this.base}/products/searchByCode`, {
+      params: { code }
+    });
+  }
+
 }
