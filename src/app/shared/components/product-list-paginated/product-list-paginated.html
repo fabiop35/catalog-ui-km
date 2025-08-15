@@ -74,7 +74,8 @@
 </mat-card>
 
 <mat-paginator [pageIndex]="pageIndex" [pageSize]="pageSize" [pageSizeOptions]="[5, 10, 20]" [length]="totalElements"
-  (page)="onPageChange($event)"></mat-paginator>
+  (page)="onPageChange($event)">
+</mat-paginator>
 
 <div class="grid">
   <ng-container *ngFor="let product of products; trackBy: trackById">
@@ -105,8 +106,8 @@
     </mat-card>
 
     <!-- inline edit -->
-    <app-inline-product-edit *ngIf="editing[product.id!]" [product]="product"
-      (saved)="onProductUpdated()">
-    </app-inline-product-edit>
+    <app-inline-product-edit-modal *ngIf="editing[product.id!]" 
+      (saved)="onProductUpdated(product)">
+    </app-inline-product-edit-modal>
   </ng-container>
 </div>

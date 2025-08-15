@@ -24,6 +24,7 @@ import { ProductForm } from '../product-form/product-form';
 import { Category } from '../../models/category.model';
 import { TaxCategory } from '../../models/tax-category.model';
 import { BarcodeScanner } from "../barcode-scanner/barcode-scanner";
+import { InlineProductEditModal } from '../products/inline-product-edit-modal/inline-product-edit-modal';
 
 @Component({
   selector: 'app-product-list-paginated',
@@ -43,8 +44,9 @@ import { BarcodeScanner } from "../barcode-scanner/barcode-scanner";
     MatToolbarModule,
     MatButtonModule,
     MatSelectModule,
-    BarcodeScanner
-  ],
+    BarcodeScanner,
+    InlineProductEditModal
+],
   templateUrl: './product-list-paginated.html',
   styleUrls: ['./product-list-paginated.scss']
 })
@@ -98,15 +100,48 @@ export class ProductListPaginated implements OnInit {
     this.load();
   }
 
-  openEdit(product: ProductWithCategoryDto) {
+  /*openEdit(product: ProductWithCategoryDto) {
     this.editing[product.id!] = true;
+  }*/
+
+  openEdit(product: ProductWithCategoryDto) {
+    // Open modal dialog instead of inline editing
+    const dialogRef = this.dialog.open(InlineProductEditModal, {
+      width: '100vw',
+      height: '100dvh',
+      maxWidth: '100vw',
+      maxHeight: '100dvh',
+      panelClass: 'full-screen-dialog',
+      data: { product: product }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.onProductUpdated(result);
+      }
+    });
   }
 
-  onProductUpdated() {
+  /*onProductUpdated() {
     this.snack.open('Product updated ✔️', 'Close', { duration: 3000 });
     this.editing = {};
     this.load(); // reload current page
     this.updatedId = this.products[0]?.id; // last modified (or pass id from save)
+    setTimeout(() => (this.updatedId = undefined), 3000);
+  }*/
+
+  onProductUpdated(updatedProduct: ProductWithCategoryDto) {
+    this.snack.open('Product updated ✔️', 'Close', { duration: 3000 });
+    
+    // Update the product in the list
+    const index = this.products.findIndex(p => p.id === updatedProduct.id);
+    if (index !== -1) {
+      this.products[index] = updatedProduct;
+    }
+    
+    this.load(); // reload current page to refresh data
+    this.updatedId = updatedProduct.id; // highlight updated product
+    
     setTimeout(() => (this.updatedId = undefined), 3000);
   }
 
