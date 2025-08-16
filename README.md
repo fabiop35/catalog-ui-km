@@ -112,3 +112,6 @@ $ ng serve --ssl true --ssl-cert "./localhost.pem" --ssl-key "./localhost-key.pe
 #Test if camera works: https://webrtc.github.io/samples/src/content/devices/input-output/
 
 $ ng g c shared/components/products/inline-product-edit-modal --standalone --skip-tests --style=scss
+
+#change from paginated to infinite scroll
+ng add @angular/cdk

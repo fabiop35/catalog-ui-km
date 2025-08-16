@@ -65,7 +65,7 @@ export class InlineProductEditModal implements AfterViewInit {
       code: new FormControl({ value: this.data.product.code, disabled: true }, Validators.required),
       codetype: new FormControl(this.data.product.codetype || 'EAN-13'),
       name: new FormControl(this.data.product.name, Validators.required),
-      display: new FormControl(this.data.product.display || ''),
+      //display: new FormControl(this.data.product.display || ''),
       pricesell: new FormControl(this.data.product.pricesell, [Validators.required, Validators.min(0)]),
       pricebuy: new FormControl(this.data.product.pricebuy, [Validators.required, Validators.min(0)]),
       categoryId: new FormControl(this.data.product.categoryId, Validators.required),

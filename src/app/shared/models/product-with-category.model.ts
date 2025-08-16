@@ -10,5 +10,5 @@ export interface ProductWithCategoryDto {
   categoryId: string;
   categoryName?: string;
   taxcatId: string;
-  display?: string;    // optional
+  //display?: string;    // optional
 }

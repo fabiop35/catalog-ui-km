@@ -1,10 +1,11 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, OnDestroy } from '@angular/core';
+import { Observable, of, map, startWith, debounceTime, distinctUntilChanged, switchMap } from 'rxjs';
+import { ScrollDispatcher, CdkScrollable } from '@angular/cdk/scrolling';
+
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
-import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatIconModule } from "@angular/material/icon";
 import { MatInputModule } from '@angular/material/input';
@@ -13,9 +14,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatDialog } from '@angular/material/dialog';
-import { MatAutocompleteModule, MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
-
-import { Observable, of, map, startWith, debounceTime, distinctUntilChanged, switchMap } from 'rxjs';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
 
 import { CatalogService } from '../../services/catalog';
 import { InlineProductEdit } from '../inline-product-edit/inline-product-edit';
@@ -25,6 +24,7 @@ import { Category } from '../../models/category.model';
 import { TaxCategory } from '../../models/tax-category.model';
 import { BarcodeScanner } from "../barcode-scanner/barcode-scanner";
 import { InlineProductEditModal } from '../products/inline-product-edit-modal/inline-product-edit-modal';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-product-list-paginated',
@@ -32,7 +32,6 @@ import { InlineProductEditModal } from '../products/inline-product-edit-modal/in
   imports: [
     CommonModule,
     MatCardModule,
-    MatPaginatorModule,
     MatChipsModule,
     RouterLink,
     MatIconModule,
@@ -46,66 +45,113 @@ import { InlineProductEditModal } from '../products/inline-product-edit-modal/in
     MatSelectModule,
     BarcodeScanner,
     InlineProductEditModal
-],
+  ],
   templateUrl: './product-list-paginated.html',
   styleUrls: ['./product-list-paginated.scss']
 })
-export class ProductListPaginated implements OnInit {
+export class ProductListPaginated implements OnInit, OnDestroy {
 
-  pageIndex = 0;
+  page = 0;
   pageSize = 10;
-  totalElements = 0;
-  updatedId?: string;
   products: ProductWithCategoryDto[] = [];
-  trackById = (index: number, item: ProductWithCategoryDto) => item.id!
+  hasMore = true;
+  loading = false;
+  creating = false;
+
+  updatedId?: string;
+  trackById = (index: number, item: ProductWithCategoryDto) => item.id!;
   editing: Record<string, boolean> = {};
 
-  /* search */
+  // Search
   idInput = '';
   searchCtrl = new FormControl('');
   singleProduct?: ProductWithCategoryDto;
   filteredProducts$!: Observable<ProductWithCategoryDto[]>;
   detailForm!: FormGroup;
 
-  /* dropdowns */
+  // Dropdowns
   categories: Category[] = [];
   taxCategories: TaxCategory[] = [];
+
+  private scrollSubscription: any;
 
   constructor(
     private svc: CatalogService,
     private snack: MatSnackBar,
     private dialog: MatDialog,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private scroll: ScrollDispatcher
   ) { }
 
   ngOnInit() {
     this.load();
+
     this.filteredProducts$ = this.searchCtrl.valueChanges.pipe(
       debounceTime(300),
       distinctUntilChanged(),
       switchMap(term => this.svc.searchProducts(term || ''))
     );
+
+    // Auto-load on scroll
+    this.scrollSubscription = this.scroll.scrolled().subscribe(() => {
+      if (this.loading || !this.hasMore) return;
+
+      const el = document.documentElement;
+      const offset = el.scrollHeight - el.scrollTop - el.clientHeight;
+
+      if (offset <= 300) {
+        this.load();
+      }
+    });
+  }
+  ngOnDestroy() {
+    if (this.scrollSubscription) {
+      this.scrollSubscription.unsubscribe();
+    }
   }
 
   load() {
-    this.svc.listProductsPaged(this.pageIndex, this.pageSize).subscribe(page => {
-      this.products = page.content;
-      this.totalElements = page.totalElements;
+    if (this.loading || !this.hasMore) return;
+
+    this.loading = true;
+    this.svc.listProductsPaged(this.page, this.pageSize).subscribe({
+      next: (page) => {
+        // Append new products
+        this.products = [...this.products, ...page.content];
+        this.hasMore = page.number < page.totalPages - 1;
+        this.page++;
+
+        // ✅ Critical: Force Angular to detect changes
+        this.cdr.detectChanges();
+
+        // ✅ Force browser layout reflow
+        this.forceReflow();
+
+        this.loading = false;
+      },
+      error: (err) => {
+        console.error('Error loading products:', err);
+        this.snack.open('Error al cargar productos', 'Cerrar', { duration: 3000 });
+        this.loading = false;
+        this.cdr.detectChanges();
+      }
     });
   }
 
-  onPageChange(e: PageEvent) {
-    this.pageIndex = e.pageIndex;
-    this.pageSize = e.pageSize;
+  // Forces the browser to recalculate layout
+  private forceReflow() {
+    // Trigger layout recalculation
+    document.body.style.display = 'none';
+    document.body.style.display = 'block';
+  }
+  resetAndReload() {
+    this.page = 0;
+    this.products = [];
+    this.hasMore = true;
     this.load();
   }
 
-  /*openEdit(product: ProductWithCategoryDto) {
-    this.editing[product.id!] = true;
-  }*/
-
   openEdit(product: ProductWithCategoryDto) {
-    // Open modal dialog instead of inline editing
     const dialogRef = this.dialog.open(InlineProductEditModal, {
       width: '100vw',
       height: '100dvh',
@@ -122,47 +168,24 @@ export class ProductListPaginated implements OnInit {
     });
   }
 
-  /*onProductUpdated() {
-    this.snack.open('Product updated ✔️', 'Close', { duration: 3000 });
-    this.editing = {};
-    this.load(); // reload current page
-    this.updatedId = this.products[0]?.id; // last modified (or pass id from save)
-    setTimeout(() => (this.updatedId = undefined), 3000);
-  }*/
-
   onProductUpdated(updatedProduct: ProductWithCategoryDto) {
-    this.snack.open('Product updated ✔️', 'Close', { duration: 3000 });
-    
-    // Update the product in the list
+    this.snack.open('Producto actualizado ✔️', 'Cerrar', { duration: 3000 });
     const index = this.products.findIndex(p => p.id === updatedProduct.id);
     if (index !== -1) {
       this.products[index] = updatedProduct;
     }
-    
-    this.load(); // reload current page to refresh data
-    this.updatedId = updatedProduct.id; // highlight updated product
-    
+    this.updatedId = updatedProduct.id;
     setTimeout(() => (this.updatedId = undefined), 3000);
   }
 
-  private _filter(value: string): ProductWithCategoryDto[] {
-    const term = value.toLowerCase();
-    return this.products.filter(p => p.name.toLowerCase().includes(term));
-  }
-
-  displayFn(product: ProductWithCategoryDto): string {
-    return product?.name || '';
-  }
-
   onSelect(product: ProductWithCategoryDto) {
-    // fetch lists once if not loaded
     this.svc.listCategories().subscribe(c => this.categories = c);
     this.svc.listTaxCategories().subscribe(tc => this.taxCategories = tc);
 
     this.singleProduct = product;
     this.detailForm = new FormGroup({
       name: new FormControl(product.name, Validators.required),
-      display: new FormControl(product.display),
+      //display: new FormControl(product.display),
       pricesell: new FormControl(product.pricesell, Validators.required),
       pricebuy: new FormControl(product.pricebuy, Validators.required),
       categoryId: new FormControl(product.categoryId, Validators.required),
@@ -173,22 +196,17 @@ export class ProductListPaginated implements OnInit {
 
   clearSelection() {
     this.singleProduct = undefined;
-    this.searchCtrl.setValue(''); // Clear the search box
-  }
-
-  getSingle() {
-    if (!this.idInput) return;
-    this.svc.getProduct(this.idInput).subscribe(p => this.singleProduct = p);
+    this.searchCtrl.setValue('');
   }
 
   openCreateDialog() {
     this.dialog.open(ProductForm, {
       width: '500px',
-      data: {} // empty DTO for create
+      data: {}
     }).afterClosed().subscribe(result => {
       if (result) {
-        this.load();                 // reload list
-        this.updatedId = result.id;  // highlight
+        this.resetAndReload();
+        this.updatedId = result.id;
         setTimeout(() => (this.updatedId = undefined), 3000);
       }
     });
@@ -198,17 +216,16 @@ export class ProductListPaginated implements OnInit {
     if (!this.detailForm.valid) return;
 
     const payload: ProductWithCategoryDto = {
-      ...this.singleProduct!, // keep read-only fields
+      ...this.singleProduct!,
       ...this.detailForm.getRawValue(),
       currency: 'COP'
     };
 
     this.svc.updateProduct(payload.id!, payload).subscribe({
       next: (p) => {
-        this.snack.open('Updated ✔️', 'Close', { duration: 3000 });
+        this.snack.open('Actualizado ✔️', 'Cerrar', { duration: 3000 });
         this.singleProduct = undefined;
-        this.editing = {};
-        this.load(); // reload page
+        this.resetAndReload();
         this.updatedId = p.id;
         setTimeout(() => (this.updatedId = undefined), 3000);
       }
@@ -232,46 +249,36 @@ export class ProductListPaginated implements OnInit {
   }
 
   handleScannedCode(code: string) {
-    // 1. Clear previous search
     this.singleProduct = undefined;
     this.searchCtrl.setValue('');
 
-    // 2. Seach product by code
     this.svc.searchProductsByCode(code).subscribe({
       next: (products) => {
         if (products && products.length > 0) {
-          // we found the product
           const product = products[0];
-
-          // Load the necessary categories
           this.svc.listCategories().subscribe(c => this.categories = c);
           this.svc.listTaxCategories().subscribe(tc => this.taxCategories = tc);
 
-          // Show the product
           this.singleProduct = product;
           this.detailForm = new FormGroup({
             name: new FormControl(product.name, Validators.required),
-            display: new FormControl(product.display),
+            //display: new FormControl(product.display),
             pricesell: new FormControl(product.pricesell, Validators.required),
             pricebuy: new FormControl(product.pricebuy, Validators.required),
             categoryId: new FormControl(product.categoryId, Validators.required),
             taxcatId: new FormControl(product.taxcatId, Validators.required)
           });
 
-          // Feedback visual
           this.snack.open(`✅ Encontrado: ${product.name}`, 'OK', {
             duration: 2000,
             panelClass: ['success-snackbar']
           });
         } else {
-          // Product not found
           this.snack.open('❌ Código no encontrado', 'OK', {
             duration: 3000,
             panelClass: ['error-snackbar']
           });
         }
-
-        // Force detection of changes to update the UI
         this.cdr.detectChanges();
       },
       error: (err: any) => {
@@ -284,4 +291,10 @@ export class ProductListPaginated implements OnInit {
     });
   }
 
+  navigateToProducts() {
+   this.creating = false;
+    this.editing = {};
+    //this.detailForm.reset();
+    this.load();
+  }
 }

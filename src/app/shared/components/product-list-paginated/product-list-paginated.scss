@@ -1,143 +1,96 @@
-.cards {
-    margin: 1rem;
+/* product-list-paginated.scss */
+
+// === Container ===
+.grid-container {
+  padding: 1rem;
+  width: 100%;
+  box-sizing: border-box;
+  // No min-height that could clip
 }
 
-.product-card {
-    in-height: 140px;
-    cursor: pointer;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-
-    &:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
-    }
-
-    img {
-        height: 200px;
-        object-fit: cover;
-    }
-
-    .price {
-        display: flex;
-        gap: 0.5rem;
-        margin-top: 0.5rem;
-
-        .sell {
-            font-weight: 600;
-            color: #0d47a1; // Indigo 900
-        }
-
-        .buy {
-            font-size: 0.9em;
-            color: #757575; // Gray 700
-            text-decoration: line-through;
-        }
-    }
-}
-
-.updated {
-    border: 2px solid #4caf50;
-    animation: pulse 3s forwards;
-}
-
-@keyframes pulse {
-    0% {
-        box-shadow: 0 0 0 rgba(76, 175, 80, 0.8);
-    }
-
-    100% {
-        box-shadow: 0 0 0 rgba(76, 175, 80, 0);
-    }
-}
-
+// === Grid ===
 .grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 1.5rem;
-    padding: 1rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
+  padding: 1rem 1rem 3rem 1rem;
+  width: 100%;
+  box-sizing: border-box;
 }
 
+// === Product Card ===
+.product-card {
+  max-width: 320px;
+  width: 100%;
+  min-height: 140px;
+  cursor: pointer;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  transition: transform 0.2s ease;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+  }
+
+  .price {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+
+    .sell {
+      font-weight: 600;
+      color: #0d47a1;
+    }
+
+    .buy {
+      font-size: 0.9em;
+      color: #757575;
+      text-decoration: line-through;
+    }
+  }
+}
+
+// === Loading & Button ===
+.loading,
+.load-more-container,
+.end-message {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 1rem;
+  font-style: italic;
+  color: #555;
+}
+
+.load-more-container button {
+  padding: 0.75rem 1.5rem;
+  min-width: 200px;
+}
+
+// === Search Field ===
 .search-field {
-    width: 50%;
-    margin-bottom: 1rem;
-
-    mat-form-field {
-        background: rgba(255, 255, 255, 0.8);
-        border: 1px solid rgba(0, 0, 0, 0.1);
-        border-radius: 24px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        transition: box-shadow 0.3s ease, background 0.3s ease;
-
-        &:hover {
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
-            background: rgba(255, 255, 255, 0.9);
-        }
-
-        &:focus-within {
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
-            background: rgba(255, 255, 255, 1);
-        }
-    }
-
-    mat-label {
-        color: #263238;
-    }
-
-    input {
-        color: #263238;
-    }
-
-    mat-icon {
-        color: #263238;
-    }
-
-    .scan-button {
-        color: #283593;
-        width: 40px;
-        height: 40px;
-        border-radius: 12px;
-        background: #e8eaf6;
-        transition: all 0.2s ease;
-        margin-right: 4px;
-
-        &:hover {
-            background: #d1c4e9;
-            transform: scale(1.05);
-        }
-
-        mat-icon {
-            font-size: 20px;
-        }
-    }
+  width: 90%;
+  max-width: 500px;
+  margin: 1rem auto;
+  display: flex;
+  align-items: center;
 }
 
-.card {
-    background: #fff;
-    border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, .08);
-    padding: 1.5rem;
-    text-align: center;
-    transition: transform .2s, box-shadow .2s;
+// === Toolbar ===
+mat-toolbar {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
 
+.toolbar {
+  .toolbar-title {
+    cursor: pointer;
+    transition: color 0.2s ease;
+    
     &:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 6px 16px rgba(0, 0, 0, .15);
+      color: #bbdefb; /* Light blue on hover */
     }
-
-    .name {
-        font-size: 1.25rem;
-        font-weight: 600;
-        color: #263238;
-    }
-}
-
-/* Snackbars personalizados */
-.success-snackbar {
-    background: #d4edda;
-    color: #155724;
-}
-
-.error-snackbar {
-    background: #f8d7da;
-    color: #721c24;
+  }
 }

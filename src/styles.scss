@@ -58,22 +58,6 @@ body {
 }
 
 /* CRITICAL MOBILE KEYBOARD FIXES */
-html,
-body {
-  height: 100%;
-  overflow: hidden;
-  /* Prevent body scroll */
-}
-
-body {
-  /* iOS specific fix */
-  -webkit-user-select: none;
-  user-select: none;
-
-  /* Android specific fix */
-  touch-action: manipulation;
-  overscroll-behavior: contain;
-}
 
 /* Prevent zoom on input focus (mobile) */
 input,

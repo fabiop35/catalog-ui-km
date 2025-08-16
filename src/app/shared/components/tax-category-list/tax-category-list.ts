@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -41,7 +41,10 @@ export class TaxCategoryList implements OnInit {
   });
   trackById = (index: number, item: TaxCategory) => item.id!
 
-  constructor(private svc: CatalogService, private snack: MatSnackBar) { }
+  constructor(
+    private svc: CatalogService,
+    private snack: MatSnackBar,
+    private router: Router) { }
 
   ngOnInit() {
     //this.svc.listTaxCategories().subscribe(list => this.taxCategories = list); 
@@ -87,7 +90,18 @@ export class TaxCategoryList implements OnInit {
   cancel() {
     this.creating = false;
     this.editing = {};
+    this.form.reset();
   }
 
+  /**
+  * Navigate to tax categories route when clicking the title
+  */
+  navigateToTaxCategories() {
+    //this.router.navigate(['/tax-categories']);
+    this.creating = false;
+    this.editing = {};
+    this.form.reset();
+    this.load();
+  }
 
 }

@@ -55,7 +55,7 @@ export class ProductForm implements OnInit, AfterViewInit, OnDestroy {
     code: new FormControl(''),
     codetype: new FormControl('EAN-13'),
     name: new FormControl(''),
-    display: new FormControl(''),
+    //display: new FormControl(''),
     pricesell: new FormControl(0),
     pricebuy: new FormControl(0),
     categoryId: new FormControl(''),
@@ -97,8 +97,8 @@ export class ProductForm implements OnInit, AfterViewInit, OnDestroy {
       pricebuy: this.form.value.pricebuy!,
       currency: 'USD',
       categoryId: this.form.value.categoryId!,
-      taxcatId: this.form.value.taxcatId!,
-      display: this.form.value.display || ''
+      taxcatId: this.form.value.taxcatId!
+      //display: this.form.value.display || ''
     };
 
     const obs = this.product?.id

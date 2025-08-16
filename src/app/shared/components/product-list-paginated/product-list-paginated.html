@@ -1,5 +1,5 @@
-<mat-toolbar color="primary">
-  <span>Productos</span>
+<mat-toolbar color="primary" class="toolbar">
+  <span class="toolbar-title" (click)="navigateToProducts()">Productos</span>
   <span class="spacer"></span>
   <button mat-button (click)="openCreateDialog()" color="accent">
     <mat-icon>add</mat-icon> Nuevo Producto
@@ -15,43 +15,37 @@
       {{ p.name }} – ({{ p.pricesell | currency }})
     </mat-option>
   </mat-autocomplete>
+
+  <!-- Barcode scanner button -->
+  <button matSuffix mat-icon-button type="button" (click)="openBarcodeScanner()" aria-label="Scan barcode"
+    class="scan-button">
+    <mat-icon>qr_code_scanner</mat-icon>
+  </button>
 </mat-form-field>
 
-<!-- Botón de escaneo de código de barras -->
-<button matSuffix mat-icon-button type="button" (click)="openBarcodeScanner()" aria-label="Scan barcode"
-  class="scan-button">
-  <mat-icon>qr_code_scanner</mat-icon>
-</button>
 
 
-<!-- Single product detail when searched -->
-<!-- detail / edit -->
+<!-- Single product detail -->
 <mat-card *ngIf="singleProduct" class="detail-card">
   <mat-card-title>{{ singleProduct.name }}</mat-card-title>
-
   <mat-card-content>
     <form [formGroup]="detailForm" (ngSubmit)="saveDetail()">
       <mat-form-field appearance="fill" class="full-width">
         <mat-label>Nombre</mat-label>
         <input matInput formControlName="name" required>
       </mat-form-field>
-
-      <mat-form-field appearance="fill" class="full-width">
+      <!-- <mat-form-field appearance="fill" class="full-width">
         <mat-label>Display</mat-label>
         <input matInput formControlName="display">
-      </mat-form-field>
-
+      </mat-form-field> -->
       <mat-form-field appearance="fill" class="full-width">
         <mat-label>Precio de venta</mat-label>
         <input matInput formControlName="pricesell" type="number" required>
       </mat-form-field>
-
       <mat-form-field appearance="fill" class="full-width">
         <mat-label>Precio de compra</mat-label>
         <input matInput formControlName="pricebuy" type="number" required>
       </mat-form-field>
-
-      <!-- dropdowns for IDs -->
       <mat-form-field appearance="fill" class="full-width">
         <mat-label>Categoria</mat-label>
         <mat-select formControlName="categoryId" required>
@@ -66,48 +60,48 @@
       </mat-form-field>
     </form>
   </mat-card-content>
-
   <mat-card-actions align="end">
     <button mat-button (click)="clearSelection()">Cancelar</button>
     <button mat-raised-button color="primary" (click)="saveDetail()">Actualizar</button>
   </mat-card-actions>
 </mat-card>
 
-<mat-paginator [pageIndex]="pageIndex" [pageSize]="pageSize" [pageSizeOptions]="[5, 10, 20]" [length]="totalElements"
-  (page)="onPageChange($event)">
-</mat-paginator>
+<!-- Product Grid -->
+<div class="grid-container">
+  <div class="grid">
+    <ng-container *ngFor="let product of products; trackBy: trackById">
+      <mat-card [class.updated]="updatedId === product.id" *ngIf="!editing[product.id!]" class="product-card">
+        <mat-card-header>
+          <mat-card-title>{{ product.name }}</mat-card-title>
+          <mat-card-subtitle>{{ product.reference }}</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <mat-chip-set>
+            <mat-chip color="primary">{{ product.categoryName }}</mat-chip>
+          </mat-chip-set>
+          <div class="price">
+            <span class="sell">{{ product.pricesell | currency:'COP' }}</span>
+            <span class="buy">{{ product.pricebuy | currency:'COP' }}</span>
+          </div>
+        </mat-card-content>
+        <mat-card-actions align="end">
+          <button mat-icon-button (click)="openEdit(product)" matTooltip="Edit">
+            <mat-icon>edit</mat-icon>
+          </button>
+        </mat-card-actions>
+      </mat-card>
+      <app-inline-product-edit-modal *ngIf="editing[product.id!]"
+        (saved)="onProductUpdated(product)"></app-inline-product-edit-modal>
+    </ng-container>
 
-<div class="grid">
-  <ng-container *ngFor="let product of products; trackBy: trackById">
-    <!-- normal card -->
-    <mat-card [class.updated]="updatedId === product.id" *ngIf="!editing[product.id!]" class="product-card">
+    <div *ngIf="hasMore && !loading" class="load-more-container">
+      <button mat-stroked-button (click)="load()" [disabled]="loading">
+        {{ loading ? 'Cargando...' : 'Cargar más productos' }}
+      </button>
+    </div>
 
-      <mat-card-header>
-
-        <mat-card-title>{{ product.name }}</mat-card-title>
-        <mat-card-subtitle>{{ product.reference }}</mat-card-subtitle>
-      </mat-card-header>
-
-      <mat-card-content>
-        <mat-chip-set>
-          <mat-chip color="primary">{{ product.categoryName }}</mat-chip>
-        </mat-chip-set>
-        <div class="price">
-          <span class="sell">{{ product.pricesell | currency }}</span>
-          <span class="buy">{{ product.pricebuy | currency }}</span>
-        </div>
-      </mat-card-content>
-
-      <mat-card-actions align="end">
-        <button mat-icon-button (click)="openEdit(product)" matTooltip="Edit">
-          <mat-icon>edit</mat-icon>
-        </button>
-      </mat-card-actions>
-    </mat-card>
-
-    <!-- inline edit -->
-    <app-inline-product-edit-modal *ngIf="editing[product.id!]" 
-      (saved)="onProductUpdated(product)">
-    </app-inline-product-edit-modal>
-  </ng-container>
+    <div *ngIf="!hasMore && products.length > 0" class="end-message">
+      🎉 Has cargado todos los productos.
+    </div>
+  </div>
 </div>
