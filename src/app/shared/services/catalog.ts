@@ -84,7 +84,7 @@ export class CatalogService {
   }
 
   listProductsPaged(page = 0, size = 5): Observable<Page<ProductWithCategoryDto>> {
-    return this.http.get<Page<ProductWithCategoryDto>>(`${this.base}/products`, {
+    return this.http.get<Page<ProductWithCategoryDto>>(`${this.base}/products?sort=name`, {
       params: { page, size }
     });
   }

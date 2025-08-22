@@ -11,4 +11,6 @@ export interface ProductWithCategoryDto {
   categoryName?: string;
   taxcatId: string;
   //display?: string;    // optional
+  taxName?: string;
+  taxRate?: number;
 }

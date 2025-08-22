@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, OnInit, OnDestroy } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, OnDestroy, Input } from '@angular/core';
 import { Observable, of, map, startWith, debounceTime, distinctUntilChanged, switchMap } from 'rxjs';
 import { ScrollDispatcher, CdkScrollable } from '@angular/cdk/scrolling';
 
@@ -292,9 +292,24 @@ export class ProductListPaginated implements OnInit, OnDestroy {
   }
 
   navigateToProducts() {
-   this.creating = false;
+    this.creating = false;
     this.editing = {};
     //this.detailForm.reset();
     this.load();
   }
-}
+
+  totalPriceSell(product1: ProductWithCategoryDto): number {
+    const taxRate = product1.taxRate ?? 0;
+    return product1.pricesell * (1 + taxRate);
+  }
+
+  getRawProfit(product: ProductWithCategoryDto): number {
+    const profit = product.pricesell - product.pricebuy;
+    return (profit / product.pricesell);
+  }
+
+  getMargin(product: ProductWithCategoryDto): number {
+    const profit = product.pricesell - product.pricebuy;
+    return (profit / product.pricebuy);
+  }
+} 

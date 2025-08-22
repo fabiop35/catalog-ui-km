@@ -87,7 +87,8 @@ export class ProductPanel {
       pricebuy: 4.50,
       currency: 'USD',
       categoryId: 'c4d5e6f7-a8b9-c0d1-e2f3-a4b5c6d7e8f9',
-      taxcatId: '04928060-63b7-4a0d-9b0d-b8d2d2c3e1e2'
+      taxcatId: '04928060-63b7-4a0d-9b0d-b8d2d2c3e1e2',
+      taxName: 'IVA 0'
     }).subscribe(() => this.load());
   }
 

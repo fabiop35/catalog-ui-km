@@ -80,8 +80,14 @@
             <mat-chip color="primary">{{ product.categoryName }}</mat-chip>
           </mat-chip-set>
           <div class="price">
-            <span class="sell">{{ product.pricesell | currency:'COP' }}</span>
-            <span class="buy">{{ product.pricebuy | currency:'COP' }}</span>
+            <span class="sell">{{ totalPriceSell(product) | currency:'$ ' }}</span>
+            <span class="buy">{{ product.pricesell | currency:'$ ' }}</span>
+          </div><br>
+          <div class="rawProfit">
+            <span class="sell">Beneficio Bruto: {{ getRawProfit(product)  | percent:'1.2-2'}}</span>
+          </div>
+          <div class="margin">
+            <span class="sell">Margen: {{ getMargin(product)  | percent:'1.2-2'}}</span>
           </div>
         </mat-card-content>
         <mat-card-actions align="end">
