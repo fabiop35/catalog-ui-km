@@ -8,8 +8,19 @@
 
 <mat-form-field appearance="fill" class="search-field">
   <mat-label>Buscar producto</mat-label>
-  <input matInput [formControl]="searchCtrl" [matAutocomplete]="auto" placeholder="Type to filter…">
+  <input #searchInput matInput [formControl]="searchCtrl" [matAutocomplete]="auto" placeholder="Type to filter…">
   <mat-icon matSuffix>search</mat-icon>
+
+  <!-- ✅ Clear button: Only show when there's input -->
+  <button matSuffix
+          mat-icon-button
+          type="button"
+          aria-label="Limpiar búsqueda"
+          *ngIf="searchCtrl.value"
+          (click)="clearSearch()">
+    <mat-icon color="disabled">close</mat-icon>
+  </button>
+  
   <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onSelect($event.option.value)">
     <mat-option *ngFor="let p of filteredProducts$ | async" [value]="p">
       {{ p.name }} – ({{ p.pricesell | currency }})
@@ -25,89 +36,101 @@
 
 
 
-<!-- Single product detail -->
-<mat-card *ngIf="singleProduct" class="detail-card">
-  <mat-card-title>{{ singleProduct.name }}</mat-card-title>
-  <mat-card-content>
-    <form [formGroup]="detailForm" (ngSubmit)="saveDetail()">
-      <mat-form-field appearance="fill" class="full-width">
-        <mat-label>Nombre</mat-label>
-        <input matInput formControlName="name" required>
-      </mat-form-field>
-      <!-- <mat-form-field appearance="fill" class="full-width">
-        <mat-label>Display</mat-label>
-        <input matInput formControlName="display">
-      </mat-form-field> -->
-      <mat-form-field appearance="fill" class="full-width">
-        <mat-label>Precio de venta</mat-label>
-        <input matInput formControlName="pricesell" type="number" required>
-      </mat-form-field>
-      <mat-form-field appearance="fill" class="full-width">
-        <mat-label>Precio de compra</mat-label>
-        <input matInput formControlName="pricebuy" type="number" required>
-      </mat-form-field>
-      <mat-form-field appearance="fill" class="full-width">
-        <mat-label>Categoria</mat-label>
-        <mat-select formControlName="categoryId" required>
-          <mat-option *ngFor="let c of categories" [value]="c.id">{{ c.name }}</mat-option>
-        </mat-select>
-      </mat-form-field>
-      <mat-form-field appearance="fill" class="full-width">
-        <mat-label>Categoría del Impuesto</mat-label>
-        <mat-select formControlName="taxcatId" required>
-          <mat-option *ngFor="let tc of taxCategories" [value]="tc.id">{{ tc.name }}</mat-option>
-        </mat-select>
-      </mat-form-field>
-    </form>
-  </mat-card-content>
-  <mat-card-actions align="end">
-    <button mat-button (click)="clearSelection()">Cancelar</button>
-    <button mat-raised-button color="primary" (click)="saveDetail()">Actualizar</button>
-  </mat-card-actions>
-</mat-card>
-
-<!-- Product Grid -->
+<!-- Show search results OR full product list -->
 <div class="grid-container">
   <div class="grid">
-    <ng-container *ngFor="let product of products; trackBy: trackById">
-      <mat-card [class.updated]="updatedId === product.id" *ngIf="!editing[product.id!]" class="product-card">
-        <mat-card-header>
-          <mat-card-title>{{ product.name }}</mat-card-title>
-          <mat-card-subtitle>{{ product.reference }}</mat-card-subtitle>
-        </mat-card-header>
-        <mat-card-content>
-          <mat-chip-set>
-            <mat-chip color="primary">{{ product.categoryName }}</mat-chip>
-          </mat-chip-set>
-          <div class="price">
-            <span class="sell">{{ totalPriceSell(product) | currency:'$ ' }}</span>
-            <span class="buy">{{ product.pricesell | currency:'$ ' }}</span>
-          </div><br>
-          <div class="rawProfit">
-            <span class="sell">Beneficio Bruto: {{ getRawProfit(product)  | percent:'1.2-2'}}</span>
-          </div>
-          <div class="margin">
-            <span class="sell">Margen: {{ getMargin(product)  | percent:'1.2-2'}}</span>
-          </div>
-        </mat-card-content>
-        <mat-card-actions align="end">
-          <button mat-icon-button (click)="openEdit(product)" matTooltip="Edit">
-            <mat-icon>edit</mat-icon>
-          </button>
-        </mat-card-actions>
-      </mat-card>
-      <app-inline-product-edit-modal *ngIf="editing[product.id!]"
-        (saved)="onProductUpdated(product)"></app-inline-product-edit-modal>
+
+    <!-- Render search results if any -->
+    <ng-container *ngIf="searchResults as results; else productList">
+      <ng-container *ngFor="let product of results; trackBy: trackById">
+        <mat-card 
+           [class.updated]="updatedId === product.id"
+           [class.highlighted]="highlightedProductId === product.id"
+           class="product-card">
+          <mat-card-header>
+            <mat-card-title>{{ product.name }}</mat-card-title>
+            <mat-card-subtitle>{{ product.reference }}</mat-card-subtitle>
+          </mat-card-header>
+          <mat-card-content>
+            <mat-chip-set>
+              <mat-chip color="primary">{{ product.categoryName }}</mat-chip>
+            </mat-chip-set>
+            <div class="price">
+              <span class="sell">{{ totalPriceSell(product) | currency:'$ ' }}</span>
+              <span class="buy">{{ product.pricesell | currency:'$ ' }}</span>
+            </div><br>
+            <div class="rawProfit">
+              <span class="sell">Beneficio Bruto: {{ getRawProfit(product) | percent:'1.2-2' }}</span>
+            </div>
+            <div class="margin">
+              <span class="sell">Margen: {{ getMargin(product) | percent:'1.2-2' }}</span>
+            </div>
+          </mat-card-content>
+          <mat-card-actions align="end">
+            <button mat-icon-button (click)="openEdit(product)" matTooltip="Edit">
+              <mat-icon>edit</mat-icon>
+            </button>
+          </mat-card-actions>
+        </mat-card>
+      </ng-container>
+
+      <!-- No results -->
+      <div *ngIf="results.length === 0" class="no-results">
+        No se encontraron productos.
+      </div>
     </ng-container>
 
-    <div *ngIf="hasMore && !loading" class="load-more-container">
-      <button mat-stroked-button (click)="load()" [disabled]="loading">
-        {{ loading ? 'Cargando...' : 'Cargar más productos' }}
-      </button>
-    </div>
+    <!-- Full product list (shown when no search) -->
+    <ng-template #productList>
+      <ng-container *ngFor="let product of products; trackBy: trackById">
+        <mat-card 
+           [class.updated]="updatedId === product.id" *ngIf="!editing[product.id!]" 
+           [class.highlighted]="highlightedProductId === product.id"
+           class="product-card">
+          <mat-card-header>
+            <mat-card-title>{{ product.name }}</mat-card-title>
+            <mat-card-subtitle>{{ product.reference }}</mat-card-subtitle>
+          </mat-card-header>
+          <mat-card-content>
+            <mat-chip-set>
+              <mat-chip color="primary">{{ product.categoryName }}</mat-chip>
+            </mat-chip-set>
+            <div class="price">
+              <span class="sell">{{ totalPriceSell(product) | currency:'$ ' }}</span>
+              <span class="buy">{{ product.pricesell | currency:'$ ' }}</span>
+            </div><br>
+            <div class="rawProfit">
+              <span class="sell">Beneficio Bruto: {{ getRawProfit(product) | percent:'1.2-2' }}</span>
+            </div>
+            <div class="margin">
+              <span class="sell">Margen: {{ getMargin(product) | percent:'1.2-2' }}</span>
+            </div>
+          </mat-card-content>
+          <mat-card-actions align="end">
+            <button mat-icon-button (click)="openEdit(product)" matTooltip="Edit">
+              <mat-icon>edit</mat-icon>
+            </button>
+          </mat-card-actions>
+        </mat-card>
+        <app-inline-product-edit-modal *ngIf="editing[product.id!]"
+          (saved)="onProductUpdated(product)"></app-inline-product-edit-modal>
+      </ng-container>
 
-    <div *ngIf="!hasMore && products.length > 0" class="end-message">
-      🎉 Has cargado todos los productos.
-    </div>
+      <!-- Load More / End Message -->
+      <div *ngIf="hasMore && !loading" class="load-more-container">
+        <button mat-stroked-button (click)="load()" [disabled]="loading">
+          {{ loading ? 'Cargando...' : 'Cargar más productos' }}
+        </button>
+      </div>
+
+      <div *ngIf="!hasMore && products.length > 0" class="end-message">
+        🎉 Has cargado todos los productos.
+      </div>
+    </ng-template>
   </div>
+</div>
+<div *ngIf="searchResults" class="back-button">
+  <button mat-button (click)="clearSelection()">
+    <mat-icon>arrow_back</mat-icon> Volver a todos los productos
+  </button>
 </div>

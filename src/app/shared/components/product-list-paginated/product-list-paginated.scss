@@ -88,9 +88,41 @@ mat-toolbar {
   .toolbar-title {
     cursor: pointer;
     transition: color 0.2s ease;
-    
+
     &:hover {
-      color: #bbdefb; /* Light blue on hover */
+      color: #bbdefb;
+      /* Light blue on hover */
     }
+  }
+}
+
+.no-results {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 2rem;
+  color: #777;
+  font-style: italic;
+}
+
+.product-card.highlighted {
+  border: 2px solid #0d47a1; /* Dark blue border */
+  box-shadow: 0 4px 12px rgba(13, 71, 161, 0.25);
+  transform: scale(1.02);
+  position: relative;
+
+  &::before {
+    content: '🔍';
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    font-size: 1rem;
+    background: #0d47a1;
+    color: white;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 }

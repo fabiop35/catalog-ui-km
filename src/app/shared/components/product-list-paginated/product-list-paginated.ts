@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, OnInit, OnDestroy, Input } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, OnDestroy, Input, ViewChild, ElementRef } from '@angular/core';
 import { Observable, of, map, startWith, debounceTime, distinctUntilChanged, switchMap } from 'rxjs';
 import { ScrollDispatcher, CdkScrollable } from '@angular/cdk/scrolling';
 
@@ -65,6 +65,7 @@ export class ProductListPaginated implements OnInit, OnDestroy {
   // Search
   idInput = '';
   searchCtrl = new FormControl('');
+  searchResults: ProductWithCategoryDto[] | null = null; // ← Holds search results
   singleProduct?: ProductWithCategoryDto;
   filteredProducts$!: Observable<ProductWithCategoryDto[]>;
   detailForm!: FormGroup;
@@ -74,6 +75,8 @@ export class ProductListPaginated implements OnInit, OnDestroy {
   taxCategories: TaxCategory[] = [];
 
   private scrollSubscription: any;
+  highlightedProductId: string | null = null;
+  @ViewChild('searchInput') searchInput!: ElementRef;
 
   constructor(
     private svc: CatalogService,
@@ -84,17 +87,31 @@ export class ProductListPaginated implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit() {
-    this.load();
-
+    // ✅ Initialize search
     this.filteredProducts$ = this.searchCtrl.valueChanges.pipe(
+      startWith(''),
       debounceTime(300),
       distinctUntilChanged(),
-      switchMap(term => this.svc.searchProducts(term || ''))
+      switchMap(term => {
+        if (!term) {
+          this.searchResults = null;
+          return of([]);
+        }
+        return this.svc.searchProducts(term).pipe(
+          map(products => {
+            this.searchResults = products;
+            return products;
+          })
+        );
+      })
     );
 
-    // Auto-load on scroll
+    // ✅ Load first page of products immediately
+    this.load();
+
+    // ✅ Keep scroll logic for "infinite scroll"
     this.scrollSubscription = this.scroll.scrolled().subscribe(() => {
-      if (this.loading || !this.hasMore) return;
+      if (this.loading || !this.hasMore || this.searchResults) return;
 
       const el = document.documentElement;
       const offset = el.scrollHeight - el.scrollTop - el.clientHeight;
@@ -179,10 +196,18 @@ export class ProductListPaginated implements OnInit, OnDestroy {
   }
 
   onSelect(product: ProductWithCategoryDto) {
-    this.svc.listCategories().subscribe(c => this.categories = c);
-    this.svc.listTaxCategories().subscribe(tc => this.taxCategories = tc);
+    this.searchCtrl.setValue(product.name);
+    this.searchResults = [product];
+    this.highlightedProductId = product.id ?? null;
 
-    this.singleProduct = product;
+    if (this.categories.length === 0) {
+      this.svc.listCategories().subscribe(c => this.categories = c);
+    }
+    if (this.taxCategories.length === 0) {
+      this.svc.listTaxCategories().subscribe(tc => this.taxCategories = tc);
+    }
+
+    /*this.singleProduct = product;
     this.detailForm = new FormGroup({
       name: new FormControl(product.name, Validators.required),
       //display: new FormControl(product.display),
@@ -190,13 +215,15 @@ export class ProductListPaginated implements OnInit, OnDestroy {
       pricebuy: new FormControl(product.pricebuy, Validators.required),
       categoryId: new FormControl(product.categoryId, Validators.required),
       taxcatId: new FormControl(product.taxcatId, Validators.required)
-    });
-    this.searchCtrl.setValue('');
+    });*/
+
+
   }
 
   clearSelection() {
-    this.singleProduct = undefined;
     this.searchCtrl.setValue('');
+    this.searchResults = null;
+    this.cdr.detectChanges();
   }
 
   openCreateDialog() {
@@ -249,31 +276,18 @@ export class ProductListPaginated implements OnInit, OnDestroy {
   }
 
   handleScannedCode(code: string) {
-    this.singleProduct = undefined;
-    this.searchCtrl.setValue('');
+    this.searchCtrl.setValue(code); // Triggers search via filteredProducts$
 
     this.svc.searchProductsByCode(code).subscribe({
       next: (products) => {
-        if (products && products.length > 0) {
-          const product = products[0];
-          this.svc.listCategories().subscribe(c => this.categories = c);
-          this.svc.listTaxCategories().subscribe(tc => this.taxCategories = tc);
-
-          this.singleProduct = product;
-          this.detailForm = new FormGroup({
-            name: new FormControl(product.name, Validators.required),
-            //display: new FormControl(product.display),
-            pricesell: new FormControl(product.pricesell, Validators.required),
-            pricebuy: new FormControl(product.pricebuy, Validators.required),
-            categoryId: new FormControl(product.categoryId, Validators.required),
-            taxcatId: new FormControl(product.taxcatId, Validators.required)
-          });
-
-          this.snack.open(`✅ Encontrado: ${product.name}`, 'OK', {
+        if (products.length > 0) {
+          this.searchResults = products;
+          this.snack.open(`✅ Encontrado: ${products[0].name}`, 'OK', {
             duration: 2000,
             panelClass: ['success-snackbar']
           });
         } else {
+          this.searchResults = [];
           this.snack.open('❌ Código no encontrado', 'OK', {
             duration: 3000,
             panelClass: ['error-snackbar']
@@ -287,6 +301,7 @@ export class ProductListPaginated implements OnInit, OnDestroy {
           duration: 3000,
           panelClass: ['error-snackbar']
         });
+        this.cdr.detectChanges();
       }
     });
   }
@@ -311,5 +326,18 @@ export class ProductListPaginated implements OnInit, OnDestroy {
   getMargin(product: ProductWithCategoryDto): number {
     const profit = product.pricesell - product.pricebuy;
     return (profit / product.pricebuy);
+  }
+
+  clearSearch() {
+    this.searchCtrl.setValue('');
+    this.searchResults = null;
+    this.highlightedProductId = null;
+
+    //Refocus input
+    setTimeout(() => {
+      this.searchInput?.nativeElement?.focus();
+    }, 0);
+
+    this.cdr.detectChanges();
   }
 } 
