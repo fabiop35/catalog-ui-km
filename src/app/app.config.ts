@@ -7,6 +7,11 @@ import { provideAnimations } from '@angular/platform-browser/animations';
 import { provideMomentDateAdapter } from '@angular/material-moment-adapter';
 import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
 
+import localeEs from '@angular/common/locales/es';
+import { registerLocaleData } from '@angular/common';
+
+registerLocaleData(localeEs, 'es-ES');
+
 export const appConfig: ApplicationConfig = {
   providers: [
     provideHttpClient(),

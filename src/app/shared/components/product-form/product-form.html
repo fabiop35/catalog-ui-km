@@ -10,33 +10,36 @@
 
         <!-- Scrollable Content Area (KEY CHANGE) -->
         <div class="form-content" #formContent>
-            <mat-form-field appearance="outline" class="full-width">
-                <mat-label>Referencia</mat-label>
-                <input matInput formControlName="reference" required>
-            </mat-form-field>
+            <div class="price-grid">
+                <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Código</mat-label>
+                    <input matInput formControlName="code" required>
+                    <button matSuffix mat-icon-button type="button" (click)="openBarcodeScanner()"
+                        aria-label="Scan barcode" class="scan-button">
+                        <mat-icon>qr_code_scanner</mat-icon>
+                    </button>
+                </mat-form-field>
+            </div>
+            <div class="price-grid">
+                <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Referencia</mat-label>
+                    <input matInput formControlName="reference" required>
+                </mat-form-field>
+            </div>
+            <div class="price-grid">
+                <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Tipo de Código</mat-label>
+                    <mat-select formControlName="codetype" required>
+                        <mat-option value="EAN-13">EAN-13</mat-option>
+                    </mat-select>
+                </mat-form-field>
 
-            <mat-form-field appearance="outline" class="full-width">
-                <mat-label>Código</mat-label>
-                <input matInput formControlName="code" required>
-                <button matSuffix mat-icon-button type="button" (click)="openBarcodeScanner()" aria-label="Scan barcode"
-                    class="scan-button">
-                    <mat-icon>qr_code_scanner</mat-icon>
-                </button>
-            </mat-form-field>
-
-            <mat-form-field appearance="outline" class="full-width">
-                <mat-label>Tipo de Código</mat-label>
-                <mat-select formControlName="codetype" required>
-                    <mat-option value="EAN-13">EAN-13</mat-option>
-                </mat-select>
-            </mat-form-field>
-
-            <mat-form-field appearance="outline" class="full-width">
-                <mat-label>Nombre</mat-label>
-                <input matInput formControlName="name" required>
-            </mat-form-field>
-
-           <!-- <mat-form-field appearance="outline" class="full-width">
+                <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Nombre</mat-label>
+                    <input matInput formControlName="name" required>
+                </mat-form-field>
+            </div>
+            <!-- <mat-form-field appearance="outline" class="full-width">
                 <mat-label>Display</mat-label>
                 <input matInput formControlName="display">
             </mat-form-field> -->
@@ -53,25 +56,47 @@
                 </mat-form-field>
             </div>
 
+            <div class="price-grid">
+                <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Tipo del Impuesto</mat-label>
+                    <mat-select formControlName="taxcatId" required>
+                        <mat-option *ngFor="let tc of taxCategories" [value]="tc.id">
+                            {{ tc.name }}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Categoría</mat-label>
+                    <mat-select formControlName="categoryId" required>
+                        <mat-option *ngFor="let c of categories" [value]="c.id">
+                            {{ c.name }}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
             <mat-form-field appearance="outline" class="full-width">
-                <mat-label>Categoría</mat-label>
-                <mat-select formControlName="categoryId" required>
-                    <mat-option *ngFor="let c of categories" [value]="c.id">
-                        {{ c.name }}
-                    </mat-option>
-                </mat-select>
+                <mat-label>*PVP</mat-label>
+                <input matInput [value]="rrp | number:'1.2-2'" disabled>
             </mat-form-field>
 
-            <mat-form-field appearance="outline" class="full-width">
-                <mat-label>Tipo del Impuesto</mat-label>
-                <mat-select formControlName="taxcatId" required>
-                    <mat-option *ngFor="let tc of taxCategories" [value]="tc.id">
-                        {{ tc.name }}
-                    </mat-option>
-                </mat-select>
-            </mat-form-field>
+            <div class="price-grid">
+                <!-- Markup (%) -->
+                <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Margen</mat-label>
+                    <input matInput [value]="markup | number:'1.2-2'"
+                        [style.color]="margin >= 50 ? 'green' : margin >= 20 ? 'orange' : 'red'" disabled>
+                    <span matSuffix>%</span>
+                </mat-form-field>
+
+                <!-- Margin (%) -->
+                <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Beneficio Bruto</mat-label>
+                    <input matInput [value]="margin | number:'1.2-2'"
+                        [style.color]="margin >= 50 ? 'green' : margin >= 20 ? 'orange' : 'red'" disabled>
+                    <span matSuffix>%</span>
+                </mat-form-field>
+            </div>
         </div>
-
         <!-- Sticky Action Bar (Now properly positioned) -->
         <div class="action-bar">
             <button mat-stroked-button class="cancel-btn" (click)="onCancel()">

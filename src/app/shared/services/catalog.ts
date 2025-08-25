@@ -16,6 +16,7 @@ export class CatalogService {
 
   //private readonly base = 'http://192.168.10.3:8081/api/v1';
   private readonly base = 'https://192.168.10.3:8443/api/v1';
+  //private readonly base = 'https://localhost:8443/api/v1';
 
   constructor(private http: HttpClient) { }
 
@@ -137,6 +138,11 @@ export class CatalogService {
     return this.http.get<ProductWithCategoryDto[]>(`${this.base}/products/searchByCode`, {
       params: { code }
     });
+  }
+
+  // Add this method to get the next reference
+  getNextProductReference(): Observable<{ reference: string }> {
+    return this.http.get<{ reference: string }>(`${this.base}/products/getNextProductReference`);
   }
 
 }

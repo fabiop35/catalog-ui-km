@@ -17,6 +17,7 @@ import { Dialog } from '../dialog/dialog';
 import { Category } from '../../models/category.model';
 import { TaxCategory } from '../../models/tax-category.model';
 import { BarcodeScanner } from '../barcode-scanner/barcode-scanner';
+import { Tax } from '../../models/tax.model';
 
 
 @Component({
@@ -40,6 +41,8 @@ export class ProductForm implements OnInit, AfterViewInit, OnDestroy {
 
   categories: Category[] = [];
   taxCategories: TaxCategory[] = [];
+  taxes: Tax[] = [];
+
   @Input() product?: ProductWithCategoryDto;
   @Output() saved = new EventEmitter<ProductWithCategoryDto>();
 
@@ -62,6 +65,10 @@ export class ProductForm implements OnInit, AfterViewInit, OnDestroy {
     taxcatId: new FormControl('')
   });
 
+  rrp: number = 0;
+  margin: number = 0;
+  markup: number = 0;
+
   constructor(
     private svc: CatalogService,
     private snack: MatSnackBar,
@@ -82,6 +89,45 @@ export class ProductForm implements OnInit, AfterViewInit, OnDestroy {
       if (!this.product) this.form.patchValue({ taxcatId: list[0]?.id });
     });
 
+    this.svc.listTaxes().subscribe(list => {
+      this.taxes = list;
+    });
+
+
+    // Get the next reference when form is initialized (only for new products)
+    if (!this.product) {
+      this.getNextProductReference();
+    }
+
+    // 🔔 Watch for changes in pricesell and taxcatId
+    this.form.get('pricesell')?.valueChanges.subscribe(() => this.calculateRrp());
+    this.form.get('taxcatId')?.valueChanges.subscribe(() => this.calculateRrp());
+
+    // Initial calculation (in case defaults are set)
+    this.calculateRrp();
+
+
+    // 🔔 Watch for changes in pricebuy and pricesell for margin
+    const priceSellControl = this.form.get('pricesell');
+    const priceBuyControl = this.form.get('pricebuy');
+    // Subscribe to changes
+    priceSellControl?.valueChanges.subscribe(() => this.calculateMetrics());
+    priceBuyControl?.valueChanges.subscribe(() => this.calculateMetrics());
+    // Initial calculation
+    this.calculateMetrics();
+
+  }
+
+  private getNextProductReference() {
+    this.svc.getNextProductReference().subscribe({
+      next: (response: { reference: string }) => {
+        this.form.patchValue({ reference: response.reference }); // ✅ Extract the string
+      },
+      error: (error) => {
+        console.error('Error getting next reference:', error);
+        this.form.patchValue({ reference: 'REF-0001' });
+      }
+    });
   }
 
   onSubmit() {
@@ -233,6 +279,38 @@ export class ProductForm implements OnInit, AfterViewInit, OnDestroy {
       this.formContent.nativeElement.scrollTop -= this.fieldOffset;
       this.fieldOffset = 0;
     }
+  }
+
+  private calculateRrp() {
+    const priceSell = this.form.get('pricesell')?.value || 0;
+    const taxCatId = this.form.get('taxcatId')?.value;
+
+    const tax = this.taxes.find(tc => tc.taxcatId === taxCatId);
+    const taxRate = tax?.rate || 0;
+
+    this.rrp = priceSell * (1 + taxRate);
+  }
+
+  private calculateMetrics() {
+    const priceSell = this.form.get('pricesell')?.value || 0;
+    const priceBuy = this.form.get('pricebuy')?.value || 0;
+
+    // 🔹 Calculate Markup: based on cost (pricebuy)
+    if (priceBuy > 0) {
+      this.markup = ((priceSell - priceBuy) / priceBuy) * 100;
+    } else {
+      this.markup = 0;
+    }
+
+    // 🔹 Calculate Margin: based on selling price (pricesell)
+    if (priceSell > 0) {
+      this.margin = ((priceSell - priceBuy) / priceSell) * 100;
+    } else {
+      this.margin = 0;
+    }
+
+    // 🔁 Also recalculate RRP
+    this.calculateRrp();
   }
 }
 
