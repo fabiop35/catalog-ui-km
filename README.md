@@ -117,5 +117,8 @@ $ ng g c shared/components/products/inline-product-edit-modal --standalone --ski
 ng add @angular/cdk
 
 ng g c shared/components/suppliers/supplier-search-dialog
+ng g c shared/components/products/product-detail-modal --standalone --skip-tests --style=scss
 
-ng g c shared/components/products/product-detail-modal --standalone --skip-tests --style=scss 
+npm install angularx-qrcode
+npm install jspdf html2canvas
+npm install jspdf-autotable

@@ -100,19 +100,30 @@ mat-icon {
 }
 
 .high-margin {
-  background-color: #e3f2fd;
-  color: #1565c0;
-  border: 1px solid #90caf9;
+    background-color: #e3f2fd;
+    color: #1565c0;
+    border: 1px solid #90caf9;
 }
 
 .medium-margin {
-  background-color: #fff3e0;
-  color: #ef6c00;
-  border: 1px solid #ffb74d;
+    background-color: #fff3e0;
+    color: #ef6c00;
+    border: 1px solid #ffb74d;
 }
 
 .low-margin {
-  background-color: #ffebee;
-  color: #c62828;
-  border: 1px solid #ef9a9a;
+    background-color: #ffebee;
+    color: #c62828;
+    border: 1px solid #ef9a9a;
+}
+
+.qr-container {
+    text-align: center;
+    padding: 16px 0;
+}
+
+.qr-caption {
+    font-size: 0.8rem;
+    color: #666;
+    margin-top: 8px;
 }

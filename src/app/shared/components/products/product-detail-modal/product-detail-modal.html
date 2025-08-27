@@ -17,6 +17,17 @@
         </div>  -->
 
         <!-- Basic Info -->
+        <mat-divider class="divider"></mat-divider>
+
+        <h4><mat-icon color="primary">qr_code</mat-icon> Código QR</h4>
+        <div class="qr-container">
+            <qrcode 
+               [qrdata]="getQrData()" 
+               size="128" 
+               level="M" 
+               style="display: block; margin: 0 auto;"></qrcode>
+            <p class="qr-caption">Escanee para ver este producto</p>
+        </div>
         <div class="info-grid">
             <div>
                 <strong>Código:</strong> {{ data.product.code }}
@@ -66,9 +77,19 @@
 
     <!-- Actions -->
     <mat-card-actions align="end" class="actions">
-        <button mat-stroked-button (click)="print()">
-            <mat-icon>print</mat-icon> Imprimir
+        <button mat-stroked-button (click)="exportToPdf()">
+            <mat-icon>picture_as_pdf</mat-icon> PDF
         </button>
+        <button mat-stroked-button color="accent" (click)="shareViaWhatsApp()">
+            <mat-icon style="color: #25D366;">forum</mat-icon> Compartir
+        </button>
+        <button mat-icon-button (click)="downloadQrCode()" matTooltip="Descargar QR">
+            <mat-icon>download</mat-icon>
+        </button>
+        <!-- <button mat-stroked-button (click)="print()">
+            <mat-icon>print</mat-icon> Imprimir
+        </button> -->
         <button mat-flat-button color="primary" (click)="close()">Cerrar</button>
     </mat-card-actions>
+
 </mat-card>

@@ -20,6 +20,7 @@ import { ProductForm } from './shared/components/product-form/product-form';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { RouterOutlet } from '@angular/router';
+import { QRCodeComponent } from 'angularx-qrcode';
 
 //type ActiveTab = 'suppliers' | 'products' | 'categories' | 'taxes';
 
@@ -41,7 +42,8 @@ import { RouterOutlet } from '@angular/router';
     MatSnackBarModule,
     ProductForm,
     MatDialogModule,
-    FormsModule
+    FormsModule,
+    QRCodeComponent
   ],
   templateUrl: './app.html'
 })
