@@ -1,0 +1,74 @@
+<mat-card class="detail-card" #printSection>
+    <!-- Header -->
+    <mat-card-header class="header">
+        <div>
+            <mat-card-title class="title">{{ data.product.name }}</mat-card-title>
+            <mat-card-subtitle>{{ data.product.reference }}</mat-card-subtitle>
+        </div>
+        <!--<img mat-card-avatar [src]="getImageUrl()" [alt]="data.product.name" class="avatar">-->
+    </mat-card-header>
+
+    <!-- Content -->
+    <mat-card-content>
+
+        <!-- Image Full
+        <div class="image-container" *ngIf="data.product.image">
+          <img [src]="getImageUrl()" alt="Product Image" class="full-image">
+        </div>  -->
+
+        <!-- Basic Info -->
+        <div class="info-grid">
+            <div>
+                <strong>Código:</strong> {{ data.product.code }}
+                <button mat-icon-button (click)="copyToClipboard(data.product.code)" matTooltip="Copiar código">
+                    <mat-icon>content_copy</mat-icon>
+                </button>
+            </div>
+            <div>
+                <strong>Tipo:</strong> {{ data.product.codetype }}
+            </div>
+            <div><strong>Categoría:</strong> {{ data.product.categoryName }}</div>
+            <div><strong>Impuesto:</strong> {{ data.product.taxName }} ({{ data.product.taxRate | percent:'1.0-0' }})
+            </div>
+            <div><strong>Proveedor:</strong> {{ data.product.supplierName || 'No asignado' }}</div>
+        </div>
+
+        <mat-divider class="divider"></mat-divider>
+
+        <!-- Pricing -->
+        <h4><mat-icon color="primary">sell</mat-icon> Precios</h4>
+        <div class="price-grid">
+            <div><strong>Precio de Compra:</strong> {{ data.product.pricebuy | currency:'$ ' }}</div>
+            <div><strong>Precio de Venta:</strong> {{ data.product.pricesell | currency:'$ ' }}</div>
+            <div><strong>*PVP (con IVA):</strong> {{ rrp | currency:'$ ' }}</div>
+        </div>
+
+        <mat-divider class="divider"></mat-divider>
+
+        <!-- Profitability -->
+        <h4><mat-icon color="accent">trending_up</mat-icon> Beneficios</h4>
+        <div class="profit-grid">
+            <div class="profit-item" [ngClass]="getMarkupClass(markup)">
+                <span>
+                    <strong>Margen:</strong> {{ markup | percent:'1.2-2' }}
+                    <mat-icon>{{ getTrendIcon(markup) }}</mat-icon>
+                </span>
+                <mat-icon matTooltip="{{ getProfitTooltip() }}" class="info-icon">info</mat-icon>
+            </div>
+            <div class="profit-item" [ngClass]="getMarginClass(margin)">
+                <span>
+                    <strong>Beneficio Bruto:</strong> {{ margin | percent:'1.2-2' }}
+                    <mat-icon>{{ getTrendIcon(margin) }}</mat-icon>
+                </span>
+            </div>
+        </div>
+    </mat-card-content>
+
+    <!-- Actions -->
+    <mat-card-actions align="end" class="actions">
+        <button mat-stroked-button (click)="print()">
+            <mat-icon>print</mat-icon> Imprimir
+        </button>
+        <button mat-flat-button color="primary" (click)="close()">Cerrar</button>
+    </mat-card-actions>
+</mat-card>

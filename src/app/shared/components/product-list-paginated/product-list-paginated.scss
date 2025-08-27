@@ -140,3 +140,77 @@ mat-toolbar {
 .low-margin {
   color: red;
 }
+
+.margin {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 0.95rem;
+}
+
+.sell {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-weight: 500;
+}
+
+.high-margin {
+  color: #1a73e8; // Blue-green color:  //#1de81a; 
+  background-color: #e6fde3; //#1a73e8;
+  border: 1px solid #bbdefb; //
+}
+
+.medium-margin {
+  color: #ed6c02; // Orange
+  background-color: #fff3e0;
+  border: 1px solid #ffb74d;
+}
+
+.low-margin {
+  color: #c62828; // Red
+  background-color: #ffebee;
+  border: 1px solid #ef9a9a;
+}
+
+.trend-icon {
+  font-size: 16px !important;
+  width: 16px;
+  height: 16px;
+}
+
+.sell {
+  transition: all 0.3s ease;
+  transform: scale(1);
+
+  &.high-margin:hover,
+  &.medium-margin:hover {
+    transform: scale(1.05);
+  }
+}
+
+.detail-dialog {
+  .mat-mdc-dialog-container {
+    backdrop-filter: blur(4px);
+  }
+}
+
+.high-margin {
+  background-color: #e3f2fd;
+  color: #1565c0;
+  border: 1px solid #90caf9;
+}
+
+.medium-margin {
+  background-color: #fff3e0;
+  color: #ef6c00;
+  border: 1px solid #ffb74d;
+}
+
+.low-margin {
+  background-color: #ffebee;
+  color: #c62828;
+  border: 1px solid #ef9a9a;
+}

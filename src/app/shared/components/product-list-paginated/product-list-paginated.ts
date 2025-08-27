@@ -15,6 +15,8 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatDialog } from '@angular/material/dialog';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { CatalogService } from '../../services/catalog';
 import { InlineProductEdit } from '../inline-product-edit/inline-product-edit';
@@ -24,7 +26,9 @@ import { Category } from '../../models/category.model';
 import { TaxCategory } from '../../models/tax-category.model';
 import { BarcodeScanner } from "../barcode-scanner/barcode-scanner";
 import { InlineProductEditModal } from '../products/inline-product-edit-modal/inline-product-edit-modal';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { ProductDetailModal } from '../products/product-detail-modal/product-detail-modal';
+
+
 
 @Component({
   selector: 'app-product-list-paginated',
@@ -44,7 +48,9 @@ import { MatSnackBar } from '@angular/material/snack-bar';
     MatButtonModule,
     MatSelectModule,
     BarcodeScanner,
-    InlineProductEditModal
+    InlineProductEditModal,
+    MatTooltipModule,
+    ProductDetailModal
   ],
   templateUrl: './product-list-paginated.html',
   styleUrls: ['./product-list-paginated.scss']
@@ -323,6 +329,7 @@ export class ProductListPaginated implements OnInit, OnDestroy {
     return (profit / product.pricesell);
   }
 
+  // Calculate margin as fraction
   getMargin(product: ProductWithCategoryDto): number {
     const profit = product.pricesell - product.pricebuy;
     return (profit / product.pricebuy);
@@ -351,6 +358,31 @@ export class ProductListPaginated implements OnInit, OnDestroy {
     if (margin >= 0.5) return 'high-margin';
     if (margin >= 0.2) return 'medium-margin';
     return 'low-margin';
+  }
+
+
+  // Return trend icon
+  getTrendIcon(margin: number): string {
+    if (margin >= 0.5) return 'trending_up';   // High margin → good
+    if (margin >= 0.2) return 'trending_flat'; // Medium → neutral
+    return 'trending_down';                    // Low → warning
+  }
+
+  // Tooltip with calculation
+  getMarginTooltip(product: ProductWithCategoryDto): string {
+    const sell = product.pricesell;
+    const buy = product.pricebuy;
+    const margin = this.getMargin(product);
+    return `Margen = ((${sell} - ${buy}) / ${sell}) × 100 = ${Math.round(margin * 100)}%`;
+  }
+
+  openDetail(product: ProductWithCategoryDto) {
+    this.dialog.open(ProductDetailModal, {
+      width: '500px',
+      maxHeight: '90vh',
+      data: { product },
+      panelClass: 'detail-dialog'
+    });
   }
 
 } 

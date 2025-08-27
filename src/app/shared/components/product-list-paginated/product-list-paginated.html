@@ -94,19 +94,25 @@
               <span class="buy">{{ product.pricesell | currency:'$ ' }}</span>
             </div><br>
             <div class="rawProfit">
-              <span class="sell" [ngClass]="getMarkupClass(getRawProfit(product))">
+              <span class="sell" [ngClass]="getMarkupClass(getRawProfit(product))" matTooltipPosition="above">
                 Beneficio Bruto: {{ getRawProfit(product) | percent:'1.2-2' }}
+                <mat-icon class="trend-icon">{{ getTrendIcon(getRawProfit(product)) }}</mat-icon>
               </span>
             </div>
             <div class="margin">
-              <span class="sell" [ngClass]="getMarginClass(getMargin(product))">
+              <span class="sell" [ngClass]="getMarginClass(getMargin(product))" [matTooltip]="getMarginTooltip(product)"
+                matTooltipPosition="above">
                 Margen: {{ getMargin(product) | percent:'1.2-2' }}
+                <mat-icon class="trend-icon">{{ getTrendIcon(getMargin(product)) }}</mat-icon>
               </span>
             </div>
           </mat-card-content>
           <mat-card-actions align="end">
             <button mat-icon-button (click)="openEdit(product)" matTooltip="Edit">
               <mat-icon>edit</mat-icon>
+            </button>
+            <button mat-icon-button (click)="openDetail(product)" matTooltip="Ver detalles">
+              <mat-icon>visibility</mat-icon>
             </button>
           </mat-card-actions>
         </mat-card>
