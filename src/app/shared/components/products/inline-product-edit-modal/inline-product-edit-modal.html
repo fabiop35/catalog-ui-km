@@ -15,24 +15,29 @@
           <!-- Fields (same as before) -->
           <mat-form-field appearance="outline" class="full-width">
             <mat-label>Referencia</mat-label>
-            <input matInput formControlName="reference" readonly >
+            <input matInput formControlName="reference" readonly>
           </mat-form-field>
 
           <mat-form-field appearance="outline" class="full-width">
             <mat-label>Código</mat-label>
-            <input matInput formControlName="code" readonly >
+            <input matInput formControlName="code" readonly>
           </mat-form-field>
 
           <mat-form-field appearance="outline" class="full-width">
             <mat-label>Tipo de Código</mat-label>
-            <input matInput formControlName="codetype" readonly >
+            <input matInput formControlName="codetype" readonly>
           </mat-form-field>
 
           <mat-form-field appearance="outline" class="full-width">
             <mat-label>Nombre</mat-label>
             <input matInput formControlName="name" required>
           </mat-form-field>
-
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Categoría</mat-label>
+            <mat-select formControlName="categoryId" required>
+              <mat-option *ngFor="let c of categories" [value]="c.id">{{ c.name }}</mat-option>
+            </mat-select>
+          </mat-form-field>
           <!--<mat-form-field appearance="outline" class="full-width">
             <mat-label>Display</mat-label>
             <input matInput formControlName="display">
@@ -40,27 +45,55 @@
 
           <mat-form-field appearance="outline" class="full-width">
             <mat-label>Precio de Venta</mat-label>
-            <input matInput formControlName="pricesell" type="number" inputmode="decimal" required>
+            <input matInput formControlName="pricesell" type="number" inputmode="decimal"
+              placeholder="{{ (form.get('pricesell')?.value || 0) | currency:'COP':'symbol':'1.2-2' }}" required>
           </mat-form-field>
-
           <mat-form-field appearance="outline" class="full-width">
             <mat-label>Precio de Compra</mat-label>
             <input matInput formControlName="pricebuy" type="number" inputmode="decimal" required>
           </mat-form-field>
-
-          <mat-form-field appearance="outline" class="full-width">
-            <mat-label>Categoría</mat-label>
-            <mat-select formControlName="categoryId" required>
-              <mat-option *ngFor="let c of categories" [value]="c.id">{{ c.name }}</mat-option>
-            </mat-select>
-          </mat-form-field>
-
           <mat-form-field appearance="outline" class="full-width">
             <mat-label>Categoría del Impuesto</mat-label>
             <mat-select formControlName="taxcatId" required>
               <mat-option *ngFor="let tc of taxCategories" [value]="tc.id">{{ tc.name }}</mat-option>
             </mat-select>
           </mat-form-field>
+
+          <!-- RRP -->
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>*PVP</mat-label>
+            <input matInput [value]="rrp | currency:'$ ':'symbol':'1.0-0'" disabled>
+          </mat-form-field>
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Margen</mat-label>
+            <input matInput [value]="markup | number:'1.2-2' "
+              [style.color]="markup >= 50 ? 'green' : markup >= 20 ? 'orange' : 'red' "  disabled>
+            <span matSuffix>%</span>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Beneficio Bruto</mat-label>
+            <input matInput [value]="margin | number:'1.2-2'"
+              [style.color]="margin >= 50 ? 'green' : margin >= 20 ? 'orange' : 'red'" disabled>
+            <span matSuffix>%</span>
+          </mat-form-field>
+          <!-- Supplier -->
+          <div class="price-grid">
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Proveedor</mat-label>
+              <input matInput [value]="getSupplierName()" (click)="openSupplierSearch()"
+                placeholder="Seleccionar proveedor..." readonly class="supplier-input">
+              <button matSuffix mat-icon-button type="button" (click)="openSupplierSearch()"
+                aria-label="Buscar proveedor" class="search-btn">
+                <mat-icon>search</mat-icon>
+              </button>
+              <button *ngIf="selectedSupplier" matSuffix mat-icon-button type="button" (click)="clearSupplier($event)"
+                aria-label="Limpiar proveedor" class="clear-btn">
+                <mat-icon>close</mat-icon>
+              </button>
+            </mat-form-field>
+          </div>
+
         </mat-card-content>
       </mat-card>
     </div>
@@ -68,10 +101,8 @@
     <!-- Fixed Action Bar -->
     <div class="action-bar">
       <button mat-button type="button" (click)="cancel()" class="cancel-button">Cancelar</button>
-      <button mat-raised-button color="primary" type="submit" [disabled]="form.invalid" class="save-button">Guardar</button>
+      <button mat-raised-button color="primary" type="submit" [disabled]="form.invalid"
+        class="save-button">Guardar</button>
     </div>
   </form>
 </div>
-
-
-

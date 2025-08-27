@@ -13,4 +13,6 @@ export interface ProductWithCategoryDto {
   //display?: string;    // optional
   taxName?: string;
   taxRate?: number;
+  idSupplier?: string;
+  supplierName?: string;
 }

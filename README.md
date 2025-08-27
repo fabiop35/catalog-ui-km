@@ -115,3 +115,5 @@ $ ng g c shared/components/products/inline-product-edit-modal --standalone --ski
 
 #change from paginated to infinite scroll
 ng add @angular/cdk
+
+ng g c shared/components/suppliers/supplier-search-dialog

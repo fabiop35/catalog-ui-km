@@ -10,4 +10,5 @@ export interface Product {
   categoryId: string;
   taxcatId: string;
   categoryName?: string;
+  idSupplier?: string;
 }

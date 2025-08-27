@@ -18,6 +18,8 @@ import { Category } from '../../models/category.model';
 import { TaxCategory } from '../../models/tax-category.model';
 import { BarcodeScanner } from '../barcode-scanner/barcode-scanner';
 import { Tax } from '../../models/tax.model';
+import { Supplier } from '../../models/supplier.model';
+import { SupplierSearchDialog } from '../suppliers/supplier-search-dialog/supplier-search-dialog';
 
 
 @Component({
@@ -62,12 +64,14 @@ export class ProductForm implements OnInit, AfterViewInit, OnDestroy {
     pricesell: new FormControl(0),
     pricebuy: new FormControl(0),
     categoryId: new FormControl(''),
-    taxcatId: new FormControl('')
+    taxcatId: new FormControl(''),
+    idSupplier: new FormControl('')
   });
 
   rrp: number = 0;
   margin: number = 0;
   markup: number = 0;
+  selectedSupplier: Supplier | null = null;
 
   constructor(
     private svc: CatalogService,
@@ -143,7 +147,8 @@ export class ProductForm implements OnInit, AfterViewInit, OnDestroy {
       pricebuy: this.form.value.pricebuy!,
       currency: 'USD',
       categoryId: this.form.value.categoryId!,
-      taxcatId: this.form.value.taxcatId!
+      taxcatId: this.form.value.taxcatId!,
+      idSupplier: this.form.value.idSupplier || ''
       //display: this.form.value.display || ''
     };
 
@@ -311,6 +316,32 @@ export class ProductForm implements OnInit, AfterViewInit, OnDestroy {
 
     // 🔁 Also recalculate RRP
     this.calculateRrp();
+  }
+
+  getSupplierName(): string {
+    return this.selectedSupplier?.name || '';
+  }
+
+  openSupplierSearch(): void {
+    const dialogRef = this.dialog.open(SupplierSearchDialog, {
+      width: '90vw',
+      maxWidth: '600px',
+      maxHeight: '80vh',
+      data: { selectedId: this.form.get('idSupplier')?.value || null }
+    });
+
+    dialogRef.afterClosed().subscribe((supplier: Supplier | undefined) => {
+      if (supplier) {
+        this.selectedSupplier = supplier;
+        this.form.patchValue({ idSupplier: supplier.id });
+      }
+    });
+  }
+
+  clearSupplier(event: Event) {
+    event.stopPropagation();
+    this.selectedSupplier = null;
+    this.form.patchValue({ idSupplier: '' });
   }
 }
 

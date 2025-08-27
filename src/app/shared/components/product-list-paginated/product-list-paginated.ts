@@ -340,4 +340,17 @@ export class ProductListPaginated implements OnInit, OnDestroy {
 
     this.cdr.detectChanges();
   }
+
+  getMarginClass(margin: number): string {
+    if (margin >= 0.5) return 'high-margin';
+    if (margin >= 0.2) return 'medium-margin';
+    return 'low-margin';
+  }
+
+  getMarkupClass(margin: number): string {
+    if (margin >= 0.5) return 'high-margin';
+    if (margin >= 0.2) return 'medium-margin';
+    return 'low-margin';
+  }
+
 } 

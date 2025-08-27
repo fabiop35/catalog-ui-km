@@ -79,7 +79,7 @@ mat-form-field {
 
 .action-bar .cancel-button {
     color: #331082;
-    background: linear-gradient(135deg, #f0f4f8 0%, #f0f4f8 100%);
+    background: linear-gradient(135deg, #060606 0%, #f0f4f8 100%);
 }
 
 .action-bar .save-button {
@@ -128,4 +128,26 @@ mat-form-field {
     &:active:not(:disabled) {
         background: linear-gradient(135deg, #121955 0%, #1c2769 100%);
     }
+}
+
+.price-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+
+  @media (max-width: 480px) {
+    grid-template-columns: 1fr;
+  }
+}
+.supplier-input {
+  cursor: pointer;
+  background: #f9f9f9;
+}
+
+.search-btn, .clear-btn {
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: #e0e0e0;
+  }
 }

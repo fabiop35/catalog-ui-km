@@ -12,15 +12,11 @@
   <mat-icon matSuffix>search</mat-icon>
 
   <!-- ✅ Clear button: Only show when there's input -->
-  <button matSuffix
-          mat-icon-button
-          type="button"
-          aria-label="Limpiar búsqueda"
-          *ngIf="searchCtrl.value"
-          (click)="clearSearch()">
+  <button matSuffix mat-icon-button type="button" aria-label="Limpiar búsqueda" *ngIf="searchCtrl.value"
+    (click)="clearSearch()">
     <mat-icon color="disabled">close</mat-icon>
   </button>
-  
+
   <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onSelect($event.option.value)">
     <mat-option *ngFor="let p of filteredProducts$ | async" [value]="p">
       {{ p.name }} – ({{ p.pricesell | currency }})
@@ -43,10 +39,8 @@
     <!-- Render search results if any -->
     <ng-container *ngIf="searchResults as results; else productList">
       <ng-container *ngFor="let product of results; trackBy: trackById">
-        <mat-card 
-           [class.updated]="updatedId === product.id"
-           [class.highlighted]="highlightedProductId === product.id"
-           class="product-card">
+        <mat-card [class.updated]="updatedId === product.id" [class.highlighted]="highlightedProductId === product.id"
+          class="product-card">
           <mat-card-header>
             <mat-card-title>{{ product.name }}</mat-card-title>
             <mat-card-subtitle>{{ product.reference }}</mat-card-subtitle>
@@ -60,10 +54,12 @@
               <span class="buy">{{ product.pricesell | currency:'$ ' }}</span>
             </div><br>
             <div class="rawProfit">
-              <span class="sell">Beneficio Bruto: {{ getRawProfit(product) | percent:'1.2-2' }}</span>
+              <span class="sell" [ngClass]="getMarginClass(getRawProfit(product))">Beneficio Bruto: {{
+                getRawProfit(product) | percent:'1.2-2' }}</span>
             </div>
             <div class="margin">
-              <span class="sell">Margen: {{ getMargin(product) | percent:'1.2-2' }}</span>
+              <span class="sell" [ngClass]="getMarginClass(getMargin(product))">Margen: {{ getMargin(product) |
+                percent:'1.2-2' }}</span>
             </div>
           </mat-card-content>
           <mat-card-actions align="end">
@@ -83,10 +79,8 @@
     <!-- Full product list (shown when no search) -->
     <ng-template #productList>
       <ng-container *ngFor="let product of products; trackBy: trackById">
-        <mat-card 
-           [class.updated]="updatedId === product.id" *ngIf="!editing[product.id!]" 
-           [class.highlighted]="highlightedProductId === product.id"
-           class="product-card">
+        <mat-card [class.updated]="updatedId === product.id" *ngIf="!editing[product.id!]"
+          [class.highlighted]="highlightedProductId === product.id" class="product-card">
           <mat-card-header>
             <mat-card-title>{{ product.name }}</mat-card-title>
             <mat-card-subtitle>{{ product.reference }}</mat-card-subtitle>
@@ -100,10 +94,14 @@
               <span class="buy">{{ product.pricesell | currency:'$ ' }}</span>
             </div><br>
             <div class="rawProfit">
-              <span class="sell">Beneficio Bruto: {{ getRawProfit(product) | percent:'1.2-2' }}</span>
+              <span class="sell" [ngClass]="getMarkupClass(getRawProfit(product))">
+                Beneficio Bruto: {{ getRawProfit(product) | percent:'1.2-2' }}
+              </span>
             </div>
             <div class="margin">
-              <span class="sell">Margen: {{ getMargin(product) | percent:'1.2-2' }}</span>
+              <span class="sell" [ngClass]="getMarginClass(getMargin(product))">
+                Margen: {{ getMargin(product) | percent:'1.2-2' }}
+              </span>
             </div>
           </mat-card-content>
           <mat-card-actions align="end">

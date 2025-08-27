@@ -105,7 +105,8 @@ mat-toolbar {
 }
 
 .product-card.highlighted {
-  border: 2px solid #0d47a1; /* Dark blue border */
+  border: 2px solid #0d47a1;
+  /* Dark blue border */
   box-shadow: 0 4px 12px rgba(13, 71, 161, 0.25);
   transform: scale(1.02);
   position: relative;
@@ -125,4 +126,17 @@ mat-toolbar {
     align-items: center;
     justify-content: center;
   }
+}
+
+.high-margin {
+  color: green;
+  font-weight: bold;
+}
+
+.medium-margin {
+  color: orange;
+}
+
+.low-margin {
+  color: red;
 }

@@ -43,7 +43,20 @@
                 <mat-label>Display</mat-label>
                 <input matInput formControlName="display">
             </mat-form-field> -->
-
+            <div class="price-grid">
+                <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Proveedor</mat-label>
+                    <input matInput [value]="getSupplierName()" (click)="openSupplierSearch()"
+                        placeholder="Seleccionar proveedor..." readonly>
+                    <button matSuffix mat-icon-button type="button" (click)="openSupplierSearch()"
+                        aria-label="Buscar proveedor">
+                        <mat-icon>search</mat-icon>
+                    </button><button *ngIf="selectedSupplier" matSuffix mat-icon-button type="button"
+                        (click)="clearSupplier($event)">
+                        <mat-icon>close</mat-icon>
+                    </button>
+                </mat-form-field>
+            </div>
             <div class="price-grid">
                 <mat-form-field appearance="outline">
                     <mat-label>Precio de venta</mat-label>
