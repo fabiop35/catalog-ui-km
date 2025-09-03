@@ -26,6 +26,7 @@ export class HomeComponent {
     { title: 'Categorias', icon: 'category', link: '/categories', color: '#ff9800', desc: 'Organice los productos por categorias' },
     { title: 'Categorias de Impuestos', icon: 'receipt', link: '/tax-categories', color: '#4caf50', desc: 'Defina IVA / Tipos de impuestos' },
     { title: 'Impuestos', icon: 'paid', link: '/taxes', color: '#e91e63', desc: 'Cree & maneje las tasas de impuestos' },
-    { title: 'Proveedores', icon: 'business', link: '/suppliers', color: '#9c27b0', desc: 'Gestione proveedores y contactos' }
+    { title: 'Proveedores', icon: 'business', link: '/suppliers', color: '#9c27b0', desc: 'Gestione proveedores y contactos' },
+    { title: 'Inventarios', icon: 'factory', link: '/inventory', color: '#afaf4cff', desc: 'Administra los niveles de stock y movimientos' }
   ];
 }

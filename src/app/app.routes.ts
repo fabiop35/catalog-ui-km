@@ -1,5 +1,8 @@
 import { Routes } from '@angular/router';
 import { ProductListPaginated } from './shared/components/product-list-paginated/product-list-paginated';
+import { StockCurrentList } from './shared/components/stock/stock-current-list/stock-current-list';
+import { StockMovementList } from './shared/components/stock/stock-movement-list/stock-movement-list';
+import { InventoryValuationReport } from './shared/components/stock/inventory-valuation-report/inventory-valuation-report';
 
 export const routes: Routes = [
   { path: '', loadComponent: () => import('./pages/home/home').then(c => c.HomeComponent) },
@@ -17,5 +20,8 @@ export const routes: Routes = [
   { path: 'taxes/new', loadComponent: () => import('./shared/components/tax-form/tax-form').then(c => c.TaxForm) },
   //{ path: 'suppliers', loadComponent: () => import('./shared/components/supplier-manager/supplier-manager/supplier-manager').then(c => c.SupplierManager) },
   { path: 'suppliers', loadComponent: () => import('./shared/components/supplier-list/supplier-list').then(c => c.SupplierList) },
+  { path: 'inventory', loadComponent: () => import('./shared/components/stock/stock-current-list/stock-current-list').then(c => c.StockCurrentList) },
+  { path: 'inventory/movements', loadComponent: () => import('./shared/components/stock/stock-movement-list/stock-movement-list').then(c => c.StockMovementList) },
+  { path: 'inventory/valuation', loadComponent: () => import('./shared/components/stock/inventory-valuation-report/inventory-valuation-report').then(c => c.InventoryValuationReport) },
   { path: '**', redirectTo: '' }   // optional catch-all
 ];

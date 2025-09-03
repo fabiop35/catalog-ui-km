@@ -1,0 +1,442 @@
+// This is the critical fix - styles for the dialog container itself
+::ng-deep .mat-mdc-dialog-container .mat-mdc-dialog-surface {
+  max-width: 600px !important;
+  width: calc(100% - 32px) !important; // Account for dialog margins
+}
+
+::ng-deep .mat-mdc-dialog-container .mat-mdc-dialog-content {
+  padding: 0 !important; // Remove any extra padding from dialog content
+  overflow: visible !important; // Ensure content isn't clipped
+}
+
+.movement-detail-container {
+  max-width: 100% !important; // Override max-width to fill the dialog
+  width: 100% !important;
+  margin: 0 !important; // Remove margin to fill width
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  overflow: visible !important; // Critical for proper width calculation
+
+  // Header styling
+  .header {
+    padding: 20px 24px 16px;
+    border-bottom: 1px solid #e0e0e0;
+    margin: 0;
+
+    .header-content {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+
+      .header-icon {
+        color: #1976d2;
+        font-size: 24px;
+      }
+    }
+
+    .close-button {
+      margin-left: auto;
+      color: #757575;
+
+      &:hover {
+        background-color: rgba(0, 0, 0, 0.08);
+      }
+    }
+  }
+
+  // Card content - FIXED: Removed right padding to fill width
+  mat-card-content {
+    padding: 0 24px 16px;
+
+    .loading-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 24px;
+
+      .loading-text {
+        margin-top: 16px;
+        color: #666;
+        font-size: 16px;
+        font-weight: 500;
+      }
+    }
+
+    .empty-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px 24px;
+      text-align: center;
+
+      .empty-icon {
+        font-size: 64px;
+        color: #bdbdbd;
+        margin-bottom: 16px;
+      }
+
+      h3 {
+        margin: 0 0 8px;
+        color: #616161;
+        font-size: 1.2rem;
+        font-weight: 500;
+      }
+
+      p {
+        color: #757575;
+        max-width: 300px;
+        line-height: 1.5;
+        margin: 0;
+      }
+    }
+
+    .movement-details {
+      .movement-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 16px 0;
+        border-bottom: 1px solid #e0e0e0;
+        margin-bottom: 16px;
+
+        .movement-type {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          padding: 6px 12px;
+          border-radius: 12px;
+          font-weight: 600;
+          font-size: 14px;
+
+          &.movement-purchase {
+            background-color: #e8f5e9;
+            color: #2e7d32;
+
+            mat-icon {
+              color: #2e7d32;
+            }
+          }
+
+          &.movement-sale {
+            background-color: #ffebee;
+            color: #c62828;
+
+            mat-icon {
+              color: #c62828;
+            }
+          }
+
+          &.movement-adjustment {
+            background-color: #fff8e1;
+            color: #f57f17;
+
+            mat-icon {
+              color: #f57f17;
+            }
+          }
+
+          &.movement-transfer {
+            background-color: #e3f2fd;
+            color: #1565c0;
+
+            mat-icon {
+              color: #1565c0;
+            }
+          }
+
+          mat-icon {
+            font-size: 18px;
+          }
+        }
+
+        .movement-date {
+          display: flex;
+          align-items: center;
+          gap: 6px;
+          color: #666;
+          font-size: 14px;
+
+          mat-icon {
+            font-size: 18px;
+          }
+        }
+      }
+
+      .product-info-card {
+        margin-bottom: 16px;
+        border: 1px solid #e0e0e0;
+        border-radius: 12px;
+        width: 100% !important; // Critical: Ensure card fills width
+
+        mat-card-header {
+          padding: 16px 16px 8px;
+          width: 100%; // Ensure header fills width
+
+          .mat-card-title {
+            margin: 0;
+            font-size: 1.2rem;
+            font-weight: 500;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+          }
+
+          .mat-card-subtitle {
+            margin: 4px 0 0;
+            font-size: 0.9rem;
+            color: #666;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+          }
+        }
+
+        mat-card-content {
+          padding: 12px 16px 16px;
+          width: 100%; // Critical for proper width
+
+          // Ensure grid fills container
+          .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            width: 100%;
+            margin: 0;
+
+            @media (max-width: 480px) {
+              grid-template-columns: 1fr;
+            }
+          }
+
+          .info-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            width: 100%;
+            margin: 0;
+
+            mat-icon {
+              font-size: 20px;
+              margin-top: 4px;
+            }
+
+            .label {
+              display: block;
+              font-size: 12px;
+              color: #666;
+              margin-bottom: 2px;
+            }
+
+            .value {
+              font-size: 14px;
+              font-weight: 500;
+              color: #212121;
+              overflow: hidden;
+              text-overflow: ellipsis;
+            }
+
+            .units {
+              font-weight: 600;
+
+              &.positive {
+                color: #2e7d32;
+              }
+
+              &.negative {
+                color: #c62828;
+              }
+            }
+          }
+
+          .variant-info {
+            margin-top: 12px;
+            width: 100%;
+
+            .variant-chip {
+              background-color: #f3e5f5;
+              color: #7b1fa2;
+              font-weight: 500;
+              width: 100%;
+              text-align: center;
+            }
+          }
+        }
+      }
+
+      .details-card {
+        border: 1px solid #e0e0e0;
+        border-radius: 12px;
+        width: 100% !important; // Critical: Ensure card fills width
+
+        mat-card-header {
+          padding: 16px 16px 8px;
+          width: 100%; // Ensure header fills width
+
+          .mat-card-title {
+            margin: 0;
+            font-size: 1.1rem;
+            font-weight: 500;
+            color: #1976d2;
+          }
+        }
+
+        mat-card-content {
+          padding: 12px 16px 16px;
+          width: 100%; // Critical for proper width
+
+          // Ensure grid fills container
+          .details-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 16px;
+            width: 100%;
+            margin: 0;
+          }
+
+          .detail-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            width: 100%;
+            margin: 0;
+
+            mat-icon {
+              font-size: 20px;
+              margin-top: 4px;
+              color: #1976d2;
+            }
+
+            .label {
+              display: block;
+              font-size: 12px;
+              color: #666;
+              margin-bottom: 2px;
+            }
+
+            .value {
+              font-size: 14px;
+              font-weight: 500;
+              color: #212121;
+              overflow: hidden;
+              text-overflow: ellipsis;
+            }
+          }
+
+          .notes-section {
+            display: flex;
+            gap: 12px;
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid #e0e0e0;
+            width: 100%;
+
+            mat-icon {
+              font-size: 20px;
+              margin-top: 4px;
+              color: #1976d2;
+            }
+
+            .notes-content {
+              flex: 1;
+              width: calc(100% - 32px); // Account for icon width
+
+              .label {
+                display: block;
+                font-size: 12px;
+                color: #666;
+                margin-bottom: 8px;
+              }
+
+              .notes-text {
+                margin: 0;
+                font-size: 14px;
+                color: #212121;
+                line-height: 1.5;
+                word-break: break-word;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  // Actions
+  .actions {
+    padding: 8px 24px 16px;
+    width: 100%; // Ensure actions fill width
+
+    button {
+      font-weight: 500;
+      width: auto;
+    }
+  }
+}
+
+// Responsive design
+@media (max-width: 480px) {
+  .movement-detail-container {
+    margin: 0 !important;
+    max-width: 100% !important;
+    width: 100% !important;
+
+    .header {
+      padding: 16px 16px 12px;
+
+      .header-content {
+        gap: 8px;
+
+        .header-icon {
+          font-size: 20px;
+        }
+      }
+    }
+
+    mat-card-content {
+      padding: 0 16px 16px;
+
+      .movement-details {
+        .movement-header {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 12px;
+        }
+
+        .product-info-card,
+        .details-card {
+          mat-card-content {
+            padding: 12px 12px 16px;
+          }
+        }
+      }
+    }
+  }
+}
+
+// Animations
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.movement-details {
+  animation: fadeIn 0.3s ease-out;
+}
+
+// Accessibility
+.movement-detail-container {
+
+  .close-button:focus,
+  .actions button:focus {
+    outline: 2px solid #1976d2;
+    outline-offset: 2px;
+  }
+}

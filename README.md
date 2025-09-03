@@ -122,3 +122,21 @@ ng g c shared/components/products/product-detail-modal --standalone --skip-tests
 npm install angularx-qrcode
 npm install jspdf html2canvas
 npm install jspdf-autotable
+
+# Create stock management components
+ng g c shared/components/stock/stock-current-list --standalone --skip-tests --style=scss
+ng g c shared/components/stock/stock-movement-list --standalone --skip-tests --style=scss
+ng g c shared/components/stock/stock-adjustment-modal --standalone --skip-tests --style=scss
+ng g c shared/components/stock/inventory-valuation-report --standalone --skip-tests --style=scss
+ng g c shared/components/stock/stock-movement-detail-modal --standalone --skip-tests --style=scss
+ng g c shared/components/stock/location-selector --standalone --skip-tests --style=scss
+
+ng g s shared/services/stock.service --skip-tests
+
+ng g i shared/models/stock-current.dto --type=model
+ng g i shared/models/stock-history-dto --type=model
+ng g i shared/models/stock-movement-reason --type=model
+ng g i shared/models/inventory-item-valuation-dto --type=model
+ng g i shared/models/location --type=model
+ng g i shared/models/stock-movement-params --type=model
+ng g i shared/models/page-dto --type=model

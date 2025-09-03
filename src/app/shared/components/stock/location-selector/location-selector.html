@@ -1,0 +1,50 @@
+<mat-card class="location-selector-container">
+  <mat-card-header class="header">
+    <div class="header-content">
+      <mat-icon class="header-icon">business</mat-icon>
+      <mat-card-title>Seleccionar Ubicación</mat-card-title>
+    </div>
+    <button mat-icon-button (click)="cancel()" class="close-button">
+      <mat-icon>close</mat-icon>
+    </button>
+  </mat-card-header>
+  
+  <mat-card-content>
+    <div *ngIf="loading" class="loading-container">
+      <mat-spinner diameter="40"></mat-spinner>
+      <p class="loading-text">Cargando ubicaciones...</p>
+    </div>
+    
+    <div *ngIf="!loading && locations.length > 0" class="locations-container">
+      <mat-list>
+        <mat-list-item 
+          *ngFor="let location of locations; let i = index" 
+          (click)="selectLocation(location)"
+          class="location-item"
+          [class.selected]="selectedLocationId === location.id">
+          
+          <div class="location-content">
+            <div class="location-icon-container">
+              <mat-icon class="location-icon">apartment</mat-icon>
+            </div>
+            
+            <div class="location-info">
+              <h4 class="location-name">{{location.name}}</h4>
+              <p class="location-address">{{location.address}}</p>
+            </div>
+            
+            <div class="selection-indicator">
+              <mat-icon class="check-icon">check_circle</mat-icon>
+            </div>
+          </div>
+        </mat-list-item>
+      </mat-list>
+    </div>
+    
+    <div *ngIf="!loading && locations.length === 0" class="empty-state">
+      <mat-icon class="empty-icon">location_off</mat-icon>
+      <h3>No hay ubicaciones disponibles</h3>
+      <p>No se encontraron ubicaciones en el sistema. Por favor, contacte al administrador.</p>
+    </div>
+  </mat-card-content>
+</mat-card>

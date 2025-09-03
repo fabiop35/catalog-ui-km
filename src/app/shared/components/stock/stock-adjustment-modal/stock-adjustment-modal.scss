@@ -1,0 +1,45 @@
+.dialog-content {
+    width: 400px;
+    padding: 16px;
+
+    .current-stock {
+        margin-bottom: 16px;
+        font-size: 16px;
+        color: #555;
+
+        strong {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1976d2;
+        }
+    }
+
+    .full-width {
+        width: 100%;
+    }
+
+    .adjustment-info {
+        margin: 12px 0;
+        padding: 8px;
+        background-color: #f5f5f5;
+        border-radius: 4px;
+
+        .adjustment-container {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+
+            mat-icon {
+                font-size: 20px;
+            }
+
+            .increase {
+                color: #2e7d32;
+            }
+
+            .decrease {
+                color: #c62828;
+            }
+        }
+    }
+}

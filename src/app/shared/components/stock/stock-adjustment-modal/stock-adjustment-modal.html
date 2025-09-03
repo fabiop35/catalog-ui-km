@@ -1,0 +1,37 @@
+<h2 mat-dialog-title>Ajustar Stock</h2>
+<mat-dialog-content class="dialog-content">
+    <p class="current-stock">Stock actual: <strong>{{currentStock | number:'1.0-0'}}</strong></p>
+
+    <form [formGroup]="adjustmentForm" (ngSubmit)="onSubmit()">
+        <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Nuevo nivel de stock</mat-label>
+            <input matInput type="number" formControlName="newStock" step="any" min="0">
+            <mat-hint>Ingrese el nuevo nivel de stock total</mat-hint>
+        </mat-form-field>
+
+        <div class="adjustment-info"
+            *ngIf="adjustmentForm.get('newStock')?.valid && adjustmentForm.get('newStock')?.value !== null">
+            <div class="adjustment-container">
+                <mat-icon [color]="isIncrease ? 'primary' : 'warn'">
+                    {{ isIncrease ? 'add_circle' : 'remove_circle' }}
+                </mat-icon>
+                <span [class.increase]="isIncrease" [class.decrease]="!isIncrease">
+                    Ajuste: {{adjustmentAmount > 0 ? '+' : ''}}{{adjustmentAmount | number:'1.0-0'}}
+                </span>
+            </div>
+        </div>
+
+        <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Notas (opcional)</mat-label>
+            <textarea matInput formControlName="notes" rows="3"
+                placeholder="Detalles adicionales sobre este ajuste"></textarea>
+        </mat-form-field>
+    </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+    <button mat-button (click)="close(false)" type="button">Cancelar</button>
+    <button mat-raised-button color="primary" [disabled]="adjustmentForm.invalid" (click)="onSubmit()" type="submit">
+        Aplicar Ajuste
+    </button>
+</mat-dialog-actions>

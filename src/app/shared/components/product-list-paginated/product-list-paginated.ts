@@ -5,6 +5,7 @@ import { ScrollDispatcher, CdkScrollable } from '@angular/cdk/scrolling';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+
 import { MatCardModule } from '@angular/material/card';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatIconModule } from "@angular/material/icon";
@@ -212,18 +213,6 @@ export class ProductListPaginated implements OnInit, OnDestroy {
     if (this.taxCategories.length === 0) {
       this.svc.listTaxCategories().subscribe(tc => this.taxCategories = tc);
     }
-
-    /*this.singleProduct = product;
-    this.detailForm = new FormGroup({
-      name: new FormControl(product.name, Validators.required),
-      //display: new FormControl(product.display),
-      pricesell: new FormControl(product.pricesell, Validators.required),
-      pricebuy: new FormControl(product.pricebuy, Validators.required),
-      categoryId: new FormControl(product.categoryId, Validators.required),
-      taxcatId: new FormControl(product.taxcatId, Validators.required)
-    });*/
-
-
   }
 
   clearSelection() {

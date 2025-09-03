@@ -1,0 +1,190 @@
+<mat-card class="stock-current-container">
+    <mat-card-header>
+        <mat-card-title>Inventario Actual</mat-card-title>
+        <mat-card-subtitle>Visualización de niveles de stock por ubicación</mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+        <div class="toolbar">
+            <div class="search-container">
+                <mat-form-field appearance="outline" subscriptSizing="dynamic">
+                    <mat-label>Buscar producto</mat-label>
+                    <input #searchInput matInput [formControl]="searchCtrl" [matAutocomplete]="auto"
+                        placeholder="Referencia, código o nombre">
+                    <mat-icon matSuffix>search</mat-icon>
+                    <!-- Clear button for search -->
+                    <button matSuffix mat-icon-button type="button" aria-label="Limpiar búsqueda"
+                        *ngIf="searchCtrl.value && typeof searchCtrl.value === 'string' && searchCtrl.value.trim() !== ''"
+                        (click)="clearSearch()">
+                        <mat-icon color="disabled">close</mat-icon>
+                    </button>
+
+                    <!-- Autocomplete with displayWith correctly placed -->
+                    <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn"
+                        (optionSelected)="onSearchSelected($event)">
+                        <ng-container
+                            *ngIf="searchResults.length > 0 && searchCtrl.value && typeof searchCtrl.value === 'string' && searchCtrl.value.trim() !== ''; else noResults">
+                            <mat-option *ngFor="let item of searchResults" [value]="item">
+                                <span>{{item.productName}}</span>
+                                <small class="product-ref">Ref: {{item.productReference}} | Código:
+                                    {{item.productCode}}</small>
+                            </mat-option>
+                        </ng-container>
+                        <ng-template #noResults>
+                            <mat-option disabled
+                                *ngIf="searchCtrl.value && typeof searchCtrl.value === 'string' && searchCtrl.value.trim() !== '' && !loading">
+                                No se encontraron productos
+                            </mat-option>
+                        </ng-template>
+                    </mat-autocomplete>
+                </mat-form-field>
+            </div>
+
+            <div class="actions">
+                <button mat-icon-button (click)="openLocationSelector()" aria-label="Seleccionar ubicación">
+                    <mat-icon>location_on</mat-icon>
+                </button>
+                <button mat-raised-button color="primary" (click)="resetAndReload()">
+                    <mat-icon>refresh</mat-icon> Actualizar
+                </button>
+            </div>
+        </div>
+
+        <!-- FIX 10: Properly handle search results display -->
+        <div class="stock-list" *ngIf="isSearching && searchResults.length > 0; else defaultList">
+            <div class="grid-container">
+                <div class="grid">
+                    <ng-container *ngFor="let item of searchResults; trackBy: trackById">
+                        <mat-card class="stock-item-card"
+                            [ngClass]="{'low-stock': item.units < 5, 'out-of-stock': item.units <= 0}">
+                            <mat-card-header>
+                                <mat-card-title class="product-name">{{item.productName}}</mat-card-title>
+                                <mat-card-subtitle class="product-ref">
+                                    Ref: {{item.productReference}} | Código: {{item.productCode}}
+                                </mat-card-subtitle>
+                            </mat-card-header>
+
+                            <mat-card-content>
+                                <mat-chip-set class="location-chips">
+                                    <mat-chip color="primary" class="location-chip">
+                                        {{item.locationName}}
+                                    </mat-chip>
+                                    <mat-chip *ngIf="item.attributeSetInstanceDescription" color="accent"
+                                        class="variant-chip">
+                                        {{item.attributeSetInstanceDescription}}
+                                    </mat-chip>
+                                </mat-chip-set>
+
+                                <div class="stock-info">
+                                    <div class="stock-units">
+                                        <strong>Unidades:</strong>
+                                        <span class="units-value">{{item.units | number:'1.0-0'}}</span>
+                                    </div>
+
+                                    <div class="stock-status-container">
+                                        <mat-chip [color]="getStockStatusColor(item.units)">
+                                            {{getStockStatus(item.units)}}
+                                        </mat-chip>
+                                    </div>
+                                </div>
+                            </mat-card-content>
+
+                            <mat-card-actions align="end" class="card-actions">
+                                <button mat-icon-button (click)="viewHistory(item)" matTooltip="Ver historial">
+                                    <mat-icon>history</mat-icon>
+                                </button>
+                                <button mat-icon-button (click)="adjustStock(item)" matTooltip="Ajustar stock">
+                                    <mat-icon>edit</mat-icon>
+                                </button>
+                            </mat-card-actions>
+                        </mat-card>
+                    </ng-container>
+
+                    <!-- FIX 11: No results message when searching -->
+                    <div *ngIf="searchResults.length === 0 && !loading && isSearching" class="no-results">
+                        <p>No se encontraron productos que coincidan con tu búsqueda.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Default product list (shown when not searching) -->
+        <ng-template #defaultList>
+            <div class="stock-list" *ngIf="stockItems.length > 0; else emptyState">
+                <div class="grid-container">
+                    <div class="grid">
+                        <ng-container *ngFor="let item of stockItems; trackBy: trackById">
+                            <mat-card class="stock-item-card"
+                                [ngClass]="{'low-stock': item.units < 5, 'out-of-stock': item.units <= 0}">
+                                <mat-card-header>
+                                    <mat-card-title class="product-name">{{item.productName}}</mat-card-title>
+                                    <mat-card-subtitle class="product-ref">
+                                        Ref: {{item.productReference}} | Código: {{item.productCode}}
+                                    </mat-card-subtitle>
+                                </mat-card-header>
+
+                                <mat-card-content>
+                                    <mat-chip-set class="location-chips">
+                                        <mat-chip color="primary" class="location-chip">
+                                            {{item.locationName}}
+                                        </mat-chip>
+                                        <mat-chip *ngIf="item.attributeSetInstanceDescription" color="accent"
+                                            class="variant-chip">
+                                            {{item.attributeSetInstanceDescription}}
+                                        </mat-chip>
+                                    </mat-chip-set>
+
+                                    <div class="stock-info">
+                                        <div class="stock-units">
+                                            <strong>Unidades:</strong>
+                                            <span class="units-value">{{item.units | number:'1.0-0'}}</span>
+                                        </div>
+
+                                        <div class="stock-status-container">
+                                            <mat-chip [color]="getStockStatusColor(item.units)">
+                                                {{getStockStatus(item.units)}}
+                                            </mat-chip>
+                                        </div>
+                                    </div>
+                                </mat-card-content>
+
+                                <mat-card-actions align="end" class="card-actions">
+                                    <button mat-icon-button (click)="viewHistory(item)" matTooltip="Ver historial">
+                                        <mat-icon>history</mat-icon>
+                                    </button>
+                                    <button mat-icon-button (click)="adjustStock(item)" matTooltip="Ajustar stock">
+                                        <mat-icon>edit</mat-icon>
+                                    </button>
+                                </mat-card-actions>
+                            </mat-card>
+                        </ng-container>
+                    </div>
+                </div>
+
+                <!-- FIX 12: Only show load more when not searching -->
+                <div class="load-more-container" *ngIf="hasMore && !isSearching">
+                    <button mat-stroked-button (click)="load()" [disabled]="loading" class="load-more-btn">
+                        <mat-spinner *ngIf="loading" diameter="20"></mat-spinner>
+                        <span *ngIf="!loading">Cargar más productos</span>
+                    </button>
+                </div>
+            </div>
+        </ng-template>
+
+        <!-- FIX 13: Proper empty state handling -->
+        <ng-template #emptyState>
+            <div class="empty-state" *ngIf="!loading">
+                <mat-icon class="empty-icon">inventory_2</mat-icon>
+                <h3>No hay productos en inventario</h3>
+                <p *ngIf="!searchTerm">No hay productos en el inventario actual. Puedes comenzar añadiendo productos o
+                    realizando compras.</p>
+                <p *ngIf="searchTerm">No se encontraron productos que coincidan con tu búsqueda.</p>
+            </div>
+        </ng-template>
+
+        <!-- FIX 14: Proper loading state handling -->
+        <div class="loading-spinner" *ngIf="loading && stockItems.length === 0 && !isSearching">
+            <mat-spinner diameter="40"></mat-spinner>
+        </div>
+    </mat-card-content>
+</mat-card>

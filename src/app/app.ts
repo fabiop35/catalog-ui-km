@@ -3,8 +3,8 @@ import { RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
-import { CatalogService } from './shared/services/catalog';
-import { ProductWithCategoryDto } from './shared/models/product-with-category.model';
+import { RouterOutlet } from '@angular/router';
+import { QRCodeComponent } from 'angularx-qrcode';
 
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
@@ -12,15 +12,21 @@ import { MatListModule } from '@angular/material/list';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDialogModule } from '@angular/material/dialog';
-
-import { TaxCategoryPanel } from './shared/components/tax-category-panel/tax-category-panel';
-import { Toolbar } from './shared/components/toolbar/toolbar';
-import { ProductForm } from './shared/components/product-form/product-form';
-
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
-import { RouterOutlet } from '@angular/router';
-import { QRCodeComponent } from 'angularx-qrcode';
+
+import { CatalogService } from './shared/services/catalog';
+import { InventoryValuationReport } from './shared/components/stock/inventory-valuation-report/inventory-valuation-report';
+import { LocationSelectorComponent } from './shared/components/stock/location-selector/location-selector';
+import { ProductWithCategoryDto } from './shared/models/product-with-category.model';
+import { ProductForm } from './shared/components/product-form/product-form';
+import { StockAdjustmentModal } from './shared/components/stock/stock-adjustment-modal/stock-adjustment-modal';
+import { StockCurrentList } from './shared/components/stock/stock-current-list/stock-current-list';
+import { StockMovementDetailModal } from './shared/components/stock/stock-movement-detail-modal/stock-movement-detail-modal';
+import { StockMovementList } from './shared/components/stock/stock-movement-list/stock-movement-list';
+import { TaxCategoryPanel } from './shared/components/tax-category-panel/tax-category-panel';
+import { Toolbar } from './shared/components/toolbar/toolbar';
+
 
 //type ActiveTab = 'suppliers' | 'products' | 'categories' | 'taxes';
 
@@ -43,7 +49,14 @@ import { QRCodeComponent } from 'angularx-qrcode';
     ProductForm,
     MatDialogModule,
     FormsModule,
-    QRCodeComponent
+    QRCodeComponent,
+    // Inventory components
+    StockCurrentList,
+    StockMovementList,
+    InventoryValuationReport,
+    LocationSelectorComponent,
+    StockAdjustmentModal,
+    StockMovementDetailModal
   ],
   templateUrl: './app.html'
 })
