@@ -23,7 +23,7 @@ export interface StockService {
 @Injectable({ providedIn: 'root' })
 export class StockService {
 
-  private readonly base = 'https://192.168.10.3:8443/api/v1';
+  private readonly base = 'https://192.168.10.5:8443/api/v1';
 
   constructor(private http: HttpClient) { }
 
@@ -138,6 +138,21 @@ export class StockService {
     if (endDate) params = params.set('endDate', endDate);
 
     return this.http.get<StockHistoryDto[]>(`${this.base}/stock/history/product/${productId}`, { params });
+  }
+
+  //History
+  getStockHistoryForItem(
+    locationId: string,
+    productId: string,
+    attributeSetInstanceId: string = ''
+  ): Observable<StockHistoryDto[]> {
+    let params = new HttpParams()
+      .set('locationId', locationId)
+      .set('productId', productId);
+    if (attributeSetInstanceId) {
+      params = params.set('attributeSetInstanceId', attributeSetInstanceId);
+    }
+    return this.http.get<StockHistoryDto[]>(`${this.base}/stock/history/item`, { params });
   }
 
 }

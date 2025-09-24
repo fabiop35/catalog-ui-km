@@ -1,27 +1,29 @@
+// File: stock-history-list-modal.component.ts
 import { Component, OnInit, Inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
-import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
+import { MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { MatListModule } from '@angular/material/list';
 import { MatChipsModule } from '@angular/material/chips';
-import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
+import { MatTableModule } from '@angular/material/table'; // Consider using MatTable for better structure
+import { MatSortModule } from '@angular/material/sort'; // For sorting if needed
+import { MatPaginatorModule } from '@angular/material/paginator'; // For pagination if needed later
 import { StockHistoryDto } from '../../../models/stock-history-dto.model';
 import { StockMovementReason } from '../../../models/stock-movement-reason.model';
 import { StockService } from '../../../services/stock.service';
-import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
+import { PageDto } from '../../../models/page-dto.model';
 
-export interface StockMovementDetailData {
-  movementId?: string;
-  locationId?: string;
-  productId?: string;
+export interface StockHistoryModalData {
+  locationId: string;
+  productId: string;
   attributeSetInstanceId?: string;
 }
 
 @Component({
-  selector: 'app-stock-movement-detail-modal',
+  selector: 'app-stock-history-list-modal',
   standalone: true,
   imports: [
     CommonModule,
@@ -31,65 +33,64 @@ export interface StockMovementDetailData {
     MatButtonModule,
     MatListModule,
     MatChipsModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    MatTableModule, // Add MatTableModule
+    MatSortModule, // Add MatSortModule if sorting is needed
+    MatPaginatorModule // Add MatPaginatorModule if pagination is needed later
   ],
-  templateUrl: './stock-movement-detail-modal.html',
-  styleUrls: ['./stock-movement-detail-modal.scss']
+  templateUrl: './stock-history-list-modal.html',
+  styleUrls: ['./stock-history-list-modal.scss']
 })
-
-export class StockMovementDetailModal implements OnInit {
-
-  movement: StockHistoryDto | null = null;
+export class StockHistoryListModal implements OnInit {
+  history: StockHistoryDto[] = [];
   loading = true;
   movementReasons = StockMovementReason;
+  displayedColumns: string[] = ['date', 'reason', 'units', 'price']; // Define columns for MatTable
+
+  // Properties for product and location names, derived from history
+  productName: string | undefined;
+  locationName: string | undefined;
 
   constructor(
     private stockService: StockService,
-    private dialogRef: MatDialogRef<StockMovementDetailModal>,
-    @Inject(MAT_DIALOG_DATA) public data: StockMovementDetailData
+    private dialogRef: MatDialogRef<StockHistoryListModal>,
+    @Inject(MAT_DIALOG_DATA) public data: StockHistoryModalData
   ) { }
 
   ngOnInit() {
-    this.loadMovement();
+    this.loadHistory();
   }
 
-  loadMovement() {
-    if (this.data.movementId) {
-      this.loadMovementById();
-    } else if (this.data.locationId && this.data.productId) {
-      this.loadRecentMovement();
-    }
-  }
 
-  loadMovementById() {
-    this.stockService.getStockMovementById(this.data.movementId!)
-      .subscribe({
-        next: (movement) => {
-          this.movement = movement;
-          this.loading = false;
-        },
-        error: (err) => {
-          console.error('Error loading movement:', err);
-          this.loading = false;
-        }
-      });
-  }
-
-  loadRecentMovement() {
-    this.stockService.getStockMovementsForProduct(
-      this.data.locationId!,
-      this.data.productId!,
+  loadHistory() {
+    this.stockService.getStockHistoryForItem(
+      this.data.locationId,
+      this.data.productId,
       this.data.attributeSetInstanceId || ''
     ).subscribe({
-      next: (movements) => {
-        if (movements.length > 0) {
-          this.movement = movements[0];
+      next: (history) => {
+        this.history = history;
+        // NEW: Get names from the first history item if available
+        if (history && history.length > 0) {
+          // Use the productName and locationName from the first item
+          // Fallback to ID if name is somehow missing in the DTO
+          this.productName = history[0].productName || this.data.productId;
+          this.locationName = history[0].locationName || this.data.locationId;
+        } else {
+          // If no history, use the IDs passed in the data as fallback
+          // This is unlikely if the item exists in stock-current-list
+          this.productName = this.data.productId;
+          this.locationName = this.data.locationId;
         }
         this.loading = false;
       },
       error: (err) => {
-        console.error('Error loading movements:', err);
+        console.error('Error loading stock history:', err);
+        // Set fallback names in case of error
+        this.productName = this.data.productId;
+        this.locationName = this.data.locationId;
         this.loading = false;
+        // Optionally, show an error message to the user
       }
     });
   }
@@ -113,6 +114,7 @@ export class StockMovementDetailModal implements OnInit {
       default: return 'Desconocido';
     }
   }
+
 
   getReasonIcon(reason: number): string {
     switch (reason) {
@@ -165,6 +167,15 @@ export class StockMovementDetailModal implements OnInit {
 
   formatUnits(units: number): string {
     return units >= 0 ? `+${units}` : `${units}`;
+  }
+
+  formatPrice(price: number | null | undefined): string {
+    if (price == null || price === undefined) {
+      return 'N/A';
+    }
+    // Assuming price is per unit, format as currency if needed, e.g., using Angular's DecimalPipe
+    // For now, just format as number with 2 decimals
+    return price.toFixed(2);
   }
 
   close() {

@@ -1,143 +1,82 @@
-<mat-card class="movement-detail-container">
-  <mat-card-header class="header">
-    <div class="header-content">
-      <mat-icon class="header-icon">swap_horiz</mat-icon>
-      <mat-card-title>Historial de Movimiento</mat-card-title>
-    </div>
-    <button mat-icon-button (click)="close()" class="close-button" aria-label="Cerrar">
-      <mat-icon>close</mat-icon>
-    </button>
+<!-- File: stock-movement-detail-modal.html -->
+<mat-card class="movement-detail-card">
+  <mat-card-header>
+    <mat-card-title>Detalle de Movimiento</mat-card-title>
+    <!-- Removed product reference/code subtitle -->
+    <!-- <mat-card-subtitle>{{ movement.productReference }} | {{ movement.productCode }}</mat-card-subtitle> -->
   </mat-card-header>
-
-  <mat-card-content>
-    <!-- Loading State -->
-    <div *ngIf="loading" class="loading-container">
-      <mat-spinner diameter="40"></mat-spinner>
-      <p class="loading-text">Cargando historial de movimiento...</p>
-    </div>
-
-    <!-- Empty State -->
-    <div *ngIf="!loading && !movement" class="empty-state">
-      <mat-icon class="empty-icon">history_toggle_off</mat-icon>
-      <h3>No hay historial disponible</h3>
-      <p>No se encontró historial de movimientos para este producto en la ubicación seleccionada.</p>
-    </div>
-
-    <!-- Movement Details -->
-    <div *ngIf="!loading && movement" class="movement-details">
-      <!-- Movement Header -->
-      <div class="movement-header">
-        <div class="movement-type" [ngClass]="getMovementClass(movement.reason)">
-          <mat-icon>{{ getReasonIcon(movement.reason) }}</mat-icon>
-          {{ getReasonLabel(movement.reason) }}
-        </div>
-
-        <div class="movement-date">
-          <mat-icon>event</mat-icon>
-          {{ formatDate(movement.date) }}
-        </div>
-      </div>
-
-      <!-- Product Information -->
-      <mat-card class="product-info-card">
-        <mat-card-header>
-          <mat-card-title>{{ movement.productName }}</mat-card-title>
-          <mat-card-subtitle>{{ movement.productReference }} | {{ movement.productCode }}</mat-card-subtitle>
-        </mat-card-header>
-
-        <mat-card-content>
-          <div class="info-grid">
-            <div class="info-item">
-              <mat-icon color="primary">inventory_2</mat-icon>
-              <div>
-                <span class="label">Ubicación</span>
-                <span class="value">{{ movement.locationName }}</span>
-              </div>
-            </div>
-
-            <div class="info-item">
-              <mat-icon color="primary">paid</mat-icon>
-              <div>
-                <span class="label">Precio Unitario</span>
-                <span class="value">{{ movement.price | currency:'COP':'symbol':'1.0-0' }}</span>
-              </div>
-            </div>
-
-            <div class="info-item">
-              <mat-icon color="primary">numbers</mat-icon>
-              <div>
-                <span class="label">Unidades</span>
-                <span class="value units" [ngClass]="{positive: movement.units >= 0, negative: movement.units < 0}">
-                  {{ formatUnits(movement.units) }}
-                </span>
-              </div>
-            </div>
-
-            <div class="info-item">
-              <mat-icon color="primary">calculate</mat-icon>
-              <div>
-                <span class="label">Valor Total</span>
-                <span class="value">{{ (movement.units * movement.price) | currency:'COP':'symbol':'1.0-0' }}</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- Variant Information -->
-          <div *ngIf="movement.attributeSetInstanceDescription" class="variant-info">
-            <mat-chip color="accent" class="variant-chip">
-              {{ movement.attributeSetInstanceDescription }}
+  <mat-card-content *ngIf="!loading">
+    <div *ngIf="movement; else noMovement">
+      <mat-list>
+        <mat-list-item>
+          <h4 mat-line>Producto</h4>
+          <p mat-line>{{ movement.productName || movement.productId }}</p>
+        </mat-list-item>
+        <mat-list-item>
+          <h4 mat-line>Ubicación</h4>
+          <p mat-line>{{ movement.locationName || movement.locationId }}</p>
+        </mat-list-item>
+        <mat-list-item *ngIf="movement.attributeSetInstanceDescription">
+          <h4 mat-line>Variante</h4>
+          <p mat-line>{{ movement.attributeSetInstanceDescription }}</p>
+        </mat-list-item>
+        <mat-list-item>
+          <h4 mat-line>Fecha</h4>
+          <p mat-line>{{ formatDate(movement.date) }}</p>
+        </mat-list-item>
+        <mat-list-item>
+          <h4 mat-line>Razón</h4>
+          <p mat-line>
+            <mat-chip [color]="getMovementClass(movement.reason).split('-')[1] || 'primary'">
+              <mat-icon>{{ getReasonIcon(movement.reason) }}</mat-icon>
+              {{ getReasonLabel(movement.reason) }}
             </mat-chip>
-          </div>
-        </mat-card-content>
-      </mat-card>
-
-      <!-- Additional Details -->
-      <mat-card class="details-card">
-        <mat-card-header>
-          <mat-card-title>Detalles Adicionales</mat-card-title>
-        </mat-card-header>
-
-        <mat-card-content>
-          <div class="details-grid">
-            <div class="detail-item">
-              <mat-icon>person</mat-icon>
-              <div>
-                <span class="label">Registrado por</span>
-                <span class="value">{{ movement.userName }}</span>
-              </div>
-            </div>
-
-            <div *ngIf="movement.supplierName" class="detail-item">
-              <mat-icon>business</mat-icon>
-              <div>
-                <span class="label">Proveedor</span>
-                <span class="value">{{ movement.supplierName }}</span>
-              </div>
-            </div>
-
-            <div *ngIf="movement.supplierDoc" class="detail-item">
-              <mat-icon>description</mat-icon>
-              <div>
-                <span class="label">Documento</span>
-                <span class="value">{{ movement.supplierDoc }}</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- Notes -->
-          <div *ngIf="movement.notes" class="notes-section">
-            <mat-icon>note</mat-icon>
-            <div class="notes-content">
-              <span class="label">Notas</span>
-              <p class="notes-text">{{ movement.notes }}</p>
-            </div>
-          </div>
-        </mat-card-content>
-      </mat-card>
+          </p>
+        </mat-list-item>
+        <mat-list-item>
+          <h4 mat-line>Unidades</h4>
+          <p mat-line [ngClass]="{ 'positive': movement.units >= 0, 'negative': movement.units < 0 }">
+            {{ formatUnits(movement.units) }}
+          </p>
+        </mat-list-item>
+        <mat-list-item>
+          <h4 mat-line>Precio Unitario</h4>
+          <p mat-line>{{ movement.price !== null ? (movement.price | currency:'COP':'symbol':'1.0-0') : 'N/A' }}</p>
+        </mat-list-item>
+        <mat-list-item>
+          <h4 mat-line>Valor Total</h4>
+          <!-- Use safe navigation operator (?.) and handle null price -->
+          <p mat-line>{{ (movement.price !== null ? movement.units * movement.price : 0) |
+            currency:'COP':'symbol':'1.0-0' }}</p>
+        </mat-list-item>
+        <mat-list-item *ngIf="movement.notes">
+          <h4 mat-line>Notas</h4>
+          <p mat-line>{{ movement.notes }}</p>
+        </mat-list-item>
+        <mat-list-item *ngIf="movement.userName">
+          <h4 mat-line>Usuario</h4>
+          <p mat-line>{{ movement.userName }}</p>
+        </mat-list-item>
+        <mat-list-item *ngIf="movement.supplierName && movement.supplierName !== 'N/A'">
+          <h4 mat-line>Proveedor</h4>
+          <p mat-line>{{ movement.supplierName }}</p>
+        </mat-list-item>
+        <mat-list-item *ngIf="movement.supplierDoc">
+          <h4 mat-line>Documento Proveedor</h4>
+          <p mat-line>{{ movement.supplierDoc }}</p>
+        </mat-list-item>
+      </mat-list>
     </div>
+    <ng-template #noMovement>
+      <p>No se encontraron detalles del movimiento.</p>
+    </ng-template>
   </mat-card-content>
 
-  <mat-card-actions align="end" class="actions">
-    <button mat-stroked-button (click)="close()">Cerrar</button>
+  <mat-card-content *ngIf="loading" class="loading-container">
+    <mat-spinner></mat-spinner>
+  </mat-card-content>
+
+  <mat-card-actions align="end">
+    <button mat-button (click)="close()">Cerrar</button>
   </mat-card-actions>
 </mat-card>

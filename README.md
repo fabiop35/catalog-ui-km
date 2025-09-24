@@ -140,3 +140,23 @@ ng g i shared/models/inventory-item-valuation-dto --type=model
 ng g i shared/models/location --type=model
 ng g i shared/models/stock-movement-params --type=model
 ng g i shared/models/page-dto --type=model
+
+# Create shared components for inventory
+ng generate component shared/components/stock/stock-current-list
+ng generate component shared/components/stock/location-selector
+ng generate component shared/components/stock/stock-movement-detail-modal
+ng generate component shared/components/stock/stock-adjustment-modal
+ng generate component shared/components/stock/inventory-count *
+
+# Create inventory module
+ng generate module inventory --route inventory --module app-routing
+ng generate service services/stock --project=app
+
+ng generate interface shared/models/stock-adjustment-request --type=model #created
+
+ng generate component shared/components/stock/stock-adjust --standalone --skip-tests --style=scss #Created
+
+#History
+ng g c shared/components/stock/stock-history-list-modal --standalone --inline-style --inline-template --skip-tests
+touch src/app/shared/models/stock-history-dto.model.ts
+

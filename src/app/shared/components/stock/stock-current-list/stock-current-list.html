@@ -76,15 +76,14 @@
                                 </mat-chip-set>
 
                                 <div class="stock-info">
-                                    <div class="stock-units">
-                                        <strong>Unidades:</strong>
-                                        <span class="units-value">{{item.units | number:'1.0-0'}}</span>
-                                    </div>
-
                                     <div class="stock-status-container">
                                         <mat-chip [color]="getStockStatusColor(item.units)">
                                             {{getStockStatus(item.units)}}
                                         </mat-chip>
+                                        <div class="stock-units">
+                                            <strong>Unidades:</strong>
+                                            <span class="units-value">{{item.units | number:'1.0-0'}}</span>
+                                        </div>
                                     </div>
                                 </div>
                             </mat-card-content>
@@ -93,9 +92,9 @@
                                 <button mat-icon-button (click)="viewHistory(item)" matTooltip="Ver historial">
                                     <mat-icon>history</mat-icon>
                                 </button>
-                                <button mat-icon-button (click)="adjustStock(item)" matTooltip="Ajustar stock">
+                                <!-- <button mat-icon-button (click)="adjustStock(item)" matTooltip="Ajustar stock">
                                     <mat-icon>edit</mat-icon>
-                                </button>
+                                </button> -->
                             </mat-card-actions>
                         </mat-card>
                     </ng-container>
@@ -135,15 +134,14 @@
                                     </mat-chip-set>
 
                                     <div class="stock-info">
-                                        <div class="stock-units">
-                                            <strong>Unidades:</strong>
-                                            <span class="units-value">{{item.units | number:'1.0-0'}}</span>
-                                        </div>
-
                                         <div class="stock-status-container">
                                             <mat-chip [color]="getStockStatusColor(item.units)">
                                                 {{getStockStatus(item.units)}}
                                             </mat-chip>
+                                            <div class="stock-units">
+                                                <strong>Unidades:</strong>
+                                                <span class="units-value">{{item.units | number:'1.0-0'}}</span>
+                                            </div>
                                         </div>
                                     </div>
                                 </mat-card-content>
@@ -152,9 +150,9 @@
                                     <button mat-icon-button (click)="viewHistory(item)" matTooltip="Ver historial">
                                         <mat-icon>history</mat-icon>
                                     </button>
-                                    <button mat-icon-button (click)="adjustStock(item)" matTooltip="Ajustar stock">
+                                    <!-- <button mat-icon-button (click)="adjustStock(item)" matTooltip="Ajustar stock">
                                         <mat-icon>edit</mat-icon>
-                                    </button>
+                                    </button> -->
                                 </mat-card-actions>
                             </mat-card>
                         </ng-container>

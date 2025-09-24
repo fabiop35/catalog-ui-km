@@ -1,0 +1,205 @@
+// File: stock-history-list-modal.component.scss
+.history-modal-card {
+  max-height: 80vh; // Limit height
+  overflow: hidden; // Hide overflow initially
+  background-color: #fafafa; // Slightly off-white background for contrast
+
+  .mat-mdc-card-header {
+    background-color: #1a237e; // Dark blue header
+    color: white;
+    padding: 16px 24px;
+
+    .mat-mdc-card-title {
+      font-size: 1.5rem; // Larger, bolder title
+      font-weight: 500;
+      margin: 0;
+    }
+
+    .mat-mdc-card-subtitle {
+      opacity: 0.87;
+      font-size: 1rem;
+      margin-top: 4px;
+      color: white;
+    }
+  }
+
+  .mat-mdc-card-content {
+    overflow: auto; // Allow scrolling within content
+    max-height: calc(80vh - 160px); // Adjust based on header/footer height
+    padding: 16px; // Add padding inside content
+
+    // Optional: Add a subtle shadow or border to separate content from header
+    border-bottom: 1px solid #e0e0e0;
+  }
+
+  .loading-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 200px; // Provide a fixed height while loading
+    background-color: rgba(250, 250, 250, 0.8); // Light background for loading state
+  }
+
+  .no-history {
+    text-align: center;
+    padding: 40px 20px;
+    color: #757575;
+    font-style: italic;
+
+    p {
+      margin: 0;
+      font-size: 1.1rem;
+    }
+  }
+
+  .history-table-container {
+    // Optional: Add padding or other styles
+    background-color: white; // White background for the table container
+    border-radius: 8px; // Rounded corners
+    overflow: hidden; // Contain rounded corners if needed
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); // Add a subtle shadow
+  }
+
+  .history-table {
+    width: 100%;
+
+    .mat-mdc-header-row,
+    .mat-mdc-row {
+      height: 48px; // Consistent row height
+    }
+
+    .mat-mdc-header-cell {
+      font-weight: 600; // Bold headers
+      color: #455a64; // Darker header text
+      background-color: #eceff1; // Light header background
+      text-align: left; // Left-align headers (or center/justify as needed)
+      border-bottom: 1px solid #bdbdbd; // Separator line
+
+      &.date-header,
+      &.units-header,
+      &.price-header {
+        text-align: center; // Center-align numeric headers
+      }
+    }
+
+    .mat-mdc-cell {
+      vertical-align: middle; // Vertically center content
+      padding: 8px 16px; // Consistent padding
+      border-bottom: 1px solid #e0e0e0; // Separator line
+
+      &.date-cell,
+      &.units-cell,
+      &.price-cell {
+        text-align: center; // Center-align numeric cells
+        font-weight: 500; // Slightly bolder for numbers
+      }
+
+      &.units-cell {
+        font-family: 'Courier New', monospace; // Monospace for numbers if desired
+      }
+
+      &.positive {
+        color: #2e7d32; // Green for positive movements
+        font-weight: 600;
+      }
+
+      &.negative {
+        color: #c62828; // Red for negative movements
+        font-weight: 600;
+      }
+
+      &.notes-cell {
+        color: #616161; // Muted color for notes
+        font-style: italic; // Italicize notes
+      }
+    }
+
+    .movement-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px; // Space between icon and text
+      font-weight: 500; // Bold text inside chip
+      padding: 4px 8px; // Smaller padding for compact look
+
+      .chip-icon {
+        font-size: 16px; // Smaller icon size
+        height: 16px;
+        width: 16px;
+      }
+    }
+  }
+
+  // Style chips based on reason (using the class from getMovementClass)
+  .movement-purchase .mat-mdc-chip {
+    background-color: #e8f5e9;
+    color: #2e7d32;
+    border: 1px solid #a5d6a7;
+  }
+
+  .movement-sale .mat-mdc-chip {
+    background-color: #ffebee;
+    color: #c62828;
+    border: 1px solid #ef9a9a;
+  }
+
+  .movement-adjustment .mat-mdc-chip {
+    background-color: #fff8e1;
+    color: #f57f17;
+    border: 1px solid #fff59d;
+  }
+
+  .movement-transfer .mat-mdc-chip {
+    background-color: #e1f5fe;
+    color: #0277bd;
+    border: 1px solid #81d4fa;
+  }
+
+  .movement-return .mat-mdc-chip {
+    background-color: #f3e5f5;
+    color: #7b1fa2;
+    border: 1px solid #ce93d8;
+  }
+
+  .movement-breakage .mat-mdc-chip {
+    background-color: #ffe0b2;
+    color: #ef6c00;
+    border: 1px solid #ffb74d;
+  }
+
+  .movement-sample .mat-mdc-chip {
+    background-color: #e0f2f1;
+    color: #00695c;
+    border: 1px solid #80cbc4;
+  }
+
+  .movement-free .mat-mdc-chip {
+    background-color: #f1f8e9;
+    color: #558b2f;
+    border: 1px solid #c5e1a5;
+  }
+
+  .movement-used .mat-mdc-chip {
+    background-color: #efebe9;
+    color: #5d4037;
+    border: 1px solid #bcaaa4;
+  }
+
+  .movement-error .mat-mdc-chip {
+    background-color: #ffebee;
+    color: #c62828;
+    border: 1px solid #ef9a9a;
+  }
+
+  .movement-unknown .mat-mdc-chip {
+    background-color: #f5f5f5;
+    color: #757575;
+    border: 1px solid #bdbdbd;
+  }
+}
+
+// Optional: Style the card actions footer
+.history-modal-card .mat-mdc-card-actions {
+  padding: 16px 24px;
+  border-top: 1px solid #e0e0e0; // Separator line
+  background-color: #f5f5f5; // Light footer background
+}

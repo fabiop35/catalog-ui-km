@@ -23,6 +23,9 @@ import { LocationSelectorComponent } from '../location-selector/location-selecto
 import { StockAdjustmentModal } from '../stock-adjustment-modal/stock-adjustment-modal';
 import { StockMovementDetailModal } from '../stock-movement-detail-modal/stock-movement-detail-modal';
 import { PageDto } from '../../../models/page-dto.model';
+
+import { StockHistoryListModal } from '../stock-history-list-modal/stock-history-list-modal';
+
 type SearchResult = { content: StockCurrentDto[]; last: boolean; } | PageDto<StockCurrentDto>;
 
 @Component({
@@ -48,7 +51,7 @@ type SearchResult = { content: StockCurrentDto[]; last: boolean; } | PageDto<Sto
 })
 
 export class StockCurrentList implements OnInit, AfterViewInit, OnDestroy {
-  
+
   page = 0;
   pageSize = 20;
   stockItems: StockCurrentDto[] = [];
@@ -265,7 +268,7 @@ export class StockCurrentList implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  viewHistory(item: StockCurrentDto) {
+  /*viewHistory(item: StockCurrentDto) {
     const dialogRef = this.dialog.open(StockMovementDetailModal, {
       width: '800px',
       maxWidth: '95vw',
@@ -275,7 +278,7 @@ export class StockCurrentList implements OnInit, AfterViewInit, OnDestroy {
         attributeSetInstanceId: item.attributeSetInstanceId
       }
     });
-  }
+  }*/
 
   getStockStatus(units: number): string {
     if (units <= 0) return 'Sin stock';
@@ -298,5 +301,19 @@ export class StockCurrentList implements OnInit, AfterViewInit, OnDestroy {
   // Display function for autocomplete
   displayFn(item: any): string {
     return item && item.productName ? item.productName : '';
+  }
+
+  viewHistory(item: StockCurrentDto) {
+    // Open the NEW StockHistoryListModal
+    const dialogRef = this.dialog.open(StockHistoryListModal, {
+      width: '900px', // Adjust width as needed
+      maxWidth: '95vw',
+      maxHeight: '80vh', // Limit height
+      data: {
+        locationId: item.locationId,
+        productId: item.productId,
+        attributeSetInstanceId: item.attributeSetInstanceId,
+      }
+    });
   }
 }

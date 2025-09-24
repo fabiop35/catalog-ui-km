@@ -1,21 +1,20 @@
+// src/app/shared/models/stock-history-dto.model.ts
 export interface StockHistoryDto {
     id: string;
-    date: string;
+    date: string; // or Date if parsed
     reason: number;
     locationId: string;
-    locationName: string;
     productId: string;
-    productName: string;
-    productReference: string;
-    productCode: string;
     attributeSetInstanceId?: string;
-    attributeSetInstanceDescription?: string;
     units: number;
-    price: number;
-    userId: string;
-    userName: string;
+    price: number | null; // Check if price can be null in DB/Java model
+    userId?: string;
     supplierId?: string;
-    supplierName?: string;
     supplierDoc?: string;
     notes?: string;
+    productName?: string;
+    locationName?: string;
+    userName?: string;
+    supplierName?: string;
+    attributeSetInstanceDescription?: string;
 }
