@@ -18,7 +18,11 @@
                         (click)="clearSearch()">
                         <mat-icon color="disabled">close</mat-icon>
                     </button>
-
+                    <!-- Barcode scanner button -->
+                    <button matSuffix mat-icon-button type="button" (click)="openBarcodeScanner()"
+                        aria-label="Escanear código de barras" class="scan-button">
+                        <mat-icon>qr_code_scanner</mat-icon>
+                    </button>
                     <!-- Autocomplete with displayWith correctly placed -->
                     <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn"
                         (optionSelected)="onSearchSelected($event)">

@@ -23,8 +23,10 @@ import { LocationSelectorComponent } from '../location-selector/location-selecto
 import { StockAdjustmentModal } from '../stock-adjustment-modal/stock-adjustment-modal';
 import { StockMovementDetailModal } from '../stock-movement-detail-modal/stock-movement-detail-modal';
 import { PageDto } from '../../../models/page-dto.model';
-
 import { StockHistoryListModal } from '../stock-history-list-modal/stock-history-list-modal';
+import { BarcodeScanner } from '../../barcode-scanner/barcode-scanner'; 
+
+
 
 type SearchResult = { content: StockCurrentDto[]; last: boolean; } | PageDto<StockCurrentDto>;
 
@@ -44,7 +46,8 @@ type SearchResult = { content: StockCurrentDto[]; last: boolean; } | PageDto<Sto
     MatAutocompleteModule,
     FormsModule,
     ReactiveFormsModule,
-    MatTooltipModule
+    MatTooltipModule,
+    BarcodeScanner
   ],
   templateUrl: './stock-current-list.html',
   styleUrls: ['./stock-current-list.scss']
@@ -79,7 +82,7 @@ export class StockCurrentList implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnInit() {
     this.load();
-    this.setupSearch();
+    //this.setupSearch();
   }
 
   ngAfterViewInit() {
@@ -199,11 +202,8 @@ export class StockCurrentList implements OnInit, AfterViewInit, OnDestroy {
 
   load() {
     if (this.loading || this.isSearching) return;
-
     this.loading = true;
-
     const searchTerm = this.searchTerm;
-
     this.stockService.getCurrentStock(this.page, this.pageSize, searchTerm, this.selectedLocationId)
       .pipe(
         tap(() => this.loading = false)
@@ -219,7 +219,7 @@ export class StockCurrentList implements OnInit, AfterViewInit, OnDestroy {
         },
         error: (err: any) => {
           console.error('Error loading stock:', err);
-          this.snack.open('Error al cargar inventario', 'Cerrar', { duration: 3000 });
+          this.snack.open('Error al cargar inventario', 'Cerrar', { duration: 6000 });
           this.loading = false;
         }
       });
@@ -316,4 +316,83 @@ export class StockCurrentList implements OnInit, AfterViewInit, OnDestroy {
       }
     });
   }
+
+  // NEW: Method to open the barcode scanner modal
+  openBarcodeScanner() {
+    const dialogRef = this.dialog.open(BarcodeScanner, {
+      width: '100vw',
+      height: '100vh',
+      maxWidth: '100vw',
+      maxHeight: '100vh',
+      panelClass: 'full-screen-dialog',
+      autoFocus: false
+    });
+
+    // Subscribe to the scanner's output event
+    dialogRef.componentInstance.codeScanned.subscribe((code: string) => {
+      this.handleScannedCode(code);
+      dialogRef.close(); // Close the scanner modal after scanning
+    });
+  }
+
+  // UPDATED: Method to handle the scanned barcode code
+  handleScannedCode(code: string) {
+    console.log('Scanned code:', code);
+    // Set the search term to the scanned code to potentially trigger text search if needed
+    // However, we will handle the results from the specific API call directly.
+    this.searchCtrl.setValue(code);
+
+    // Search for stock items using the code via the NEW StockService method
+    this.stockService.getCurrentStockByProductCode(code, this.selectedLocationId).subscribe({
+      next: (stockItems: StockCurrentDto[]) => {
+        console.log('Stock items found by code:', stockItems);
+        if (stockItems.length > 0) {
+          // Clear any previous search results
+          this.searchResults = [];
+          // Set the new results from the barcode scan
+          this.searchResults = stockItems;
+          // Mark as searching to display the search results grid
+          this.isSearching = true;
+          // Stop loading state
+          this.loading = false;
+          // Trigger change detection to update the UI
+          this.cdr.detectChanges();
+
+          // Show success message
+          this.snack.open(`Código encontrado: ${stockItems[0].productName}`, 'Cerrar', {
+            duration: 3000,
+            panelClass: ['success-snackbar']
+          });
+        } else {
+          // No stock items found with the scanned code
+          this.searchResults = []; // Clear previous results
+          this.isSearching = true; // Mark as searching to show the "no results" state in the search section
+          this.loading = false; // Stop loading state
+          this.cdr.detectChanges(); // Ensure UI updates
+
+          // Show not found message
+          this.snack.open('Código no encontrado en inventario', 'Cerrar', {
+            duration: 0,
+            horizontalPosition: 'center',
+            //verticalPosition: 'bottom',    // or 'top'
+            //panelClass: ['error-snackbar']
+          });
+        }
+      },
+      error: (err: any) => {
+        console.error('Error searching stock by code:', err);
+        this.searchResults = []; // Clear results on error
+        this.isSearching = true; // Mark as searching to show state
+        this.loading = false; // Stop loading state on error
+        this.cdr.detectChanges(); // Ensure UI updates
+
+        // Show error message
+        this.snack.open('Error al buscar inventario por código', 'Cerrar', {
+          duration: 0,
+          panelClass: ['error-snackbar']
+        });
+      }
+    });
+  }
+
 }

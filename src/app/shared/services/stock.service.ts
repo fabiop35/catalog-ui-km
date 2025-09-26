@@ -155,4 +155,15 @@ export class StockService {
     return this.http.get<StockHistoryDto[]>(`${this.base}/stock/history/item`, { params });
   }
 
+  // Get Current Stock Items by Product Code
+  getCurrentStockByProductCode(
+    code: string,
+    locationId?: string | null
+  ): Observable<StockCurrentDto[]> {
+    let params = new HttpParams().set('code', code);
+    if (locationId) {
+      params = params.set('locationId', locationId);
+    }
+    return this.http.get<StockCurrentDto[]>(`${this.base}/stock/current/byCode`, { params });
+  }
 }

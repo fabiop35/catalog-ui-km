@@ -1,5 +1,4 @@
-// File: stock-history-list-modal.component.ts
-import { Component, OnInit, Inject } from '@angular/core';
+import { Component, OnInit, Inject, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
@@ -51,6 +50,9 @@ export class StockHistoryListModal implements OnInit {
   productName: string | undefined;
   locationName: string | undefined;
 
+  //Property to track if the screen is mobile
+  isMobile = false;
+
   constructor(
     private stockService: StockService,
     private dialogRef: MatDialogRef<StockHistoryListModal>,
@@ -59,8 +61,20 @@ export class StockHistoryListModal implements OnInit {
 
   ngOnInit() {
     this.loadHistory();
+     this.checkScreenSize(); // Check screen size on init
   }
 
+  //Listen to window resize events to update isMobile
+  @HostListener('window:resize', ['$event'])
+  onResize(event: any) {
+    this.checkScreenSize();
+  }
+
+  //Method to determine if the screen is mobile
+  private checkScreenSize() {
+    // Define your mobile breakpoint (e.g., 768px)
+    this.isMobile = window.innerWidth <= 768; // Adjust breakpoint as needed
+  }
 
   loadHistory() {
     this.stockService.getStockHistoryForItem(
@@ -70,7 +84,7 @@ export class StockHistoryListModal implements OnInit {
     ).subscribe({
       next: (history) => {
         this.history = history;
-        // NEW: Get names from the first history item if available
+        // Get names from the first history item if available
         if (history && history.length > 0) {
           // Use the productName and locationName from the first item
           // Fallback to ID if name is somehow missing in the DTO
