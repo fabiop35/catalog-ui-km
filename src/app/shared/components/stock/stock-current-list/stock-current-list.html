@@ -1,3 +1,4 @@
+<!-- stock-current-list.html -->
 <mat-card class="stock-current-container">
     <mat-card-header>
         <mat-card-title>Inventario Actual</mat-card-title>
@@ -139,12 +140,12 @@
 
                                     <div class="stock-info">
                                         <div class="stock-status-container">
-                                            <mat-chip [ngClass]="getStockStatusClass(item.units)">
+                                            <mat-chip [color]="getStockStatusColor(item.units)">
                                                 {{getStockStatus(item.units)}}
                                             </mat-chip>
                                             <div class="stock-units">
                                                 <strong>Unidades:</strong>
-                                                <span [ngClass]="getStockStatusClass(item.units)">{{item.units | number:'1.0-0'}}</span>
+                                                <span class="units-value">{{item.units | number:'1.0-0'}}</span>
                                             </div>
                                         </div>
                                     </div>
@@ -165,7 +166,8 @@
 
                 <!-- FIX 12: Only show load more when not searching -->
                 <div class="load-more-container" *ngIf="hasMore && !isSearching">
-                    <button mat-stroked-button (click)="load()" [disabled]="loading" class="load-more-btn">
+                    <!-- CHANGED: Call loadMainList instead of load -->
+                    <button mat-stroked-button (click)="loadMainList()" [disabled]="loading" class="load-more-btn">
                         <mat-spinner *ngIf="loading" diameter="20"></mat-spinner>
                         <span *ngIf="!loading">Cargar más productos</span>
                     </button>

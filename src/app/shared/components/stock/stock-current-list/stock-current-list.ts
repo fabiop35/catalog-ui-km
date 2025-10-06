@@ -1,11 +1,11 @@
+// stock-current-list.ts
 import { Component, OnInit, OnDestroy, ChangeDetectorRef, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
-
 import { debounceTime, Subject, takeUntil, tap, switchMap, startWith, distinctUntilChanged, of, Observable } from 'rxjs';
-
+import { map } from 'rxjs/operators'; // Import map operator explicitly
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -25,8 +25,6 @@ import { StockMovementDetailModal } from '../stock-movement-detail-modal/stock-m
 import { PageDto } from '../../../models/page-dto.model';
 import { StockHistoryListModal } from '../stock-history-list-modal/stock-history-list-modal';
 import { BarcodeScanner } from '../../barcode-scanner/barcode-scanner'; 
-
-
 
 type SearchResult = { content: StockCurrentDto[]; last: boolean; } | PageDto<StockCurrentDto>;
 
@@ -52,9 +50,7 @@ type SearchResult = { content: StockCurrentDto[]; last: boolean; } | PageDto<Sto
   templateUrl: './stock-current-list.html',
   styleUrls: ['./stock-current-list.scss']
 })
-
 export class StockCurrentList implements OnInit, AfterViewInit, OnDestroy {
-
   page = 0;
   pageSize = 20;
   stockItems: StockCurrentDto[] = [];
@@ -71,8 +67,6 @@ export class StockCurrentList implements OnInit, AfterViewInit, OnDestroy {
   trackById = (index: number, item: StockCurrentDto) =>
     `${item.locationId}-${item.productId}-${item.attributeSetInstanceId || 'default'}`;
 
-
-
   constructor(
     private stockService: StockService,
     private dialog: MatDialog,
@@ -81,8 +75,10 @@ export class StockCurrentList implements OnInit, AfterViewInit, OnDestroy {
   ) { }
 
   ngOnInit() {
-    this.load();
-    //this.setupSearch();
+    // Set up the autocomplete search *before* loading the main list
+    this.setupSearch();
+    // Load the initial main list after setting up search
+    this.loadMainList(); // Renamed from 'load' to be clearer
   }
 
   ngAfterViewInit() {
@@ -97,128 +93,157 @@ export class StockCurrentList implements OnInit, AfterViewInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  // Complete search setup with proper handling of all edge cases
+  // Set up the autocomplete search logic
   private setupSearch() {
     this.searchCtrl.valueChanges.pipe(
-      startWith(''),
-      debounceTime(300),
-      distinctUntilChanged(),
+      startWith(''), // Trigger initial load with empty string
+      debounceTime(300), // Wait 300ms after user stops typing
+      distinctUntilChanged(), // Only proceed if the value actually changed
       tap(term => {
-        // Properly handle term being an object or string
+        // Handle term being a string (user typing) or an object (selected from autocomplete)
         const searchTerm = this.getSearchTerm(term);
         this.searchTerm = searchTerm;
 
-        // Reset state when search is cleared
+        // If user cleared the search box
         if (!searchTerm) {
+          console.log("Search cleared, showing main list.");
           this.isSearching = false;
           this.searchResults = [];
+          // Optionally, reload the main list here if desired when clearing
+          // this.resetMainList(); // Uncomment if you want to reset main list on clear
           this.cdr.detectChanges();
           return;
         }
 
+        console.log("Search term changed:", searchTerm);
+        // User is searching, show loading state in autocomplete area
         this.isSearching = true;
-        this.loading = true;
+        this.loading = true; // This loading state is for the search results area
+        this.cdr.detectChanges();
       }),
       switchMap(term => {
         const searchTerm = this.getSearchTerm(term);
-
         if (!searchTerm) {
-          return of({ content: [], last: true });
+          // If cleared, return empty results to clear the autocomplete list
+          return of([]);
         }
 
+        // Call the search API with the text term
+        // Note: Adjust the service call if location filter should apply to autocomplete results
+        console.log("Calling search API with term:", searchTerm);
+        // Assuming the existing getCurrentStock can handle a 'search' parameter effectively
+        // for text-based searching.
         return this.stockService.getCurrentStock(0, this.pageSize, searchTerm, this.selectedLocationId).pipe(
-          tap(() => this.loading = false)
+            map((page: PageDto<StockCurrentDto>) => page.content) // Extract content array from page object for autocomplete, explicitly type 'page'
         );
+        // If the service method doesn't exist or isn't suitable for autocomplete,
+        // you might need to add a new method in StockService like:
+        // getCurrentStockByText(searchTerm: string, locationId?: string): Observable<StockCurrentDto[]>
+        // and call that here.
       }),
       takeUntil(this.destroy$)
     ).subscribe({
-      next: (data: SearchResult) => {
-        this.handleSearchResults(data.content);
+      next: (data: StockCurrentDto[]) => { // Explicitly type the data received by next
+        console.log("Search API response:", data);
+        this.handleSearchResults(data);
+        this.loading = false; // Stop loading state for search results
+        this.cdr.detectChanges();
       },
       error: (err: any) => {
         console.error('Error searching stock:', err);
         this.searchResults = [];
         this.loading = false;
         this.cdr.detectChanges();
+        this.snack.open('Error al buscar inventario', 'Cerrar', { duration: 6000 });
       }
     });
   }
 
-  // Handle term being string, object, or null safely
+  // Handle term being string, object (selected from autocomplete), or null safely
   private getSearchTerm(term: any): string {
     if (typeof term === 'string') {
       return term.trim();
-    } else if (term && term.productName) {
+    } else if (term && typeof term === 'object' && term.productName) {
+      // This happens when an option is selected from the autocomplete
       return term.productName.trim();
     }
     return '';
   }
 
-  // Properly handle search results with deduplication
+  // Properly handle search results with deduplication (though less likely needed for autocomplete)
   private handleSearchResults(results: StockCurrentDto[]) {
-    // Deduplicate results by using a Map with unique keys
-    const uniqueResults = new Map<string, StockCurrentDto>();
-
-    for (const item of results) {
-      const key = `${item.productId}-${item.attributeSetInstanceId || 'default'}`;
-      uniqueResults.set(key, item);
-    }
-
-    this.searchResults = Array.from(uniqueResults.values());
+    // Deduplicate results by using a Map with unique keys if necessary
+    // For autocomplete, this might be less critical than for infinite scroll
+    // const uniqueResults = new Map<string, StockCurrentDto>();
+    // for (const item of results) {
+    //   const key = `${item.productId}-${item.attributeSetInstanceId || 'default'}`;
+    //   uniqueResults.set(key, item);
+    // }
+    // this.searchResults = Array.from(uniqueResults.values());
+    this.searchResults = results; // Assuming API returns unique/desired results
     this.cdr.detectChanges();
   }
 
   // Properly handle autocomplete selection
   onSearchSelected(event: MatAutocompleteSelectedEvent) {
     const selected = event.option.value as StockCurrentDto;
-
     if (selected && selected.productName) {
       // Set the form control to the product name string only
       this.searchCtrl.setValue(selected.productName);
-      this.searchResults = [selected];
-      this.isSearching = true;
+      // The search results are already set by the valueChanges stream
+      // triggered by setValue, so searchResults should contain the selected item
+      this.isSearching = true; // Ensure we are in search mode to show results
+      console.log("Autocomplete option selected, showing search results.");
       this.cdr.detectChanges();
     }
   }
 
-  // Complete search reset that handles all edge cases
+  // Complete search reset that handles all edge cases (for the clear button)
   clearSearch() {
+    console.log("Clear search button clicked.");
     this.searchCtrl.setValue('');
     this.searchTerm = '';
     this.searchResults = [];
     this.isSearching = false;
-
-    // Reset to initial state
+    // Reset to initial state for main list
     this.page = 0;
     this.stockItems = [];
     this.hasMore = true;
-    this.load();
-
+    this.loadMainList(); // Reload the main list
     // Refocus input
     setTimeout(() => {
       this.searchInput?.nativeElement?.focus();
     }, 0);
   }
 
-  load() {
-    if (this.loading || this.isSearching) return;
+  // Load the main paginated list (not search results)
+  loadMainList() {
+    if (this.loading || this.isSearching) { // Don't load main list if searching or already loading
+      console.log("Skipping main list load - loading:", this.loading, "isSearching:", this.isSearching);
+      return;
+    }
+    console.log("Loading main list, page:", this.page, "searchTerm:", this.searchTerm);
     this.loading = true;
-    const searchTerm = this.searchTerm;
-    this.stockService.getCurrentStock(this.page, this.pageSize, searchTerm, this.selectedLocationId)
+    // Use the original service call for the main list, passing current searchTerm if applicable
+    // If searchTerm is empty, this should load all items; if not, it searches
+    this.stockService.getCurrentStock(this.page, this.pageSize, this.searchTerm, this.selectedLocationId)
       .pipe(
         tap(() => this.loading = false)
       )
       .subscribe({
-        next: (data: PageDto<StockCurrentDto>) => {
-          // Only append if not searching
+        next: (data: PageDto<StockCurrentDto>) => { // Explicitly type the data received by next for main list
+          // Only append if not searching (i.e., we are on the main list view)
           if (!this.isSearching) {
+            console.log("Appending main list data, page:", this.page, "items:", data.content.length);
             this.stockItems = [...this.stockItems, ...data.content];
             this.hasMore = !data.last;
             this.page++;
+          } else {
+             console.log("Received main list data but isSearching=true, ignoring for main list.");
           }
         },
         error: (err: any) => {
-          console.error('Error loading stock:', err);
+          console.error('Error loading main stock list:', err);
           this.snack.open('Error al cargar inventario', 'Cerrar', { duration: 6000 });
           this.loading = false;
         }
@@ -226,25 +251,25 @@ export class StockCurrentList implements OnInit, AfterViewInit, OnDestroy {
   }
 
   resetAndReload() {
+    console.log("Reset and reload triggered.");
     this.page = 0;
     this.stockItems = [];
     this.hasMore = true;
-    this.isSearching = false;
+    this.isSearching = false; // Reset search state
     this.searchResults = [];
     this.searchTerm = '';
-    this.searchCtrl.setValue('');
-    this.load();
+    this.searchCtrl.setValue(''); // Clear the input field
+    this.loadMainList(); // Reload the main list
   }
 
   openLocationSelector() {
     const dialogRef = this.dialog.open(LocationSelectorComponent, {
       width: '400px'
     });
-
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         this.selectedLocationId = result;
-        this.resetAndReload();
+        this.resetAndReload(); // Reload list with new location filter
       }
     });
   }
@@ -259,7 +284,6 @@ export class StockCurrentList implements OnInit, AfterViewInit, OnDestroy {
         currentStock: item.units
       }
     });
-
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         this.resetAndReload();
@@ -267,18 +291,6 @@ export class StockCurrentList implements OnInit, AfterViewInit, OnDestroy {
       }
     });
   }
-
-  /*viewHistory(item: StockCurrentDto) {
-    const dialogRef = this.dialog.open(StockMovementDetailModal, {
-      width: '800px',
-      maxWidth: '95vw',
-      data: {
-        locationId: item.locationId,
-        productId: item.productId,
-        attributeSetInstanceId: item.attributeSetInstanceId
-      }
-    });
-  }*/
 
   getStockStatus(units: number): string {
     if (units <= 0) return 'Sin stock';
@@ -304,11 +316,10 @@ export class StockCurrentList implements OnInit, AfterViewInit, OnDestroy {
   }
 
   viewHistory(item: StockCurrentDto) {
-    // Open the NEW StockHistoryListModal
     const dialogRef = this.dialog.open(StockHistoryListModal, {
-      width: '900px', // Adjust width as needed
+      width: '900px',
       maxWidth: '95vw',
-      maxHeight: '80vh', // Limit height
+      maxHeight: '80vh',
       data: {
         locationId: item.locationId,
         productId: item.productId,
@@ -317,7 +328,7 @@ export class StockCurrentList implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  // NEW: Method to open the barcode scanner modal
+  // Method to open the barcode scanner modal
   openBarcodeScanner() {
     const dialogRef = this.dialog.open(BarcodeScanner, {
       width: '100vw',
@@ -335,19 +346,21 @@ export class StockCurrentList implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  // UPDATED: Method to handle the scanned barcode code
+  // Method to handle the scanned barcode code
   handleScannedCode(code: string) {
     console.log('Scanned code:', code);
-    // Set the search term to the scanned code to potentially trigger text search if needed
-    // However, we will handle the results from the specific API call directly.
+    // Set the search term to the scanned code
     this.searchCtrl.setValue(code);
 
-    // Search for stock items using the code via the NEW StockService method
+    // Search for stock items using the code via the StockService method
+    // This should ideally use a method that returns StockCurrentDto[] directly
+    // based on the code, potentially filtered by selectedLocationId.
+    // Assuming getCurrentStockByProductCode fits this purpose.
     this.stockService.getCurrentStockByProductCode(code, this.selectedLocationId).subscribe({
-      next: (stockItems: StockCurrentDto[]) => {
+      next: (stockItems: StockCurrentDto[]) => { // Explicitly type the data received by next for barcode scan
         console.log('Stock items found by code:', stockItems);
         if (stockItems.length > 0) {
-          // Clear any previous search results
+          // Clear any previous search results from text search
           this.searchResults = [];
           // Set the new results from the barcode scan
           this.searchResults = stockItems;
@@ -357,7 +370,6 @@ export class StockCurrentList implements OnInit, AfterViewInit, OnDestroy {
           this.loading = false;
           // Trigger change detection to update the UI
           this.cdr.detectChanges();
-
           // Show success message
           this.snack.open(`Código encontrado: ${stockItems[0].productName}`, 'Cerrar', {
             duration: 3000,
@@ -365,17 +377,14 @@ export class StockCurrentList implements OnInit, AfterViewInit, OnDestroy {
           });
         } else {
           // No stock items found with the scanned code
-          this.searchResults = []; // Clear previous results
+          this.searchResults = []; // Clear results on error
           this.isSearching = true; // Mark as searching to show the "no results" state in the search section
           this.loading = false; // Stop loading state
           this.cdr.detectChanges(); // Ensure UI updates
-
           // Show not found message
           this.snack.open('Código no encontrado en inventario', 'Cerrar', {
-            duration: 0,
+            duration: 0, // Keep open until user dismisses
             horizontalPosition: 'center',
-            //verticalPosition: 'bottom',    // or 'top'
-            //panelClass: ['error-snackbar']
           });
         }
       },
@@ -385,14 +394,12 @@ export class StockCurrentList implements OnInit, AfterViewInit, OnDestroy {
         this.isSearching = true; // Mark as searching to show state
         this.loading = false; // Stop loading state on error
         this.cdr.detectChanges(); // Ensure UI updates
-
         // Show error message
         this.snack.open('Error al buscar inventario por código', 'Cerrar', {
-          duration: 0,
+          duration: 0, // Keep open until user dismisses
           panelClass: ['error-snackbar']
         });
       }
     });
   }
-
 }
