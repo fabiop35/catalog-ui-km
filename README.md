@@ -108,6 +108,8 @@ $ npm install @zxing/browser @zxing/library
 $ ng g c shared/components/barcode-scanner --standalone --skip-tests --style=scss
 $ openssl req -x509 -newkey rsa:2048 -keyout localhost-key.pem -out localhost.pem -days 365 -nodes
 $ ng serve --ssl true --ssl-cert "./localhost.pem" --ssl-key "./localhost-key.pem" --host 0.0.0.0 --port 4200
+ ng serve --ssl true --ssl-cert "./192.168.10.5.pem" --ssl-key "./192.168.10.5-key.pem" --host 0.0.0.0 --port 4200
+> ng serve --ssl --ssl-cert uniposweb-chain.crt --ssl-key uniposweb.key --host uniposweb --port 4200
 
 #Test if camera works: https://webrtc.github.io/samples/src/content/devices/input-output/
 

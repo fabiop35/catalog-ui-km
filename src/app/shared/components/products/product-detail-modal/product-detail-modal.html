@@ -1,3 +1,4 @@
+<!-- product-detail-modal.html -->
 <mat-card class="detail-card" #printSection>
     <!-- Header -->
     <mat-card-header class="header">
@@ -8,71 +9,127 @@
         <!--<img mat-card-avatar [src]="getImageUrl()" [alt]="data.product.name" class="avatar">-->
     </mat-card-header>
 
-    <!-- Content -->
+    <!-- Content with Tabs -->
     <mat-card-content>
+        <mat-tab-group mat-stretch-tabs class="tab-group">
+            <!-- Details Tab -->
+            <mat-tab label="Detalles">
+                <!-- Original content from the details tab -->
+                <!-- Image Full
+                <div class="image-container" *ngIf="data.product.image">
+                  <img [src]="getImageUrl()" alt="Product Image" class="full-image">
+                </div>  -->
 
-        <!-- Image Full
-        <div class="image-container" *ngIf="data.product.image">
-          <img [src]="getImageUrl()" alt="Product Image" class="full-image">
-        </div>  -->
+                <!-- Basic Info -->
+                <mat-divider class="divider"></mat-divider>
+                <h4><mat-icon color="primary">qr_code</mat-icon> Código QR</h4>
+                <div class="qr-container">
+                    <qrcode 
+                       [qrdata]="getQrData()" 
+                       size="128" 
+                       level="M" 
+                       style="display: block; margin: 0 auto;"></qrcode>
+                    <p class="qr-caption">Escanee para ver este producto</p>
+                </div>
+                <div class="info-grid">
+                    <div>
+                        <strong>Código:</strong> {{ data.product.code }}
+                        <button mat-icon-button (click)="copyToClipboard(data.product.code)" matTooltip="Copiar código">
+                            <mat-icon>content_copy</mat-icon>
+                        </button>
+                    </div>
+                    <div>
+                        <strong>Tipo:</strong> {{ data.product.codetype }}
+                    </div>
+                    <div><strong>Categoría:</strong> {{ data.product.categoryName }}</div>
+                    <div><strong>Impuesto:</strong> {{ data.product.taxName }} ({{ data.product.taxRate | percent:'1.0-0' }})
+                    </div>
+                    <div><strong>Proveedor:</strong> {{ data.product.supplierName || 'No asignado' }}</div>
+                </div>
+                <mat-divider class="divider"></mat-divider>
 
-        <!-- Basic Info -->
-        <mat-divider class="divider"></mat-divider>
+                <!-- Pricing -->
+                <h4><mat-icon color="primary">sell</mat-icon> Precios</h4>
+                <div class="price-grid">
+                    <div><strong>Precio de Compra:</strong> {{ data.product.pricebuy | currency:'$ ' }}</div>
+                    <div><strong>Precio de Venta:</strong> {{ data.product.pricesell | currency:'$ ' }}</div>
+                    <div><strong>*PVP (con IVA):</strong> {{ rrp | currency:'$ ' }}</div>
+                </div>
+                <mat-divider class="divider"></mat-divider>
 
-        <h4><mat-icon color="primary">qr_code</mat-icon> Código QR</h4>
-        <div class="qr-container">
-            <qrcode 
-               [qrdata]="getQrData()" 
-               size="128" 
-               level="M" 
-               style="display: block; margin: 0 auto;"></qrcode>
-            <p class="qr-caption">Escanee para ver este producto</p>
-        </div>
-        <div class="info-grid">
-            <div>
-                <strong>Código:</strong> {{ data.product.code }}
-                <button mat-icon-button (click)="copyToClipboard(data.product.code)" matTooltip="Copiar código">
-                    <mat-icon>content_copy</mat-icon>
-                </button>
-            </div>
-            <div>
-                <strong>Tipo:</strong> {{ data.product.codetype }}
-            </div>
-            <div><strong>Categoría:</strong> {{ data.product.categoryName }}</div>
-            <div><strong>Impuesto:</strong> {{ data.product.taxName }} ({{ data.product.taxRate | percent:'1.0-0' }})
-            </div>
-            <div><strong>Proveedor:</strong> {{ data.product.supplierName || 'No asignado' }}</div>
-        </div>
+                <!-- Profitability -->
+                <h4><mat-icon color="accent">trending_up</mat-icon> Beneficios</h4>
+                <div class="profit-grid">
+                    <div class="profit-item" [ngClass]="getMarkupClass(markup)">
+                        <span>
+                            <strong>Margen:</strong> {{ markup | percent:'1.2-2' }}
+                            <mat-icon>{{ getTrendIcon(markup) }}</mat-icon>
+                        </span>
+                        <mat-icon matTooltip="{{ getProfitTooltip() }}" class="info-icon">info</mat-icon>
+                    </div>
+                    <div class="profit-item" [ngClass]="getMarginClass(margin)">
+                        <span>
+                            <strong>Beneficio Bruto:</strong> {{ margin | percent:'1.2-2' }}
+                            <mat-icon>{{ getTrendIcon(margin) }}</mat-icon>
+                        </span>
+                    </div>
+                </div>
+            </mat-tab>
 
-        <mat-divider class="divider"></mat-divider>
+            <!-- Inventory Tab -->
+            <mat-tab label="Inventario">
+                <div class="inventory-tab-content">
+                    <!-- Loading State -->
+                    <div *ngIf="stockLoading" class="loading-container">
+                        <mat-spinner diameter="40"></mat-spinner>
+                    </div>
 
-        <!-- Pricing -->
-        <h4><mat-icon color="primary">sell</mat-icon> Precios</h4>
-        <div class="price-grid">
-            <div><strong>Precio de Compra:</strong> {{ data.product.pricebuy | currency:'$ ' }}</div>
-            <div><strong>Precio de Venta:</strong> {{ data.product.pricesell | currency:'$ ' }}</div>
-            <div><strong>*PVP (con IVA):</strong> {{ rrp | currency:'$ ' }}</div>
-        </div>
+                    <!-- Error State -->
+                    <div *ngIf="stockError && !stockLoading" class="error-container">
+                        <p class="error-text">{{ stockError }}</p>
+                    </div>
 
-        <mat-divider class="divider"></mat-divider>
+                    <!-- No Stock Found -->
+                    <div *ngIf="!stockLoading && !stockError && stockItems.length === 0" class="no-stock-container">
+                        <p>No hay inventario registrado para este producto en ninguna ubicación.</p>
+                    </div>
 
-        <!-- Profitability -->
-        <h4><mat-icon color="accent">trending_up</mat-icon> Beneficios</h4>
-        <div class="profit-grid">
-            <div class="profit-item" [ngClass]="getMarkupClass(markup)">
-                <span>
-                    <strong>Margen:</strong> {{ markup | percent:'1.2-2' }}
-                    <mat-icon>{{ getTrendIcon(markup) }}</mat-icon>
-                </span>
-                <mat-icon matTooltip="{{ getProfitTooltip() }}" class="info-icon">info</mat-icon>
-            </div>
-            <div class="profit-item" [ngClass]="getMarginClass(margin)">
-                <span>
-                    <strong>Beneficio Bruto:</strong> {{ margin | percent:'1.2-2' }}
-                    <mat-icon>{{ getTrendIcon(margin) }}</mat-icon>
-                </span>
-            </div>
-        </div>
+                    <!-- Stock Items List (using cards) -->
+                    <div *ngIf="!stockLoading && !stockError && stockItems.length > 0" class="stock-grid">
+                        <mat-card *ngFor="let item of stockItems" class="stock-item-card">
+                            <mat-card-header>
+                                <mat-card-title class="product-name">{{item.productName}}</mat-card-title>
+                                <mat-card-subtitle class="product-ref">
+                                    Ref: {{item.productReference}} | Código: {{item.productCode}}
+                                </mat-card-subtitle>
+                            </mat-card-header>
+                            <mat-card-content>
+                                <mat-chip-set class="location-chips">
+                                    <mat-chip color="primary" class="location-chip">
+                                        {{item.locationName}}
+                                    </mat-chip>
+                                    <mat-chip *ngIf="item.attributeSetInstanceDescription" color="accent"
+                                        class="variant-chip">
+                                        {{item.attributeSetInstanceDescription}}
+                                    </mat-chip>
+                                </mat-chip-set>
+                                <div class="stock-info">
+                                    <div class="stock-status-container">
+                                        <mat-chip [color]="getStockStatusColor(item.units)" [ngClass]="getStockStatusClass(item.units)">
+                                            {{getStockStatus(item.units)}}
+                                        </mat-chip>
+                                        <div class="stock-units">
+                                            <strong>Unidades:</strong>
+                                            <span  [ngClass]="getStockStatusClass(item.units)">{{item.units | number:'1.0-0'}}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </mat-card-content>
+                        </mat-card>
+                    </div>
+                </div>
+            </mat-tab>
+        </mat-tab-group>
     </mat-card-content>
 
     <!-- Actions -->
@@ -91,5 +148,4 @@
         </button> -->
         <button mat-flat-button color="primary" (click)="close()">Cerrar</button>
     </mat-card-actions>
-
 </mat-card>

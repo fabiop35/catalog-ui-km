@@ -2,11 +2,30 @@
   <button mat-icon-button [routerLink]="['/']">
     <mat-icon>home</mat-icon>
   </button>
-  <span [routerLink]="['/']">Catalog UI</span>
-  <span class="spacer"></span>
-  <button mat-button [routerLink]="['/products']">Productos |</button>
-  <button mat-button [routerLink]="['/categories']">Categorias |</button>
-  <button mat-button [routerLink]="['/tax-categories']">Categorias de Impuestos |</button>
-  <button mat-button [routerLink]="['/taxes']">Impuestos |</button>
-  <button mat-button [routerLink]="['/products/new']">Crear Producto |</button>
+  <span [routerLink]="['/']" class="title">Catalog UI</span>
+  
+  <!-- Desktop menu items -->
+  <div class="desktop-menu" *ngIf="!isMobile">
+    <button mat-button [routerLink]="['/products']">Productos |</button>
+    <button mat-button [routerLink]="['/categories']">Categorias |</button>
+    <button mat-button [routerLink]="['/tax-categories']">Categorias de Impuestos |</button>
+    <button mat-button [routerLink]="['/taxes']">Impuestos |</button>
+    <button mat-button [routerLink]="['/products/new']">Crear Producto |</button>
+  </div>
+  
+  <!-- Mobile menu button -->
+  <button mat-icon-button (click)="toggleMobileMenu()" *ngIf="isMobile" class="mobile-menu-button">
+    <mat-icon>{{ isMenuOpen ? 'close' : 'menu' }}</mat-icon>
+  </button>
 </mat-toolbar>
+
+<!-- Mobile menu overlay -->
+<div class="mobile-menu-overlay" *ngIf="isMobile && isMenuOpen" (click)="closeMobileMenu()">
+  <div class="mobile-menu-content" (click)="$event.stopPropagation()">
+    <button mat-button [routerLink]="['/products']" (click)="closeMobileMenu()">Productos</button>
+    <button mat-button [routerLink]="['/categories']" (click)="closeMobileMenu()">Categorias</button>
+    <button mat-button [routerLink]="['/tax-categories']" (click)="closeMobileMenu()">Categorias de Impuestos</button>
+    <button mat-button [routerLink]="['/taxes']" (click)="closeMobileMenu()">Impuestos</button>
+    <button mat-button [routerLink]="['/products/new']" (click)="closeMobileMenu()">Crear Producto</button>
+  </div>
+</div>

@@ -74,66 +74,9 @@
         .mat-card-content {
             padding: 8px 16px 12px;
 
-            .location-chips {
-                display: flex;
-                flex-wrap: wrap;
-                gap: 8px;
-                margin-bottom: 12px;
+            
 
-                .mat-chip {
-                    height: 28px;
-                    font-size: 0.8rem;
-                    font-weight: 500;
-                }
-
-                .location-chip {
-                    background-color: #e3f2fd;
-                    color: #1565c0;
-                }
-
-                .variant-chip {
-                    background-color: #f3e5f5;
-                    color: #7b1fa2;
-                }
-            }
-
-            .stock-info {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                margin-top: 8px;
-
-                .stock-units {
-                    font-size: 0.9rem;
-
-                    .units-value {
-                        font-weight: 600;
-                        color: #1a237e;
-                    }
-                }
-
-                .stock-status-container {
-                    .mat-chip {
-                        font-weight: 600;
-                        font-size: 0.85rem;
-
-                        &.mat-primary {
-                            background-color: #e8f5e9;
-                            color: #2e7d32;
-                        }
-
-                        &.mat-accent {
-                            background-color: #fff8e1;
-                            color: #f57f17;
-                        }
-
-                        &.mat-warn {
-                            background-color: #ffebee;
-                            color: #c62828;
-                        }
-                    }
-                }
-            }
+            
         }
 
         .card-actions {
@@ -245,3 +188,19 @@
         }
     }
 }
+
+.stock-status-available {
+    color: #2e7d32; /* Green */
+    background-color: #e8f5e9; /* Light green background */
+}
+
+.stock-status-low {
+    color: #f57f17; /* Orange */
+    background-color: #fff8e1; /* Light orange background */
+}
+
+.stock-status-out {
+    color: #c62828; /* Red */
+    background-color: #ffebee; /* Light red background */
+}
+

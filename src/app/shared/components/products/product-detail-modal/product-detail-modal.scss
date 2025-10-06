@@ -1,5 +1,6 @@
+// product-detail-modal.scss
 .detail-card {
-    max-width: 520px;
+    max-width: 520px; /* Adjusted for tabs */
     margin: 16px;
     font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
 }
@@ -126,4 +127,91 @@ mat-icon {
     font-size: 0.8rem;
     color: #666;
     margin-top: 8px;
+}
+
+/* --- New Styles for Inventory Tab --- */
+.tab-group {
+    margin-top: 16px;
+}
+
+.inventory-tab-content {
+    padding: 16px 0; /* Add some padding inside the tab */
+}
+
+.loading-container,
+.error-container,
+.no-stock-container {
+    text-align: center;
+    padding: 24px 16px;
+    color: #666;
+}
+
+.error-text {
+    color: #f44336; /* Red error color */
+}
+
+.stock-list {
+    margin-top: 8px;
+}
+
+.stock-item {
+    border-bottom: 1px solid #eee;
+    padding: 12px 0; /* Increased padding for better spacing */
+    display: flex; /* Use flex to contain the content */
+    align-items: stretch; /* Align items vertically to stretch height if needed */
+}
+
+/* Vertical layout container for stock details inside the list item */
+.stock-item-details-container {
+    display: flex; /* Use flexbox */
+    flex-direction: column; /* Stack items vertically */
+    gap: 6px; /* Space between items */
+    align-items: flex-start; /* Align items to the start (left) */
+    width: 100%; /* Ensure it takes full width */
+    padding: 0 8px; /* Add some internal padding */
+}
+
+.stock-location,
+.stock-units,
+.stock-status-text,
+.stock-item-variant {
+    display: flex;
+    align-items: center;
+    gap: 4px; /* Space between icon/text or chip/text */
+    font-size: 0.9em; /* Slightly smaller font for better fit */
+    width: 100%; /* Ensure each item takes full width */
+}
+
+.stock-location {
+    font-weight: 500;
+    color: #1a237e;
+}
+
+.stock-units .mat-mdc-chip,
+.stock-item-variant .mat-mdc-chip {
+    margin: 0; /* Remove default chip margin */
+    font-size: 0.85em; /* Slightly smaller chip font */
+}
+
+.stock-status-text {
+    font-size: 0.85rem;
+    font-weight: 500; /* Make status text bold */
+    padding: 2px 6px; /* Add some padding to status text */
+    border-radius: 4px; /* Add slight rounding */
+    display: inline-block; /* Ensure it behaves as a block for background */
+}
+
+.stock-status-available {
+    color: #2e7d32; /* Green */
+    background-color: #e8f5e9; /* Light green background */
+}
+
+.stock-status-low {
+    color: #f57f17; /* Orange */
+    background-color: #fff8e1; /* Light orange background */
+}
+
+.stock-status-out {
+    color: #c62828; /* Red */
+    background-color: #ffebee; /* Light red background */
 }

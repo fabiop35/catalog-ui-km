@@ -6,13 +6,15 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatButtonModule } from '@angular/material/button';
-
-//import { jsPDF } from 'jspdf';
-
-
+import { MatTabsModule } from '@angular/material/tabs'; // Import Tabs Module
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'; // For loading spinner
+import { MatListModule } from '@angular/material/list'; // For displaying stock list
+import { MatChipsModule } from '@angular/material/chips'; // For location/variant chips
 
 import { ProductWithCategoryDto } from '../../../models/product-with-category.model';
 import { QRCodeComponent } from "angularx-qrcode";
+import { StockCurrentDto } from '../../../models/stock-current.dto.model';
+import { StockService } from '../../../services/stock.service';
 
 @Component({
   selector: 'app-product-detail-modal',
@@ -25,7 +27,11 @@ import { QRCodeComponent } from "angularx-qrcode";
     MatDividerModule,
     MatTooltipModule,
     MatButtonModule,
-    QRCodeComponent
+    QRCodeComponent,
+    MatTabsModule,
+    MatProgressSpinnerModule,
+    MatListModule,
+    MatChipsModule
   ]
 })
 export class ProductDetailModal {
@@ -37,11 +43,18 @@ export class ProductDetailModal {
   markup: number = 0;
   margin: number = 0;
 
+   // Inventory Tab Properties
+  stockItems: StockCurrentDto[] = [];
+  stockLoading = false;
+  stockError: string | null = null;
+
   constructor(
     public dialogRef: MatDialogRef<ProductDetailModal>,
-    @Inject(MAT_DIALOG_DATA) public data: { product: ProductWithCategoryDto }
+    @Inject(MAT_DIALOG_DATA) public data: { product: ProductWithCategoryDto },
+    private stockService: StockService
   ) {
     this.calculateMetrics();
+    this.loadProductStock(); // Load stock details when modal opens
   }
 
   private calculateMetrics() {
@@ -50,6 +63,40 @@ export class ProductDetailModal {
     this.rrp = pricesell * (1 + (taxRate || 0));
     this.markup = pricebuy > 0 ? (pricesell - pricebuy) / pricebuy : 0;
     this.margin = pricesell > 0 ? (pricesell - pricebuy) / pricesell : 0;
+  }
+
+  // Load stock details for the specific product
+  private loadProductStock() {
+    this.stockLoading = true;
+    this.stockError = null;
+    // Assuming the backend has an endpoint like /stock/current/product/{productId}
+    // If not, you might need to fetch all stock and filter client-side, or add the endpoint
+    this.stockService.getCurrentStockByLocation('ALL') // This might need adjustment if you have a specific product endpoint
+      .subscribe({
+        next: (allStockItems) => {
+          // Filter stock items for the specific product
+          this.stockItems = allStockItems.filter(item => item.productId === this.data.product.id);
+          this.stockLoading = false;
+        },
+        error: (err) => {
+          console.error('Error loading stock for product:', err);
+          this.stockError = 'Error al cargar inventario para este producto.';
+          this.stockLoading = false;
+        }
+      });
+
+    // Alternative approach if there's a specific endpoint for product stock:
+    // this.stockService.getStockByProductId(this.data.product.id!).subscribe({
+    //   next: (items) => {
+    //     this.stockItems = items;
+    //     this.stockLoading = false;
+    //   },
+    //   error: (err) => {
+    //     console.error('Error loading stock for product:', err);
+    //     this.stockError = 'Error al cargar inventario.';
+    //     this.stockLoading = false;
+    //   }
+    // });
   }
 
   /*getImageUrl(): string {
@@ -229,7 +276,7 @@ export class ProductDetailModal {
       `🔍 Ref: ${product.reference}\n` +
       `🔢 Código: ${product.code}\n` +
       `💰 Precio: ${ this.formatCurrency(rrp)}  \n\n` +
-      `👉 Más info: https://tuapp.com/productos/${product.id}`
+      `👉 Más info: https://everest.com/productos/${product.id}`
     );
     const url = `https://wa.me/?text=${message}`;
     window.open(url, '_blank');
@@ -242,5 +289,26 @@ export class ProductDetailModal {
       style: 'currency',
       currency: 'COP'
     }).format(value);
+  }
+
+  // Helper method to determine stock status class (similar to stock-current-list)
+  getStockStatusClass(units: number): string {
+    if (units <= 0) return 'stock-status-out';
+    if (units < 5) return 'stock-status-low';
+    return 'stock-status-available';
+  }
+
+  // Helper method to determine stock status color (similar to stock-current-list)
+  getStockStatusColor(units: number): 'primary' | 'accent' | 'warn' {
+    if (units <= 0) return 'warn';
+    if (units < 5) return 'accent';
+    return 'primary';
+  }
+
+  // Helper method to determine stock status text (similar to stock-current-list)
+  getStockStatus(units: number): string {
+    if (units <= 0) return 'Sin stock';
+    if (units < 5) return 'Bajo';
+    return 'Disponible';
   }
 }

@@ -3,14 +3,93 @@ mat-toolbar {
   align-items: center;
   justify-content: space-between;
   padding: 0 1rem;
+  position: relative;
 
-  .spacer {
-    flex: 1 1 auto;
+  .title {
+    cursor: pointer;
+    margin: 0 1rem;
+    flex: 1;
   }
 
-  button {
-    margin-left: 0.5rem;
-    cursor: pointer; /* Set cursor to hand */
+  .desktop-menu {
+    display: flex;
+    align-items: center;
+
+    button {
+      margin: 0 0.25rem;
+      white-space: nowrap;
+    }
+  }
+
+  .mobile-menu-button {
+    margin-left: auto;
   }
 }
 
+// Mobile menu overlay styles
+.mobile-menu-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 9998;
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-end;
+
+  .mobile-menu-content {
+    background: #1976d2; // Primary color to match toolbar
+    width: 80%;
+    max-width: 300px;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    padding: 1rem 0;
+    box-shadow: -2px 0 10px rgba(0, 0, 0, 0.3);
+
+    button {
+      width: 100%;
+      justify-content: flex-start;
+      padding: 1rem 1.5rem;
+      margin: 0;
+      border-radius: 0;
+      
+      &:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+      }
+    }
+  }
+}
+
+// Responsive styles
+@media (max-width: 767px) {
+  mat-toolbar {
+    .desktop-menu {
+      display: none;
+    }
+    
+    .title {
+      margin-right: 0.5rem;
+    }
+  }
+}
+
+@media (min-width: 768px) {
+  .mobile-menu-overlay {
+    display: none;
+  }
+  
+  mat-toolbar {
+    .mobile-menu-button {
+      display: none;
+    }
+  }
+}
+
+// General button styling
+button {
+  cursor: pointer;
+  text-transform: none; // Keep original text case
+}

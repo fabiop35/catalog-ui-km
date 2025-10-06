@@ -139,12 +139,12 @@
 
                                     <div class="stock-info">
                                         <div class="stock-status-container">
-                                            <mat-chip [color]="getStockStatusColor(item.units)">
+                                            <mat-chip [ngClass]="getStockStatusClass(item.units)">
                                                 {{getStockStatus(item.units)}}
                                             </mat-chip>
                                             <div class="stock-units">
                                                 <strong>Unidades:</strong>
-                                                <span class="units-value">{{item.units | number:'1.0-0'}}</span>
+                                                <span [ngClass]="getStockStatusClass(item.units)">{{item.units | number:'1.0-0'}}</span>
                                             </div>
                                         </div>
                                     </div>
