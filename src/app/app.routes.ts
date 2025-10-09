@@ -23,5 +23,6 @@ export const routes: Routes = [
   { path: 'inventory', loadComponent: () => import('./shared/components/stock/stock-current-list/stock-current-list').then(c => c.StockCurrentList) },
   { path: 'inventory/movements', loadComponent: () => import('./shared/components/stock/stock-movement-list/stock-movement-list').then(c => c.StockMovementList) },
   { path: 'inventory/valuation', loadComponent: () => import('./shared/components/stock/inventory-valuation-report/inventory-valuation-report').then(c => c.InventoryValuationReport) },
+  { path: 'sales', loadComponent: () => import('./shared/components/sales-closed-pos-report/sales-closed-pos-report').then(c => c.SalesClosedPosReport) },
   { path: '**', redirectTo: '' }   // optional catch-all
 ];

@@ -162,3 +162,20 @@ ng generate component shared/components/stock/stock-adjust --standalone --skip-t
 ng g c shared/components/stock/stock-history-list-modal --standalone --inline-style --inline-template --skip-tests
 touch src/app/shared/models/stock-history-dto.model.ts
 
+#Sales
+ng g s shared/services/sales-closed-pos --skip-tests
+ng g i shared/models/sales-closed-pos-report-item --type=model
+ng g c shared/components/sales-closed-pos-report --standalone --skip-tests
+
+
+
+
+
+
+
+
+
+
+
+
+

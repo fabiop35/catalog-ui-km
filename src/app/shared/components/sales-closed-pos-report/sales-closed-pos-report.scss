@@ -1,0 +1,101 @@
+// Main container for the component
+.container {
+    padding: 20px;
+    width: 100%;
+    display: flex; // Use flexbox to stack filters and table area
+    flex-direction: column;
+    align-items: stretch; // Stretch children to full width
+
+    @media (max-width: 768px) {
+        padding: 10px;
+    }
+}
+
+// Container for the filter controls
+.filters {
+    display: flex;
+    gap: 16px;
+    align-items: end;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+    flex-shrink: 0;
+
+    // Ensure filter fields don't grow too large on wide screens but take space on narrow ones
+    mat-form-field {
+        flex: 1;
+        min-width: 150px;
+        max-width: 200px; // Adjust based on preference
+
+        @media (max-width: 480px) {
+            min-width: 100%; // Full width on very small screens
+            max-width: none;
+        }
+    }
+
+    // Style for the export button
+    button {
+        align-self: flex-end; // Align button with the bottom of the form fields
+
+        @media (max-width: 480px) {
+            align-self: stretch; // Stretch button full width on small screens
+            width: 100%;
+            margin-top: 10px;
+        }
+    }
+}
+
+// Dedicated container for the table's horizontal scrolling
+.table-scroll-container {
+    width: 100%; // Take full width of parent (.container)
+    overflow-x: auto; // THIS IS THE KEY: Enable horizontal scrolling
+    -webkit-overflow-scrolling: touch; // Improve scrolling feel on iOS
+    flex-shrink: 0; // Prevent this container from shrinking
+
+    // Optional styling for the scroll container
+    border: 1px solid rgba(0, 0, 0, 0.12); // Match Material Design style
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); // Optional: Add shadow
+
+    // Style the mat-table inside the scroll container
+    mat-table {
+        width: max-content; // Allow table to be as wide as its content requires
+        min-width: 100%; // But ensure it's at least as wide as the scroll container initially
+
+        // Style the header row specifically
+        .mat-mdc-header-row {
+            background-color: #1976d2;
+            color: white;
+            flex-wrap: nowrap;
+        }
+
+        .mat-mdc-header-cell {
+            color: white; 
+            font-weight: bold; 
+        }
+
+        .mat-mdc-cell {
+            white-space: nowrap; 
+            font-size: 12px;
+
+            @media (max-width: 768px) {
+                font-size: 11px;
+            }
+        }
+
+        // Ensure rows don't wrap their content artificially, allowing width expansion
+        .mat-mdc-row {
+            // Apply flex-wrap to data rows too, just in case
+            flex-wrap: nowrap; 
+        }
+    }
+}
+
+// Optional: Adjust datepicker overlay if it's cut off
+// .mat-datepicker-content {
+//   max-height: 90vh;
+//   overflow-y: auto;
+// }
+// .mat-datepicker-content .mat-calendar {
+//   width: 100%;
+//   max-width: 100%;
+// }
