@@ -9,7 +9,7 @@ import { SalesClosedPosReportItem } from '../models/sales-closed-pos-report-item
 })
 export class SalesClosedPos {
 
-  private baseUrl = 'https://192.168.10.5:8443/api/v1/sales/sales-closed-pos'; // Adjust to your backend URL
+  private baseUrl = 'https://192.168.10.7:8443/api/v1/sales/sales-closed-pos'; // Adjust to your backend URL
 
   constructor(private http: HttpClient) { }
 

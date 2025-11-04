@@ -16,7 +16,7 @@ export class CatalogService {
 
   //private readonly base = 'http://192.168.10.3:8081/api/v1';
  // private readonly base = 'https://192.168.1.41:8443/api/v1';
-  private readonly base = 'https://192.168.10.5:8443/api/v1';
+  private readonly base = 'https://192.168.10.7:8443/api/v1';
 
   constructor(private http: HttpClient) { }
 

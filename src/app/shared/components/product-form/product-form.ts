@@ -145,7 +145,7 @@ export class ProductForm implements OnInit, AfterViewInit, OnDestroy {
       name: this.form.value.name!,
       pricesell: this.form.value.pricesell!,
       pricebuy: this.form.value.pricebuy!,
-      currency: 'USD',
+      currency: 'COP',
       categoryId: this.form.value.categoryId!,
       taxcatId: this.form.value.taxcatId!,
       idSupplier: this.form.value.idSupplier || ''

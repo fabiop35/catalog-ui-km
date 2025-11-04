@@ -1,0 +1,86 @@
+<mat-card class="stock-entry-modal">
+  <mat-card-header>
+    <mat-card-title style="color: blue; font-weight: bold;">
+        Nuevo Movimiento de Inventario
+        <span *ngIf="data.attributeSetInstanceId"> (Variante: {{ data.attributeSetInstanceId }})</span>
+    </mat-card-title>
+    <mat-card-title style="color: blue;">{{ data.productName }}</mat-card-title>
+    <mat-card-subtitle>
+      {{ data.productId }}
+   </mat-card-subtitle>
+    
+  </mat-card-header>
+
+  <mat-card-content>
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" *ngIf="!loading; else loadingTpl">
+      <div class="form-row">
+        <mat-form-field appearance="outline" subscriptSizing="dynamic" class="full-width">
+          <mat-label>Precio de Compra</mat-label>
+          <input matInput type="number" step="0.01" formControlName="price" required>
+        </mat-form-field>
+      </div>
+
+      <div class="form-row">
+        <mat-form-field appearance="outline" subscriptSizing="dynamic" class="full-width">
+          <mat-label>Fecha</mat-label>
+          <input matInput [matDatepicker]="picker" formControlName="date" required>
+          <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+          <mat-datepicker #picker></mat-datepicker>
+        </mat-form-field>
+      </div>
+
+      <div class="form-row">
+        <mat-form-field appearance="outline" subscriptSizing="dynamic" class="full-width">
+          <mat-label>Razón</mat-label>
+          <mat-select formControlName="reason" required>
+            <mat-option *ngFor="let r of reasons" [value]="r.value">{{ r.label }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+      <div class="form-row">
+        <mat-form-field appearance="outline" subscriptSizing="dynamic" class="full-width">
+          <mat-label>Ubicación</mat-label>
+          <mat-select formControlName="locationId" required>
+            <mat-option *ngFor="let loc of locations" [value]="loc.id">{{ loc.name }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+      <div class="form-row">
+        <mat-form-field appearance="outline" subscriptSizing="dynamic" class="full-width">
+          <mat-label>Proveedor (opcional)</mat-label>
+          <mat-select formControlName="idSupplier">
+            <mat-option *ngFor="let sup of suppliers" [value]="sup.id">{{ sup.name }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+      <div class="form-row">
+        <mat-form-field appearance="outline" subscriptSizing="dynamic" class="full-width">
+          <mat-label>Documento (opcional)</mat-label>
+          <input matInput formControlName="supplierDoc">
+        </mat-form-field>
+      </div>
+
+      <div class="form-row">
+        <mat-form-field appearance="outline" subscriptSizing="dynamic" class="full-width">
+          <mat-label>Cantidad</mat-label>
+          <input matInput type="number" step="0.01" formControlName="quantity" required>
+        </mat-form-field>
+      </div>
+
+      <div class="button-row">
+        <button mat-button type="button" (click)="onCancel()">Cancelar</button>
+        <button mat-raised-button color="primary" type="submit" [disabled]="form.invalid">Guardar</button>
+      </div>
+    </form>
+  </mat-card-content>
+</mat-card>
+
+<ng-template #loadingTpl>
+  <div class="loading-container">
+    <mat-spinner diameter="40"></mat-spinner>
+    <p>Guardando movimiento...</p>
+  </div>
+</ng-template>

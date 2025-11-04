@@ -9,6 +9,7 @@ import { InventoryValuationDto } from '../models/inventory-item-valuation-dto.mo
 import { StockCurrentDto } from '../models/stock-current.dto.model';
 import { Location as LocationModel } from '../models/location.model';
 import { PageDto } from '../models/page-dto.model';
+import { CreateStockEntryRequest } from '../models/create-stock-entry-request.model';
 
 
 export interface StockService {
@@ -23,7 +24,7 @@ export interface StockService {
 @Injectable({ providedIn: 'root' })
 export class StockService {
 
-  private readonly base = 'https://192.168.10.5:8443/api/v1';
+  private readonly base = 'https://192.168.10.7:8443/api/v1';
 
   constructor(private http: HttpClient) { }
 
@@ -156,14 +157,34 @@ export class StockService {
   }
 
   // Get Current Stock Items by Product Code
-  getCurrentStockByProductCode(
-    code: string,
-    locationId?: string | null
-  ): Observable<StockCurrentDto[]> {
+  getCurrentStockByProductCode(code: string, locationId?: string | null): Observable<StockCurrentDto[]> {
     let params = new HttpParams().set('code', code);
     if (locationId) {
       params = params.set('locationId', locationId);
     }
     return this.http.get<StockCurrentDto[]>(`${this.base}/stock/current/byCode`, { params });
   }
+
+
+  createStockEntry(entry: StockEntryRequest): Observable<any> {
+    // Convert date to ISO string for backend
+    const payload = {
+      ...entry,
+      date: entry.date.toString()
+    };
+    return this.http.post(`${this.base}/stock/entry`, payload);
+  }
+
+}
+
+export interface StockEntryRequest {
+  productId: string;
+  attributeSetInstanceId: string | null;
+  price: number;
+  date: string;
+  reason: number;
+  locationId: string;
+  supplier: string | null;
+  supplierDoc: string | null;
+  units: number;
 }

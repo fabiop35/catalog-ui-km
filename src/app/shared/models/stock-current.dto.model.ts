@@ -8,4 +8,6 @@ export interface StockCurrentDto {
     units: number;
     attributeSetInstanceId?: string;
     attributeSetInstanceDescription?: string;
+    pricebuy: number;
+    idSupplier?: string;
 }

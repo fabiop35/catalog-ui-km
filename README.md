@@ -167,6 +167,8 @@ ng g s shared/services/sales-closed-pos --skip-tests
 ng g i shared/models/sales-closed-pos-report-item --type=model
 ng g c shared/components/sales-closed-pos-report --standalone --skip-tests
 
+# Add inventory entry
+ng g c shared/components/stock/stock-entry-modal.component --standalone --skip-tests
 
 
 

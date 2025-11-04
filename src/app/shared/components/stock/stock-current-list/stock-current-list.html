@@ -97,6 +97,9 @@
                                 <button mat-icon-button (click)="viewHistory(item)" matTooltip="Ver historial">
                                     <mat-icon>history</mat-icon>
                                 </button>
+                                <button mat-icon-button (click)="addInventoryEntry(item)" matTooltip="Nuevo movimiento">
+                                    <mat-icon>add</mat-icon>
+                                </button>
                                 <!-- <button mat-icon-button (click)="adjustStock(item)" matTooltip="Ajustar stock">
                                     <mat-icon>edit</mat-icon>
                                 </button> -->
@@ -158,6 +161,10 @@
                                     <!-- <button mat-icon-button (click)="adjustStock(item)" matTooltip="Ajustar stock">
                                         <mat-icon>edit</mat-icon>
                                     </button> -->
+                                    <button mat-icon-button (click)="addInventoryEntry(item)"
+                                        matTooltip="Nuevo movimiento">
+                                        <mat-icon>add</mat-icon>
+                                    </button>
                                 </mat-card-actions>
                             </mat-card>
                         </ng-container>

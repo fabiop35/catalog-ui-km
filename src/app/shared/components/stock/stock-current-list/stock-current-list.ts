@@ -24,7 +24,8 @@ import { StockAdjustmentModal } from '../stock-adjustment-modal/stock-adjustment
 import { StockMovementDetailModal } from '../stock-movement-detail-modal/stock-movement-detail-modal';
 import { PageDto } from '../../../models/page-dto.model';
 import { StockHistoryListModal } from '../stock-history-list-modal/stock-history-list-modal';
-import { BarcodeScanner } from '../../barcode-scanner/barcode-scanner'; 
+import { BarcodeScanner } from '../../barcode-scanner/barcode-scanner';
+import { StockEntryModalComponent } from '../stock-entry-modal.component/stock-entry-modal.component';
 
 type SearchResult = { content: StockCurrentDto[]; last: boolean; } | PageDto<StockCurrentDto>;
 
@@ -134,7 +135,7 @@ export class StockCurrentList implements OnInit, AfterViewInit, OnDestroy {
         // Assuming the existing getCurrentStock can handle a 'search' parameter effectively
         // for text-based searching.
         return this.stockService.getCurrentStock(0, this.pageSize, searchTerm, this.selectedLocationId).pipe(
-            map((page: PageDto<StockCurrentDto>) => page.content) // Extract content array from page object for autocomplete, explicitly type 'page'
+          map((page: PageDto<StockCurrentDto>) => page.content) // Extract content array from page object for autocomplete, explicitly type 'page'
         );
         // If the service method doesn't exist or isn't suitable for autocomplete,
         // you might need to add a new method in StockService like:
@@ -239,7 +240,7 @@ export class StockCurrentList implements OnInit, AfterViewInit, OnDestroy {
             this.hasMore = !data.last;
             this.page++;
           } else {
-             console.log("Received main list data but isSearching=true, ignoring for main list.");
+            console.log("Received main list data but isSearching=true, ignoring for main list.");
           }
         },
         error: (err: any) => {
@@ -402,4 +403,37 @@ export class StockCurrentList implements OnInit, AfterViewInit, OnDestroy {
       }
     });
   }
+
+  addInventoryEntry(item: StockCurrentDto) {
+    // Get current price — fallback to 0 if not available
+    //const currentPrice = this.getCurrentPriceForProduct(item.productId) || 0;
+
+    const dialogRef = this.dialog.open(StockEntryModalComponent, {
+      width: '500px',
+      data: {
+        locationId: item.locationId,
+        productId: item.productId,
+        productName: item.productName,
+        attributeSetInstanceId: item.attributeSetInstanceId,
+        currentPrice: item.pricebuy ?? 0,
+        idSupplier: item.idSupplier ?? null
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.resetAndReload();
+        this.snack.open('Movimiento de inventario registrado', 'Cerrar', { duration: 5000 });
+      }
+    });
+  }
+
+  // Helper: get current price from product (you may need to enhance this)
+  private getCurrentPriceForProduct(productId: string): number | null {
+    // Option 1: Store product prices in a map during load
+    // Option 2: Call CatalogService.getProduct(productId) — but that’s async
+    // For now, return 0 as fallback; you can improve this later
+    return 0;
+  }
+
 }
