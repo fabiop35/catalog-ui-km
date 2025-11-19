@@ -416,7 +416,8 @@ export class StockCurrentList implements OnInit, AfterViewInit, OnDestroy {
         productName: item.productName,
         attributeSetInstanceId: item.attributeSetInstanceId,
         currentPrice: item.pricebuy ?? 0,
-        idSupplier: item.idSupplier ?? null
+        idSupplier: item.idSupplier ?? null,
+        pricesell: item.pricesell ?? 0,
       }
     });
 

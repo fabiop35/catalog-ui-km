@@ -26,6 +26,7 @@ export interface StockEntryModalData {
   productName?: string;
   attributeSetInstanceId?: string | null;
   currentPrice: number;
+  pricesell: number;
   idSupplier?: string;
 }
 
@@ -80,6 +81,7 @@ export class StockEntryModalComponent implements OnInit {
   ngOnInit() {
     this.form = this.fb.group({
       price: [this.data.currentPrice || 0, [Validators.required, Validators.min(0)]],
+      pricesell: [this.data.pricesell || 0],
       date: [new Date(), Validators.required],
       reason: [1, Validators.required],
       locationId: [this.data.locationId, Validators.required],
@@ -124,7 +126,8 @@ export class StockEntryModalComponent implements OnInit {
       locationId: this.form.value.locationId,
       supplier: this.form.value.idSupplier,
       supplierDoc: this.form.value.supplierDoc || null,
-      units: this.form.value.quantity
+      units: this.form.value.quantity,
+      pricesell: this.form.value.pricesell,
     };
 
     this.stockService.createStockEntry(payload).subscribe({

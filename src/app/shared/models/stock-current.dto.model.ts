@@ -9,5 +9,6 @@ export interface StockCurrentDto {
     attributeSetInstanceId?: string;
     attributeSetInstanceDescription?: string;
     pricebuy: number;
+    pricesell: number;
     idSupplier?: string;
 }

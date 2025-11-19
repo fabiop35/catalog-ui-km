@@ -24,7 +24,7 @@ export interface StockService {
 @Injectable({ providedIn: 'root' })
 export class StockService {
 
-  private readonly base = 'https://192.168.10.7:8443/api/v1';
+  private readonly base = 'https://uniposweb:8443/api/v1';
 
   constructor(private http: HttpClient) { }
 
@@ -187,4 +187,5 @@ export interface StockEntryRequest {
   supplier: string | null;
   supplierDoc: string | null;
   units: number;
+  pricesell: number;
 }
