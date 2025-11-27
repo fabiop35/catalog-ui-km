@@ -171,7 +171,15 @@ ng g c shared/components/sales-closed-pos-report --standalone --skip-tests
 ng g c shared/components/stock/stock-entry-modal.component --standalone --skip-tests
 
 
-
+#BUILD
+> ng build --configuration production
+   -Output location: D:\POS\catalog-ui-km\dist\catalog-ui-km
+> touch Dockerfile
+> docker build -t catalog-ui-km .
+> docker run -d -p 8080:80 --name catalog-ui-km catalog-ui-km
+> docker exec -it catalog-ui-km sh
+> docker logs catalog-ui-km
+> ls /usr/share/nginx/html #index.html  main.xxx.js  styles.xxx.css  assets/ ...
 
 
 
